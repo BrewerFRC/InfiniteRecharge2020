@@ -22,16 +22,25 @@ class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-
+    
+    debug();
   }
 
 
   @Override
   public void teleopPeriodic() {
+    
+    debug();
   }
 
 
   @Override
   public void testPeriodic() {
+    d
+    ebug();
+  }
+
+  private void debug() {
+
   }
 }
