@@ -6,7 +6,11 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-//import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANEncoder;
+
 
 
 /**
@@ -32,15 +36,20 @@ public class DriveTrain extends DifferentialDrive {
 	public static final double TURNMAX = .8;
 	
 	private static final double DISTANCE_PER_PULSE_L = 0.0098195208, DISTANCE_PER_PULSE_R = 0.0098293515;
-	private static final Spark
-			frontL = new Spark(Constants.DRIVE_FL),
-			frontR = new Spark(Constants.DRIVE_FR),
-			backL = new Spark(Constants.DRIVE_BL),
-			backR = new Spark(Constants.DRIVE_BR);
-	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, backL);
-	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, backR);
+	private static final CANSparkMax
+			frontL = new CANSparkMax(Constants.DRIVE_FL, CANSparkMax.MotorType.kBrushless),
+			frontR = new CANSparkMax(Constants.DRIVE_FR, CANSparkMax.MotorType.kBrushless),
+			middleL = new CANSparkMax(Constants.DRIVE_ML, CANSparkMax.MotorType.kBrushless),
+			middleR = new CANSparkMax(Constants.DRIVE_MR, CANSparkMax.MotorType.kBrushless),
+			backL = new CANSparkMax(Constants.DRIVE_BL, CANSparkMax.MotorType.kBrushless),
+			backR = new CANSparkMax(Constants.DRIVE_BR, CANSparkMax.MotorType.kBrushless); 
+	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, middleL, backL);
+	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
-	private Encoder encoderL, encoderR;
+
+	
+	private CANEncoder encoderL, encoderR;
+	private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID pidL, pidR;
 	//private Heading heading;
 	private Solenoid shifter;
@@ -54,19 +63,36 @@ public class DriveTrain extends DifferentialDrive {
 	public DriveTrain() {
 		super(left, right);
 		
-		/*encoderL = new Encoder(Constants.DRIVE_ENCODER_LA, Constants.DRIVE_ENCODER_LB, false, EncodingType.k4X);
-		encoderL.setDistancePerPulse(DISTANCE_PER_PULSE_L);
-		encoderL.setSamplesToAverage(10);
-		encoderR = new Encoder(Constants.DRIVE_ENCODER_RA, Constants.DRIVE_ENCODER_RB, true, EncodingType.k4X);
-		encoderR.setDistancePerPulse(DISTANCE_PER_PULSE_R);
-		encoderR.setSamplesToAverage(10);*/
-		//heading = new Heading();
-		//shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SHIFTER);
+		initMotors();
+		encoderL = new CANEncoder(frontL);
+		encoderR =  new CANEncoder(frontR);
 		
-		pidL = new PID(0.005, 0, 0, false, true, "velL");
-		pidR = new PID(0.005, 0, 0, false, true, "velR");
+		//heading = new Heading();
+		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SHIFTER);
+		
+		//pidL = new PID(0.005, 0, 0, false, true, "velL");
+		//pidR = new PID(0.005, 0, 0, false, true, "velR");
 		
 		instance = this;
+	}
+
+	/**
+	 * Function to init Motors
+	 */
+	private void initMotors() {
+		frontL.restoreFactoryDefaults();
+		frontR.restoreFactoryDefaults();
+		middleL.restoreFactoryDefaults();
+		middleR.restoreFactoryDefaults();
+		backL.restoreFactoryDefaults();
+		backR.restoreFactoryDefaults();
+
+		frontL.setSmartCurrentLimit(40);
+		frontR.setSmartCurrentLimit(40);
+		middleL.setSmartCurrentLimit(40);
+		middleR.setSmartCurrentLimit(40);
+		backL.setSmartCurrentLimit(40);
+		backR.setSmartCurrentLimit(40);
 	}
 	
 	/**
@@ -96,8 +122,8 @@ public class DriveTrain extends DifferentialDrive {
 	 * Resets the counts of the left and right encoders.
 	 */
 	public void resetEncoders() {
-		encoderL.reset();
-		encoderR.reset();
+		encoderL.setPosition(0);
+		encoderR.setPosition(0);
 		pidL.reset();
 		pidR.reset();
 	}

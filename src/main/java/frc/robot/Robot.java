@@ -36,8 +36,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    d
-    ebug();
+    debug();
   }
 
   private void debug() {
