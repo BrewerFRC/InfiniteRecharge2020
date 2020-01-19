@@ -151,9 +151,9 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return the counts
 	 */
-	public int getLeftCounts() {
+	/*public int getLeftCounts() {
 		return encoderL.get();
-	}
+	}*/
 	
 	/**
 	 * Get the scaled distance of the left encoder.
@@ -161,7 +161,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return the distance in inches
 	 */
 	public double getLeftDist() {
-		return encoderL.getDistance();
+		return encoderL.getPosition();
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return the velocity in inches/second
 	 */
 	public double getLeftVelocity() {
-		return encoderL.getRate();
+		return encoderL.getVelocity();
 	}
 	
 	/**
@@ -178,9 +178,9 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return the counts
 	 */
-	public int getRightCounts() {
+	/*public int getRightCounts() {
 		return encoderR.get();
-	}
+	}*/
 	
 	/**
 	 * Get the scaled distance of the right encoder.
@@ -188,7 +188,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the distance in inches
 	 */
 	public double getRightDist() {
-		return encoderR.getDistance();
+		return encoderR.getPosition();
 	}
 	
 	/**
@@ -197,7 +197,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the velocity in inches/second
 	 */
 	public double getRightVelocity() {
-		return encoderR.getRate();
+		return encoderR.getVelocity();
 	}
 	
 	/**
@@ -205,9 +205,9 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return int - the average counts
 	 */
-	public int getAverageCounts() {
+	/*public int getAverageCounts() {
 		return (encoderL.get() + encoderR.get()) / 2;
-	}
+	}*/
 	
 	/**
 	 * Get the averaged scaled distance between the two encoders.
@@ -215,7 +215,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the average distance in inches
 	 */
 	public double getAverageDist() {
-		return (encoderL.getDistance() + encoderR.getDistance()) / 2;
+		return (this.getLeftDist() + this.getRightDist()) / 2;
 	}
 	
 	/**
@@ -224,7 +224,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the average velocity in inches/second
 	 */
 	public double getAverageVelocity() {
-		return (encoderL.getRate() + encoderR.getRate()) / 2;
+		return (this.getRightVelocity() + this.getLeftVelocity()) / 2;
 	}
 	
 	/**
