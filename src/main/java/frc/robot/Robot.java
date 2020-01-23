@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class Robot extends TimedRobot {
+  DriveTrain dt = new DriveTrain();
+  Xbox driver = new Xbox(0);
+  Xbox operator =  new Xbox(1);
 
   
   @Override
@@ -29,6 +32,8 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+
     
     debug();
   }
