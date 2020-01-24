@@ -37,7 +37,6 @@ class Robot extends TimedRobot {
   public void teleopPeriodic() {
     dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
     
-
     
     debug();
   }
