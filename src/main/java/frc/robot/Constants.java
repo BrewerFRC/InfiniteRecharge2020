@@ -18,7 +18,7 @@ public class Constants {
 
     //CAN
     //Motors
-    public static final int DRIVE_FL = 20, DRIVE_ML = 21, DRIVE_BL =23, DRIVE_FR = 24, DRIVE_MR =25, DRIVE_BR = 26;
+    public static final int DRIVE_FL = 13, DRIVE_ML = 14, DRIVE_BL =15, DRIVE_FR = 11, DRIVE_MR =10, DRIVE_BR = 12;
 
     //Devices
     public static final int PCM_CAN_ID = 2;

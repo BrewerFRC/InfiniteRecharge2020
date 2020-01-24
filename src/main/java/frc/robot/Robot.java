@@ -1,6 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class Robot extends TimedRobot {
@@ -11,6 +13,7 @@ class Robot extends TimedRobot {
   
   @Override
   public void robotInit() {
+
   }
 
 
@@ -32,7 +35,8 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
+    dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+    
 
     
     debug();
