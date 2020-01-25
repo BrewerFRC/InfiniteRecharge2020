@@ -51,10 +51,7 @@ public class Flywheel {
 
     }
 
-    /**
-     * 
-     */
-	public boolean atRPM(){
+	/*public boolean atRPM(){
         
-    }
+    } */
 }

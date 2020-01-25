@@ -11,6 +11,7 @@ public class Constants {
 
 
     //DIO
+    public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1;
 
 
     //ANA
