@@ -55,6 +55,8 @@ public class DriveTrain extends DifferentialDrive {
 	private Solenoid shifter;
 	private double driveSpeed = 0, turnSpeed = 0;
 	private double tankLeft = 0, tankRight = 0;
+
+	private boolean driveComp = true;
 	
 	/**
 	 * Creates an instance of DriveTrain.
@@ -411,4 +413,29 @@ public class DriveTrain extends DifferentialDrive {
         }
 		return current;
 	}*/
+
+	public void drivebyPID()
+    {
+    	double outputDrive = calcDrive(), outputTurn = 0;// outputTurn = -heading.turnRate();
+    	Common.dashNum("drivePIDOUT", outputDrive);
+    	Common.dashNum("TurnPIDOUT ", outputTurn);
+    	/*if(turning){
+    		drivePID.setTarget(encoder.getDistance());
+    		outputDrive = 0;
+    	}*/
+    	
+    	arcadeDrive(outputDrive, outputTurn);
+	}
+	
+	public void driveDistance(double distance) {
+    	drivePID.setTarget(this.getAverageDist() + distance);
+    	driveComp = Math.abs(getAverageDist() - drivePID.getTarget()) <= 2.0;
+	}
+	
+	public double calcDrive() {
+    	//Common.debug("DT:CalcDrive");
+    	return drivePID.calc(getAverageDist());
+    }
+
+
 }
