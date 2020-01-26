@@ -31,8 +31,8 @@ public class Intake {
 
 	private enum States {
 		IDLE, 			//No motor movement, intake is up.
-		LOAD,			// Entered through a button press, constantly runs the polycord inwards. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
-		EJECT;          //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
+		LOADING,			// Entered through a button press, constantly runs the polycord inwards. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
+		EJECTING;          //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
 
 	}
 	
@@ -56,15 +56,6 @@ public class Intake {
 	}
 
 	/**
-	 * Run the intake motor(s) inward to pickup power cells. 
-	 * The intake speed is a constant, based on observation of best mechanical performance.
-	 * This function does NOT employ safeties to protect from overloading the magazine.
-	 */
-	public void posIntake(){
-		setMotorPower(MAX_POWER);
-	}
-
-	/**
 	 * Sets the intake motor power.  Positive values will run motes inward.
 	 * Will limit the maximum power sent to the motor based on MAX_POWER.
 	 */
@@ -83,15 +74,24 @@ public class Intake {
 	/**
 	* Turn off the intake motor(s).
 	*/
-	public void stopIntake(){
+	public void motorStop(){
 		setMotorPower(0);
+	}
+
+	/**
+	 * Run the intake motor(s) inward to pickup power cells. 
+	 * The intake speed is a constant, based on observation of best mechanical performance.
+	 * This function does NOT employ safeties to protect from overloading the magazine.
+	 */
+	private void motorIn(){
+		setMotorPower(MAX_POWER);
 	}
 
 	/**
 	 * Runs the intake motor(s) outwards to dump power cells. 
 	 * The motor speed is a constant, based on observation of best mechanical performance.
 	 */
-	public void negIntake(){
+	private void motorOut(){
 		setMotorPower(-MAX_POWER);
 	}
 
@@ -99,18 +99,41 @@ public class Intake {
 	 * Set intake arms in up position through pnuematic control.
 	 * Intake motor(s) will be stopped.
 	 */
-	public void setIntakeUp(){
-		stopIntake();
+	private void setIntakeUp(){
+		motorStop();
 		arm.set(true);
 	}
 
 	/**
 	 * Set intake arms in down position through pnuematic control.
 	 */
-	public void setIntakeDown() {
+	private void setIntakeDown() {
 		arm.set(false);
 	}
-	
+
+	/** 
+	 * Call this function to initiate intaking balls.
+	 * 
+	 * The state must be IDLE for this to occur.
+	*/
+	public void startIntake() {
+		if (state == States.IDLE);
+			motorIn();
+		
+
+	}
+
+	/**
+	 *  Cancels ball intake.
+	 * 
+	 * The state must be LOADING
+	 */
+	public void stopIntake() {
+		if (state == States.LOADING); 
+			motorStop();
+
+	}
+
 	/**
 	 * 
 	 */
@@ -118,17 +141,16 @@ public class Intake {
 		switch(state) {
 			case IDLE:
 				setIntakeUp();
-				stopIntake();
 				break;
 
-			case LOAD:
+			case LOADING:
 				setIntakeDown();
-				posIntake();
+				startIntake();
 				break;
 
-			case EJECT:
+			case EJECTING:
 				setIntakeDown();
-				negIntake();
+				motorOut();
 				if (timer.get() >= MAX_RUNTIME) {
 					state = States.IDLE;	
 				}
