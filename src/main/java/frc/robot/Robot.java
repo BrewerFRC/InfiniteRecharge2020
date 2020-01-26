@@ -19,7 +19,6 @@ class Robot extends TimedRobot {
   DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
-  Timer timer = new Timer();
 
   
   // class - name - = - new class
@@ -39,6 +38,7 @@ class Robot extends TimedRobot {
       dt.resetEncoders();
     }
 
+<<<<<<< HEAD
     //colorWheel.update();
     
     
@@ -49,6 +49,9 @@ class Robot extends TimedRobot {
   public void disabledPeriodic() {
     
     debug();
+=======
+    colorWheel.update();
+>>>>>>> 0f4bd652a29075633b4cd7a11848cec13d90a49b
   }
 
 
