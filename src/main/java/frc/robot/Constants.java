@@ -20,7 +20,7 @@ public class Constants {
 
     //CAN
     //Motors
-    public static final int DRIVE_FL = 13, DRIVE_ML = 14, DRIVE_BL =15, DRIVE_FR = 11, DRIVE_MR =10, DRIVE_BR = 12;
+    public static final int DRIVE_FL = 13, DRIVE_ML = 14, DRIVE_BL =15, DRIVE_FR = 11, DRIVE_MR =10, DRIVE_BR = 12, CAN_MAGAZINE_MOTOR = 16;
 
     //Devices
     public static final int PCM_CAN_ID = 2;
@@ -28,6 +28,7 @@ public class Constants {
     //Pneumatics - Solenoids
     public static final int SOL_SHIFTER = 0; 
     public static final int SOL_INTAKE_ARM = 1; 
+    
     //Miscellaneous
     public static double REFRESH_RATE = 20;
 

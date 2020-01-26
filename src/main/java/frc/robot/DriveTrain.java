@@ -25,18 +25,17 @@ import com.revrobotics.CANEncoder;
 public class DriveTrain extends DifferentialDrive {
 	private static DriveTrain instance;
 	
-	public static double DRIVEACCEL = 0, DRIVEMIN = 0.4;
+	public static double DRIVEACCEL = 0.05;
 
 	public static final double TURNACCEL = .06;
 
-	public static final double TANKACCEL = 0.01;
-
-	public static final double TANKMIN = 0.40;
-
-	public static final double TURNMAX = .8;
+	public static final double TURNMAX = 0.5, DRIVE_MAX = 1.0;
 	
-	private static final double DISTANCE_PER_PULSE_L = 0.0098195208, DISTANCE_PER_PULSE_R = 0.0098293515;
-	private static final CANSparkMax
+	private static final double DISTANCE_CONVERSION_FACTOR = 37.452019/(12*Math.PI);	
+	/*
+		Changed neos to public for testing, change back soon
+	*/
+	public static final CANSparkMax
 			frontL = new CANSparkMax(Constants.DRIVE_FL, CANSparkMax.MotorType.kBrushless),
 			frontR = new CANSparkMax(Constants.DRIVE_FR, CANSparkMax.MotorType.kBrushless),
 			middleL = new CANSparkMax(Constants.DRIVE_ML, CANSparkMax.MotorType.kBrushless),
@@ -47,14 +46,13 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
 	private double P = 0, I = 0, D = 0;
+	private double driveSpeed = 0, turnSpeed = 0;
 	
 	private CANEncoder encoderL, encoderR;
 	//private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID drivePID;
 	//private Heading heading;
-	private Solenoid shifter;
-	private double driveSpeed = 0, turnSpeed = 0;
-	private double tankLeft = 0, tankRight = 0;
+	//private Solenoid shifter;
 
 	private boolean driveComp = true;
 	
@@ -68,9 +66,11 @@ public class DriveTrain extends DifferentialDrive {
 		initMotors();
 		encoderL = new CANEncoder(frontL);
 		encoderR =  new CANEncoder(frontR);
+		encoderL.setPositionConversionFactor(this.DISTANCE_CONVERSION_FACTOR);
+		encoderR.setPositionConversionFactor(this.DISTANCE_CONVERSION_FACTOR);
 		
 		//heading = new Heading();
-		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_SHIFTER);
+		//shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.Sol_SHIFTER);
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
@@ -118,14 +118,14 @@ public class DriveTrain extends DifferentialDrive {
 	/**
 	 * Shifts the drivetrain gearbox to high gear.
 	 */
-	public void shiftHigh() {
+	/*public void shiftHigh() {
 		shifter.set(false);
 	}
 	
 	/**
 	 * Shifts the drivetrain gearbox to low gear.
 	 */
-	public void shiftLow() {
+	/*public void shiftLow() {
 		shifter.set(true);
 	}
 	
@@ -134,7 +134,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return - is low
 	 */
-	public boolean isShiftedLow() {
+	/*public boolean isShiftedLow() {
 		return shifter.get();
 	}
 	
@@ -223,20 +223,22 @@ public class DriveTrain extends DifferentialDrive {
 	
 	/**
 	 * Get the averaged scaled distance between the two encoders.
+	 * Inverts the right side to get a robot average.
 	 * 
 	 * @return double - the average distance in inches
 	 */
 	public double getAverageDist() {
-		return (this.getLeftDist() + this.getRightDist()) / 2;
+		return (this.getLeftDist() + -this.getRightDist()) / 2;
 	}
 	
 	/**
 	 * Get the averaged scaled velocity between the two encoders.
+	 * Inverts the right side to get a robot average.
 	 * 
 	 * @return double - the average velocity in inches/second
 	 */
 	public double getAverageVelocity() {
-		return (this.getRightVelocity() + this.getLeftVelocity()) / 2;
+		return (-this.getRightVelocity() + this.getLeftVelocity()) / 2;
 	}
 	
 	/**
@@ -271,22 +273,21 @@ public class DriveTrain extends DifferentialDrive {
 	
 	/**
 	 * Gradually accelerate to a specified drive value.
+	 * Uses DRIVEACCEL as chaneg value and DRIVE_MAX as max speed allowed.
 	 * 
 	 * @param target - the target drive value from -1 to 1
 	 * @return double - the allowed drive value for this cycle.
 	 */
 	public double driveAccelCurve(double target) {
-		//double DRIVEACCEL = getDriveAccel();
-		//If the magnitude of current is less than the minimum
-		if (Math.abs(driveSpeed) < DRIVEMIN) {
-			//Move to the lesser value of the minimum or the target, including desired direction.
-			if (target > 0) {
-				driveSpeed = Math.min(DRIVEMIN, target);
-			}
-			else {
-				driveSpeed = Math.max(-DRIVEMIN, target);
+
+		if (Math.abs(target) > DRIVE_MAX) {
+			if (target > 0 ) {
+				target = DRIVE_MAX;
+			} else {
+				target = -DRIVE_MAX;
 			}
 		}
+
 		//If the magnitude of current is greater than the minimum
 		//If the difference is greater than the allowed acceleration
 		if (Math.abs(driveSpeed - target) > DRIVEACCEL) {
@@ -296,7 +297,9 @@ public class DriveTrain extends DifferentialDrive {
             } else {
                 driveSpeed = driveSpeed + DRIVEACCEL;
             }
-        }
+		}
+		
+
 		//If the difference is less than the allowed acceleration, reach target
 		else {
             driveSpeed = target;
@@ -328,7 +331,6 @@ public class DriveTrain extends DifferentialDrive {
 	    return turnSpeed;
 	}
 	
-	//turn should be inverted on testbed -Brent
 	/**
 	 * Arcade drive with an acceleration curve.
 	 * 
@@ -338,18 +340,11 @@ public class DriveTrain extends DifferentialDrive {
 	public void accelDrive(double drive, double turn) {
 		drive = driveAccelCurve(drive);
 		turn = turnAccelCurve(turn);
+		Common.dashNum("Drive output", drive);
+		Common.dashNum("Turn output", turn);
 		arcadeDrive(drive, -turn);
 	}
 	
-	/**
-	 * An implementation of tank drive that updates current speed values used in acceleration curve methods.
-	 * Does not set motors.
-	 */
-	@Override
-	public void tankDrive(double left, double right) {
-		tankLeft = left;
-		tankRight = right;
-	}
 	
 	/**
 	 * Acceleration control for tank drive. Does not set motors.

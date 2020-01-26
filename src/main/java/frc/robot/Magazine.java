@@ -1,6 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMax;
 
 /**
  * The Magazine sub-system consists of a motor and two ir make/break sensors to manage ball handling.
@@ -24,38 +27,162 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Magazine {
 
+	private static final CANSparkMax magMot = new CANSparkMax(Constants.CAN_MAGAZINE_MOTOR, CANSparkMax.MotorType.kBrushless);
 	private DigitalInput topBeamBreak = new DigitalInput(Constants.DIO_TOP_BEAMBREAK);
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
+	Timer timer = new Timer();
 	
 	private final double MAX_POWER = 0.2;  //Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
+	private double power = 0;
 	
 	private enum States {
-		IDLE, 			//Motors stopped. May have ball.
-		EMPTY,			//Motors stopped. No balls in magazine.  This occurs on timesout noted in other states.
-		LOAD_BALL,		//Move ball into magazine until Bottom sensor clears of magazine fills
+		IDLE, 				//Motors stopped. May have ball.
+		EMPTY,				//Motors stopped. No balls in magazine.  This occurs on timesout noted in other states.
+		LOAD_BALL,			//Move ball into magazine until Bottom sensor clears of magazine fills
 		BEGIN_LOAD_BREACH,	//Start moving balls toward Top sensor and start a timer
 		LOAD_BREACH,		//Continue moving balls until Top sensor triggers or timer expires
 		BREACH_LOADED,		//Stop moving balls and watch that breach stays loaded
-		BEGIN_UNLOAD_BREACH,	//Begin moving balls toward Bottom sensor and start a timer
+		SHOOT_BALL, 		//Moves 1 ball to the flywheel.
+		BEGIN_UNLOAD_BREACH,//Begin moving balls toward Bottom sensor and start a timer
 		UNLOAD_BREACH,		//Continue moving balls until Bottom sensor triggers or timer expires
 		BEGIN_DUMP_BALLS,	//Start moving balls outward and start timer
-		DUMP_BALLS;		//Run magazine outward to dump any balls by waiting for timeout
+		DUMP_BALLS;			//Run magazine outward to dump any balls by waiting for timeout
 	}
 	private States state = States.IDLE;
+	/**
+	 * Update state proccess to drive magazine.  Call every robot cycle.
+	 *
+	 * State logic:
+	 * IDLE
+	 *	Motors Off.  May contain a ball.
+	 *	If Bottom sensor detects ball and Top sensor does not, goes to LOAD_BALL.
+	 * LOAD_BALL
+	 *	Run motors inward.
+	 *	If no ball detected at Lower sensor or Top sensor detects ball, go to IDLE.
+	 * LOAD_BREACH
+	 *	Move balls to Top sensor
+	 */
+	public void update() {
+		switch (state) {
+			case IDLE:
+			// Motors Off.  May contain a ball.
+			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
+				stop();
+				break;
+				
+			case EMPTY:
+			// Motors Off.  No balls in magazine.
+			// Empty is assumed when breach LOAD_BREACH or UNLOAD_BREACH time out or DUMP_BALLS completes.
+			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
+				stop();
+				break;
+				
+			case LOAD_BALL:
+			// Run motors inward.
+			// Once ball is loaded past Lower sensor or Top sensor triggers, then go to IDLE.
+				if (bottomSensorTriggered() == true) {
+					load();
+				} else if (topSensorTriggered() == true){
+					state = States.IDLE;
+				} else {
+					state = States.IDLE;
+				}
+				break;
+				
+			case BEGIN_LOAD_BREACH:
+			// This is initiated by loadBreach(), which would typically be called when Flywheel spins up.
+			// If ball at Top sensor then BREACH_LOADED.
+			// Otherwise, run motor toward Top sensor, initialize timeout timer for breach load to handle empty
+			// magazine condition, and then go to LOAD_BREACH
+				timer.reset();
+				state = States.LOAD_BREACH;
+				break;
+				
+			case LOAD_BREACH:
+			// Look to see if ball has made it to the Top sensor.  If yes, then BREACH_LOADED.
+			// If timeout timer runs out, then we mustn't have any balls in magazine, go to EMPTY.
+			// Otherwise continue to run magaine motors inward.
+				if (topSensorTriggered() == true) {
+					state = States.BREACH_LOADED;
+				} else if (timer.get() >= MAX_RUNTIME) {
+					state = States.EMPTY;
+				}
+				break;
+				
+			case BREACH_LOADED:
+			// Stop the magazine motors.
+			// If Top sensor looses sight of ball, then go to BEGIN_LOAD_BREACH.
+				stop();
+				if (topSensorTriggered() == true) {
+					state = States.BEGIN_LOAD_BREACH;
+				}
+				break;
+			
+			case SHOOT_BALL:
+			//moves 1 ball in to flywheel.  When Top sensor clears, goes to BEGIN_LOAD_BREACH
+				load();
+				if (topSensorTriggered() == false) {
+					state = States.BEGIN_LOAD_BREACH;
+				}
+				break;
 
+			case BEGIN_UNLOAD_BREACH:
+			// This is initiated by unloadBreach(), which would typcially be called when the Flywheel spins down.
+			// Look to see if a ball is already at the Bottom sensor.  If yes, then LOAD_BALL.
+			// Otherwise, run motors toward Bottom sensor, begin timeout timer to handle empty magazine condition,
+			// and then go to UNLOAD_BREACH:
+				if (bottomSensorTriggered() == true) {
+					state = States.LOAD_BALL;
+				} else {
+					timer.reset();
+					unload();
+					state = States.UNLOAD_BREACH;
+				}
+				break;
+			
+			case UNLOAD_BREACH:
+			// Continue to run the balls outward.  If the Bottom sensor triggers, then the unload is complete
+			// and we just need to move that balls back in a bit past the Bottom sensor by going to LOAD_BALL.
+			// If the timeout timer expires, then the magazine must be empty, so go to EMPTY state.
+				if (bottomSensorTriggered() == true) {
+					state = States.LOAD_BALL;
+				} else if (timer.get() >= MAX_RUNTIME) {
+					state = States.EMPTY;
+				}
+				
+			case BEGIN_DUMP_BALLS:
+			// This state is intitiated by dumpBalls().
+			// Start running motors outward and start a timeout timer.
+			// Advance to DUMP_BALLS state.
+				timer.reset();
+				unload();
+				state = States.DUMP_BALLS;
+				break;
+				
+			case DUMP_BALLS:
+			// Continue to dump balls until timeout occurs. Go to EMPTY state.
+				if (timer.get() >= MAX_RUNTIME) {
+					state = States.EMPTY;
+				} else {
+					unload();
+				}
+				break;
+		}  // End switch
+	}	
 	/**
 	 * Set intake motor off and initialize state to IDLE.
 	 */
 	public void init(){
-		
+		timer.reset();
+		timer.start();
 	}
 
 	/**
 	 * 
 	 */
 	public void debug(){
-		
+		Common.dashNum("time elapsed", timer.get());
 	}
 
 	public boolean bottomSensorTriggered(){
@@ -108,14 +235,21 @@ public class Magazine {
 	* @param power - Floating point value between -1.0 and +1.0
 	*/
 	private void setPower(double power) {
-		
+		if (power >= MAX_POWER) {
+			power = MAX_POWER;
+			magMot.set(power);
+		} else if (power <= -MAX_POWER) {
+			power = -MAX_POWER;
+			magMot.set(power);
+		}
 	}
 
  	/**
 	 * Stop the magazine motor.
 	 */
 	public void stop() {
-
+		power = 0.0;
+		setPower(power);
 	}
 	
 	/**
@@ -124,7 +258,8 @@ public class Magazine {
 	 * This function does NOT employ any safety checks.
 	 */
 	private void load(){
-
+			power = MAX_POWER;
+			setPower(power);
 	}
 
 	/**
@@ -133,7 +268,8 @@ public class Magazine {
 	 * This function does NOT employ any safety checks.
 	 */
 	private void unload() {
-
+		power = -MAX_POWER;
+		setPower(power);
 	}
 
 
@@ -143,12 +279,14 @@ public class Magazine {
 	 * A quick trigger pull will shoot one ball (assuming a ball is already in the breach), whereas holding
 	 * the trigger will shoot multiple balls automatically as the magazine cycles automatically to reloading the breach.
 	 * 
-	 * Logically, this function sets the magazine state to SHOOT_BALL, if the magazine is in a BREACH_LOADED state.
-	 * SHOOT_BALL then advances one ball past the top sensor into the flywheel. This initiates a BEGIN_LOAD_BREACH state
+	 * Logically, this function sets the magazine state to BEGIN_SHOOT_BALL, if the magazine is in a BREACH_LOADED state.
+	 * SHOOT_BALL then advances one ball past the top sensor into the flywheel. This initiates a LOAD_BREACH state
 	 * to load the next ball, if any, and make it ready to shoot.
 	 */
 	public void shootBall() {
-
+		if (state == States.BREACH_LOADED) {
+			state = States.SHOOT_BALL;
+		}
 	}
 	
 	/**
@@ -163,7 +301,7 @@ public class Magazine {
 	
 	/**
 	 * This function initiates moving the balls toward the Top sensor, so that they are ready to shoot.
-	 * If the maagazine is in an EMPTY state, then breach loading will not occur.
+	 * If the magazine is in an EMPTY state, then breach loading will not occur.
 	 * This action would normally only take place if the flywheel is spinning, in preparation to throw.
 	 * The Shooter object is likely to use of this function, whenever initiating flywheel spin up, or autonomous mode
 	 * could use this to get balls prepped for shooting.
@@ -174,7 +312,9 @@ public class Magazine {
 	 * driverstation or to prevent allowing the flywheel to spin up when no balls are availalbe.   
 	 */
 	public void loadBreach() {
-
+		if (state == States.IDLE) {
+			state = States.BEGIN_LOAD_BREACH;
+		}
 	}
 	
 	/**
@@ -186,88 +326,8 @@ public class Magazine {
 	 *
 	 */
 	public void unloadBreach() {
-		
-	}
-
-	/**
-	 * Update state proccess to drive magazine.  Call every robot cycle.
-	 *
-	 * State logic:
-	 * IDLE
-	 *	Motors Off.  May contain a ball.
-	 *	If Bottom sensor detects ball and Top sensor does not, goes to LOAD_BALL.
-	 * LOAD_BALL
-	 *	Run motors inward.
-	 *	If no ball detected at Lower sensor or Top sensor detects ball, go to IDLE.
-	 * LOAD_BREACH
-	 *	Move balls to Top sensor
-	 */
-	public void update() {
-		switch (state) {
-			case IDLE:
-			// Motors Off.  May contain a ball.
-			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
-				
-				break;
-				
-			case EMPTY:
-			// Motors Off.  No balls in magazine.
-			// Empty is assumed when breach LOAD_BREACH or UNLOAD_BREACH time out or DUMP_BALLS completes.
-			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
-				
-				break;
-				
-			case LOAD_BALL:
-			// Run motors inward.
-			// Once ball is loaded past Lower sensor or Top sensor triggers, then go to IDLE.
-				
-				break;
-				
-			case BEGIN_LOAD_BREACH:
-			// This is initiated by loadBreach(), which would typically be called when Flywheel spins up.
-			// If ball at Top sensor then BREACH_LOADED.
-			// Otherwise, run motor toward Top sensor, initialize timeout timer for breach load to handle empty
-			// magazine condition, and then go to LOAD_BREACH
-				
-				break;
-				
-			case LOAD_BREACH:
-			// Look to see if ball has made it to the Top sensor.  If yes, then BREACH_LOADED.
-			// If timeout timer runs out, then we mustn't have any balls in magazine, go to EMPTY.
-			// Otherwise continue to run magaine motors inward.
-				
-				break;
-				
-			case BREACH_LOADED:
-			// Stop the magazine motors.
-			// If Top sensor looses sight of ball, then go to BEGIN_LOAD_BREACH.
-				
-				break;
-				
-			case BEGIN_UNLOAD_BREACH:
-			// This is initiated by unloadBreach(), which would typcially be called when the Flywheel spins down.
-			// Look to see if a ball is already at the Bottom seonsor.  If yes, then IDLE.
-			// Otherwise, run motors toward Bottom sensor, begin timeout timer to handle empty magazine condition,
-			// and then go to UNLOAD_BREACH:
-			
-				break;
-			
-			case UNLOAD_BREACH:
-			// Continue to run the balls outward.  If the Bottom sensor triggers, then the unload is complete
-			// and we just need to move that balls back in a bit past the Bottom sensor by going to LOAD_BALL.
-			// If the timeout timer expires, then the magazine must be empty, so go to EMPTY state.
-				
-			case BEGIN_DUMP_BALLS:
-			// This state is intitiated by dumpBalls().
-			// Start running motors outward and start a timeout timer.
-			// Advance to DUMP_BALLS state.
-				
-				break;
-				
-			case DUMP_BALLS:
-			// Continue to dump balls until timeout occurs. Go to EMPTY state.
-				
-				break;
-		}  // End switch
-	}		
+		if (state == States.BREACH_LOADED || state == States.BEGIN_LOAD_BREACH ) {
+			state = States.BEGIN_UNLOAD_BREACH;
+		}
+	}	
 } // End Magazine class
