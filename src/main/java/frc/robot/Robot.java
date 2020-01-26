@@ -8,9 +8,18 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
+  DriveTrain dt = new DriveTrain();
+  Xbox driver = new Xbox(0);
+  Xbox operator =  new Xbox(1);
+  Timer timer = new Timer();
+
   
   // class - name - = - new class
   XboxController a = new XboxController(0);
@@ -19,6 +28,7 @@ class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     
+
   }
 
 
@@ -28,6 +38,7 @@ class Robot extends TimedRobot {
     colorWheel.update();
     
     
+    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
@@ -37,7 +48,8 @@ class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-
+    
+    debug();
   }
 
 
@@ -48,12 +60,25 @@ class Robot extends TimedRobot {
       colorWheel.resetPieCount();
      
     }
+    dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+    if (driver.getPressed(Xbox.buttons.x)) {
+    timer.reset();
+    timer.start();
+    }
+    
+    
+    debug();
   }
 
 
   @Override
   public void testPeriodic() {
   
+    debug();
+  }
+
+  private void debug() {
+
   }
   
 
