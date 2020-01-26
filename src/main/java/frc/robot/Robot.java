@@ -38,7 +38,6 @@ class Robot extends TimedRobot {
       dt.resetEncoders();
     }
 
-<<<<<<< HEAD
     //colorWheel.update();
     
     
@@ -49,9 +48,6 @@ class Robot extends TimedRobot {
   public void disabledPeriodic() {
     
     debug();
-=======
-    colorWheel.update();
->>>>>>> 0f4bd652a29075633b4cd7a11848cec13d90a49b
   }
 
 
