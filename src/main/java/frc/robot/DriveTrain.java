@@ -49,7 +49,7 @@ public class DriveTrain extends DifferentialDrive {
 	private double P = 0, I = 0, D = 0;
 	
 	private CANEncoder encoderL, encoderR;
-	private double IPC_HIGH = 1, IPC_LOW = 1;
+	//private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID drivePID;
 	//private Heading heading;
 	private Solenoid shifter;

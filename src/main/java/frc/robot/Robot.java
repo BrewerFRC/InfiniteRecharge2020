@@ -1,5 +1,13 @@
 package frc.robot;
 
+import com.revrobotics.ColorSensorV3;
+
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -13,14 +21,23 @@ class Robot extends TimedRobot {
   Timer timer = new Timer();
 
   
+  // class - name - = - new class
+  XboxController a = new XboxController(0);
+  ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
+
   @Override
   public void robotInit() {
+    
 
   }
 
 
   @Override
   public void robotPeriodic() {
+
+    colorWheel.update();
+    
+    
     Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
@@ -38,6 +55,11 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    
+    if (a.getBButton() == true){
+      colorWheel.resetPieCount();
+     
+    }
     dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
     if (driver.getPressed(Xbox.buttons.x)) {
     timer.reset();
@@ -51,10 +73,16 @@ class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+  
     debug();
   }
 
   private void debug() {
 
   }
+  
+
+  
+    
+
 }
