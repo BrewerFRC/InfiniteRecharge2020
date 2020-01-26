@@ -21,7 +21,6 @@ class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
@@ -39,12 +38,6 @@ class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
-    if (driver.getPressed(Xbox.buttons.x)) {
-    timer.reset();
-    timer.start();
-    }
-    
-    
     debug();
   }
 
