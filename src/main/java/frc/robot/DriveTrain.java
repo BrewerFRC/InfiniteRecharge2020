@@ -46,11 +46,11 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, middleL, backL);
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
-
+	private double P = 0, I = 0, D = 0;
 	
 	private CANEncoder encoderL, encoderR;
 	private double IPC_HIGH = 1, IPC_LOW = 1;
-	private PID pidL, pidR;
+	private PID drivePID;
 	//private Heading heading;
 	private Solenoid shifter;
 	private double driveSpeed = 0, turnSpeed = 0;
@@ -72,8 +72,26 @@ public class DriveTrain extends DifferentialDrive {
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
+		drivePID = new PID(P, I, D, false, false, "DrivePID");
+		drivePID.setOutputLimits(-.4, 0.4);
+		drivePID.setMinMagnitude(0.0);
+
 		
 		instance = this;
+	}
+
+	/**
+	 * A function that initiates the drivetrain.
+	 */
+	public void init() {
+		drivePID.reset();
+	}
+
+	/**
+	 * Added an update for the Drive PID.
+	 */
+	public void update() {
+		drivePID.update();
 	}
 
 	/**
@@ -124,17 +142,9 @@ public class DriveTrain extends DifferentialDrive {
 	public void resetEncoders() {
 		encoderL.setPosition(0);
 		encoderR.setPosition(0);
-		pidL.reset();
-		pidR.reset();
+		drivePID.reset();
 	}
 	
-	/**
-	 * Update PID tuning values from the SmartDashboard.
-	 */
-	public void updatePIDs() {
-		pidL.update();
-		pidR.update();
-	}
 	
 	/**
 	 * Returns an instance of DriveTrain which is bound to the motor controllers.

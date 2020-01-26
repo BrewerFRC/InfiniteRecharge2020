@@ -42,7 +42,7 @@ public class Magazine {
 		BEGIN_DUMP_BALLS,	//Start moving balls outward and start timer
 		DUMP_BALLS;		//Run magazine outward to dump any balls by waiting for timeout
 	}
-	private States state = IDLE;
+	private States state = States.IDLE;
 
 	/**
 	 * Set intake motor off and initialize state to IDLE.
@@ -96,7 +96,7 @@ public class Magazine {
 	 * @returns: boolean true when magazine is assumed to be empty.
 	 */
 	public boolean empty() {
-		return (state == EMPTY);
+		return (state == States.EMPTY);
 	}
 	
 	/*
@@ -269,5 +269,5 @@ public class Magazine {
 				
 				break;
 		}  // End switch
-			
+	}		
 } // End Magazine class
