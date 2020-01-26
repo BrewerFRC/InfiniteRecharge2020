@@ -5,10 +5,11 @@ package frc.robot;
  * 
  * @author Brewer FIRST Robotics Team 4564
  * @author Brent Roberts
+ * @author Sworp
  */
 public class Constants {
     //PWM
-
+    static final int PWM_INTAKE_MOTOR = 0;
 
     //DIO
     public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1;
@@ -24,8 +25,8 @@ public class Constants {
     //Devices
     public static final int PCM_CAN_ID = 2;
     
-    //Pneumatics
-    public static final int SHIFTER = 0; 
+    //Pneumatics - Solenoids
+    public static final int Sol_SHIFTER = 0; 
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
