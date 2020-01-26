@@ -70,7 +70,7 @@ public class DriveTrain extends DifferentialDrive {
 		encoderR =  new CANEncoder(frontR);
 		
 		//heading = new Heading();
-		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.Sol_SHIFTER);
+		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_SHIFTER);
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");

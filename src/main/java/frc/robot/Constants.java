@@ -26,8 +26,8 @@ public class Constants {
     public static final int PCM_CAN_ID = 2;
     
     //Pneumatics - Solenoids
-    public static final int Sol_SHIFTER = 0; 
-    
+    public static final int SOL_SHIFTER = 0; 
+    public static final int SOL_INTAKE_ARM = 1; 
     //Miscellaneous
     public static double REFRESH_RATE = 20;
 
