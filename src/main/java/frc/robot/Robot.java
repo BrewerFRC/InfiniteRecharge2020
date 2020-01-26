@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
@@ -34,11 +35,20 @@ class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    if (driver.getPressed(buttons.x)) {
+      dt.resetEncoders();
+    }
 
-    colorWheel.update();
+    //colorWheel.update();
     
     
-    Common.dashBool("time passed", timer.hasPeriodPassed(5));
+   // Common.dashBool("time passed", timer.hasPeriodPassed(5));
+  }
+
+  @Override 
+  public void disabledPeriodic() {
+    
+    debug();
   }
 
 
@@ -56,11 +66,16 @@ class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     
-    if (a.getBButton() == true){
+    /*if (a.getBButton() == true){
       colorWheel.resetPieCount();
      
-    }
-    dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+    }*/
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    dt.accelDrive(drive, turn);
+    Common.dashNum("Back Neo", dt.backL.get());
+    Common.dashNum("drive", drive);
+    Common.dashNum("turn", turn);
     debug();
   }
 
@@ -72,11 +87,16 @@ class Robot extends TimedRobot {
   }
 
   private void debug() {
+    Common.dashNum("DT Average Distance", dt.getAverageDist());
+    Common.dashNum("DT Average Velocity", dt.getAverageVelocity());
+    Common.dashNum("DT left distance", dt.getLeftDist());
+    Common.dashNum("DT left velocity", dt.getLeftVelocity());
+    Common.dashNum("DT right distance", dt.getRightDist());
+    Common.dashNum("DT right velocity", dt.getRightVelocity());
 
   }
-  
+}  
 
   
     
 
-}
