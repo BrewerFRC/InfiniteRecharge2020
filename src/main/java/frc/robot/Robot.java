@@ -18,7 +18,6 @@ class Robot extends TimedRobot {
   DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
-  Timer timer = new Timer();
 
   
   // class - name - = - new class
@@ -36,9 +35,6 @@ class Robot extends TimedRobot {
   public void robotPeriodic() {
 
     colorWheel.update();
-    
-    
-    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
