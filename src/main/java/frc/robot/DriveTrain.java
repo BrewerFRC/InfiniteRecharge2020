@@ -50,7 +50,7 @@ public class DriveTrain extends DifferentialDrive {
 	
 	private CANEncoder encoderL, encoderR;
 	private double IPC_HIGH = 1, IPC_LOW = 1;
-	private PID pidL, pidR;
+	private PID drivePID;
 	//private Heading heading;
 	private Solenoid shifter;
 	private double driveSpeed = 0, turnSpeed = 0;
@@ -72,8 +72,26 @@ public class DriveTrain extends DifferentialDrive {
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
+		drivePID = new PID(P, I, D, false, false, "DrivePID")
+		drivePID.setOutpitLimits(-.4, 0.4);
+		DrivePID.setMin(0.0)
+
 		
 		instance = this;
+	}
+
+	/**
+	 * A function that initiates the drivetrain.
+	 */
+	public void init() {
+		drivePID.reset();
+	}
+
+	/**
+	 * Added an update for the Drive PID.
+	 */
+	public void update() {
+		drivePID.update()
 	}
 
 	/**
