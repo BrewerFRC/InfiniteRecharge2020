@@ -72,6 +72,8 @@ class Robot extends TimedRobot {
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
     dt.accelDrive(drive, turn);
+
+    dt.update();
     Common.dashNum("Back Neo", dt.backL.get());
     Common.dashNum("drive", drive);
     Common.dashNum("turn", turn);

@@ -31,7 +31,7 @@ public class DriveTrain extends DifferentialDrive {
 
 	public static final double TURNMAX = 0.5, DRIVE_MAX = 1.0;
 	
-	private static final double DISTANCE_CONVERSION_FACTOR = 37.452019/(12*Math.PI);	
+	private static final double HIGH_DISTANCE_CONVERSION_FACTOR = 2.02; /* was 222/106.180550*/// low appears to be 37.452019/(12*Math.PI);	
 	/*
 		Changed neos to public for testing, change back soon
 	*/
@@ -66,9 +66,9 @@ public class DriveTrain extends DifferentialDrive {
 		initMotors();
 		encoderL = new CANEncoder(frontL);
 		encoderR =  new CANEncoder(frontR);
-		encoderL.setPositionConversionFactor(this.DISTANCE_CONVERSION_FACTOR);
-		encoderR.setPositionConversionFactor(this.DISTANCE_CONVERSION_FACTOR);
-		
+		encoderL.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
+		encoderR.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
+		Common.dashNum("conversion factor", encoderL.getPositionConversionFactor());
 		//heading = new Heading();
 		//shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.Sol_SHIFTER);
 		
@@ -89,13 +89,7 @@ public class DriveTrain extends DifferentialDrive {
 		drivePID.reset();
 	}
 
-	/**
-	 * Added an update for the Drive PID.
-	 */
-	public void update() {
-		drivePID.update();
-	}
-
+	
 	/**
 	 * Function to init Motors
 	 */
@@ -431,6 +425,13 @@ public class DriveTrain extends DifferentialDrive {
     	//Common.debug("DT:CalcDrive");
     	return drivePID.calc(getAverageDist());
     }
+
+	/**
+	 * Added an update for the Drive PID.
+	 */
+	public void update() {
+		drivePID.update();
+	}
 
 
 }
