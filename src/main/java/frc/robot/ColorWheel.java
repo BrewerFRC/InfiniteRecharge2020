@@ -189,7 +189,7 @@ class ColorWheel{
                 }
                 break;
             case FINDING :
-                if (currentColor == targetColor){
+                if (targetColorVerified()){
                 state = States.IDLE;
                 }
                 break;
