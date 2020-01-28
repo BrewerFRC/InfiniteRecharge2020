@@ -24,7 +24,16 @@ import com.revrobotics.CANEncoder;
  */
 public class DriveTrain extends DifferentialDrive {
 	private static DriveTrain instance;
+
+	public enum DrivetrainStates {
+		TELEOP, //Normal driver control
+		DIST_DRIVE, //A drive to a set distance
+		TURN, //A turn to a degree
+		DRIVE_TO_WALL; //A distance drive designed to go slowly and end when it hits a wall
+	}
 	
+	public DriveTrainStates DTState = TELEOP;
+
 	public static double DRIVEACCEL = 0.05;
 
 	public static final double TURNACCEL = .06;
