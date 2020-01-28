@@ -7,27 +7,35 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Spark;
-
+import edu.wpi.first.wpilibj.DriverStation;
 
 class ColorWheel{
-
+    String gameData;
     ColorSensor colorSensor1;
     ColorSensor colorSensor2;
+    Spark motor;
     String verifiedColorChar1, verifiedColorChar2, targetColor1, targetColor2;; 
     double pieAmount1, pieAmount2;
+    String targetColor;
     
+    public static final double MAX_POWER = 0.5;
+    
+    private enum States {
+		IDLE, 			//Motors stopped. 
+        START_COUNTING, //Resets counter starts motor and goes to COUNTING
+        START_FINDING,  //Determine what color we're looking for 
+        COUNTING,       //Counts how many rotations we've gone thought
+        FINDING;        //Start looking for the color we're after
+	}
+    private States state = States.IDLE;
 
     public ColorWheel(Port one, Port two) {
         //make the sensor variables
         colorSensor1 = new ColorSensor(one);
         colorSensor2 = new ColorSensor(two);
-        Spark motor = new Spark(1);
-        //private static final Spark frontL = new Spark(Constants.DRIVE_FL), frontR = new Spark(Constants.DRIVE_FR),
-			//backL = new Spark(Constants.DRIVE_BL), backR = new Spark(Constants.DRIVE_BR);
-
-        
-
+        motor = new Spark(Constants.PWM_COLORWHEEL_MOTOR);
     }
+
     public void debug(){
         SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
     SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
@@ -41,27 +49,33 @@ class ColorWheel{
     SmartDashboard.putString("S2-targetColor", ""+targetColor2); 
     SmartDashboard.putBoolean("targetColorVerified", targetColorVerified());
     SmartDashboard.putBoolean("rotationVerified", rotationVerified());
+    }
+
+    /**
+     * Runs the motor to spin the colorwheel.  Positive values will
+     * spin the wheel clockwise.
+     * 
+     * @param power
+     */
+    private void setMotor(double power){
+        if (power > MAX_POWER) {
+            power = MAX_POWER;
+        } else {
+            if (power < -MAX_POWER) {
+                power = -MAX_POWER;
+            } 
+        motor.set(power);
+        }
+    }
+
 
     
 
-    }
-
-
-    public void update(){
-        colorSensor1.update();
-        colorSensor2.update();
-        verifiedColorChar1 = colorSensor1.getVerifiedColor(2);
-        verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
-        pieAmount1 = colorSensor1.getPieCount(2);
-        pieAmount2 = colorSensor2.getPieCount(2);
-        targetColor1 = colorSensor1.colorToLocate();
-        targetColor2 = colorSensor2.colorToLocate();
-
-    }
     public void resetPieCount(){
         colorSensor1.resetPieCount();
         colorSensor2.resetPieCount();
     }
+
     public String verifiedColor(){
         if (colorSensor1.getVerifiedColor(2) == colorSensor2.getVerifiedColor(2)){
             return colorSensor1.verifiedColorChar;
@@ -71,7 +85,10 @@ class ColorWheel{
         }
             
 
-        
+    /**
+     * Are both color sensors on the right color?
+     *  
+     */    
     }
     public boolean targetColorVerified(){
         if ((verifiedColorChar1.equals(targetColor1)) && (verifiedColorChar2.equals(targetColor2))){
@@ -81,6 +98,11 @@ class ColorWheel{
             return false;
         }
     }
+
+    /**
+     * Are we within the minimum but under the maximum amount of rotations?
+     * 
+     */
     public boolean rotationVerified() {
         if ((pieAmount1 >= 24) && (pieAmount1 <= 40) && (pieAmount2 >= 24) && (pieAmount2 <= 40)){
             return true;
@@ -96,5 +118,86 @@ class ColorWheel{
         
     } 
 
+    // Read the game data and translate the color to the color that is 90 degrees offset
+    // The function will return R, G, B or Y, if there is good game data, otherwise it returns '?'.
+    public String colorToLocate() {
+        char targetColor;
+        gameData =  DriverStation.getInstance().getGameSpecificMessage();
+        if(gameData.length() > 0) {
+            switch (gameData.charAt(0)) {
+                case 'B' :
+                    targetColor = 'R';
+                    break;
+                case 'G' :
+                    targetColor = 'Y';
+                    break;
+                case 'R' :
+                    targetColor = 'B';
+                    break;
+                case 'Y' :
+                    targetColor = 'G';
+                    break;
+                default :
+                    targetColor = '?';
+                    break;
+            }
+        } else {
+            targetColor = '?';
+        }
+        return  ""+targetColor;
+    }
 
+    //this initiates START_COUNTING if not already counting
+    public void startCounting(){
+        if (state != States.COUNTING){
+            state = States.START_COUNTING;
+        } 
+    }
+
+    public void startFinding(){
+        if (state != States.FINDING){
+            state = States.START_FINDING;
+        }
+    }
+    
+    public void update(){
+        colorSensor1.update();
+        colorSensor2.update();
+        //verifiedColorChar1 = colorSensor1.getVerifiedColor(2);
+        //verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
+        //pieAmount1 = colorSensor1.getPieCount(2);
+        //pieAmount2 = colorSensor2.getPieCount(2);
+        //targetColor1 = colorSensor1.colorToLocate();
+        //targetColor2 = colorSensor2.colorToLocate();
+        switch (state) {
+            case IDLE :
+                setMotor(0);
+                break;
+            case START_COUNTING :
+                resetPieCount();
+                setMotor(MAX_POWER);
+                state = States.COUNTING;
+                break;
+            case START_FINDING :
+                targetColor = colorToLocate();
+                setMotor(MAX_POWER);
+                state = States.FINDING;
+                break;
+            case COUNTING :
+                if (rotationVerified()){
+                    state = States.IDLE;
+                }
+                break;
+            case FINDING :
+                if (currentColor == targetColor){
+                state = States.IDLE;
+                }
+                break;
+            default :
+                ;
+                break;
+        }
+    }
+    
+    
 }
