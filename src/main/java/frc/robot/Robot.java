@@ -18,6 +18,7 @@ class Robot extends TimedRobot {
   DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
+  Intake intake = new Intake();
   Timer timer = new Timer();
 
   
@@ -48,7 +49,7 @@ class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     
-    debug();
+    //debug();
   }
 
 
@@ -76,6 +77,24 @@ class Robot extends TimedRobot {
       colorWheel.resetPieCount();
      
     }*/
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    //dt.accelDrive(drive, turn);
+    //Common.dashNum("Back Neo", dt.backL.get());
+    //Common.dashNum("drive", drive);
+    //Common.dashNum("turn", turn);
+   // debug();
+
+    // *** INTAKE
+
+    if (driver.getPressed(Xbox.buttons.a)){
+      intake.startIntake();
+    }
+      if (driver.getPressed(Xbox.buttons.b)) {
+      intake.stopIntake();
+    }
+    intake.update();
+
 
     if (driver.when(Xbox.buttons.x)) {
       dt.driveToWall(100);
@@ -83,22 +102,19 @@ class Robot extends TimedRobot {
 
     dt.update();
     Common.dashNum("Back Neo", dt.backL.get());
-    debug();
+    //debug();
   }
 
 
   @Override
   public void testPeriodic() {
   
-    debug();
+    //debug();
   }
-
+  
+/***
   private void debug() {
     colorWheel.debug();
   }
-  
-
-  
-    
-
-}
+  */
+} 

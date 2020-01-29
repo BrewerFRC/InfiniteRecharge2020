@@ -24,7 +24,7 @@ public class Intake {
 	
 	private final static Spark intakeMot = new Spark(Constants.PWM_INTAKE_MOTOR);
 	private final static Solenoid arm = new Solenoid(Constants.SOL_INTAKE_ARM);
-	private final static double MAX_POWER = .2; // This is a placeholder constant.
+	private final static double MAX_POWER = .4; // This is a placeholder constant.
 	private Timer timer = new Timer();  
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
@@ -118,9 +118,7 @@ public class Intake {
 	*/
 	public void startIntake() {
 		if (state == States.IDLE);
-			motorIn();
-		
-
+			state = States.LOADING;
 	}
 
 	/**
@@ -130,8 +128,7 @@ public class Intake {
 	 */
 	public void stopIntake() {
 		if (state == States.LOADING); 
-			motorStop();
-
+			state = States.IDLE;
 	}
 
 	/**
@@ -141,11 +138,12 @@ public class Intake {
 		switch(state) {
 			case IDLE:
 				setIntakeUp();
+				motorStop();
 				break;
 
 			case LOADING:
 				setIntakeDown();
-				startIntake();
+				motorIn();
 				break;
 
 			case EJECTING:
