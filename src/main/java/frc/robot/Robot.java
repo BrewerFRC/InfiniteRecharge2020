@@ -16,13 +16,13 @@ import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
-  DriveTrain dt = new DriveTrain();
+  //DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
+  Intake intake = new Intake();
 
   
   // class - name - = - new class
-  XboxController a = new XboxController(0);
   ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
 
   @Override
@@ -35,7 +35,7 @@ class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     if (driver.getPressed(buttons.x)) {
-      dt.resetEncoders();
+      //dt.resetEncoders();
     }
 
     //colorWheel.update();
@@ -47,7 +47,7 @@ class Robot extends TimedRobot {
   @Override 
   public void disabledPeriodic() {
     
-    debug();
+    //debug();
   }
 
 
@@ -58,7 +58,7 @@ class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     
-    debug();
+    //debug();
   }
 
 
@@ -71,20 +71,32 @@ class Robot extends TimedRobot {
     }*/
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
-    dt.accelDrive(drive, turn);
-    Common.dashNum("Back Neo", dt.backL.get());
-    Common.dashNum("drive", drive);
-    Common.dashNum("turn", turn);
-    debug();
+    //dt.accelDrive(drive, turn);
+    //Common.dashNum("Back Neo", dt.backL.get());
+    //Common.dashNum("drive", drive);
+    //Common.dashNum("turn", turn);
+   // debug();
+
+    // *** INTAKE
+
+    if (driver.getPressed(buttons.a)){
+      intake.startIntake();
+    }
+      if (driver.getPressed(buttons.b)) {
+      intake.stopIntake();
+    }
+    intake.update();
+
   }
 
 
   @Override
   public void testPeriodic() {
   
-    debug();
+    //debug();
   }
-
+  
+/***
   private void debug() {
     Common.dashNum("DT Average Distance", dt.getAverageDist());
     Common.dashNum("DT Average Velocity", dt.getAverageVelocity());
@@ -94,7 +106,9 @@ class Robot extends TimedRobot {
     Common.dashNum("DT right velocity", dt.getRightVelocity());
 
   }
+  */
 }  
+
 
   
     
