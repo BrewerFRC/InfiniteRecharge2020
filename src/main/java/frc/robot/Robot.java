@@ -69,14 +69,13 @@ class Robot extends TimedRobot {
       colorWheel.resetPieCount();
      
     }*/
-    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
-    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
-    dt.accelDrive(drive, turn);
+
+    if (driver.when(buttons.x)) {
+      dt.driveDistance(100);
+    }
 
     dt.update();
     Common.dashNum("Back Neo", dt.backL.get());
-    Common.dashNum("drive", drive);
-    Common.dashNum("turn", turn);
     debug();
   }
 

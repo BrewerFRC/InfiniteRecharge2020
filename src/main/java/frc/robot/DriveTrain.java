@@ -25,14 +25,15 @@ import com.revrobotics.CANEncoder;
 public class DriveTrain extends DifferentialDrive {
 	private static DriveTrain instance;
 
-	public enum DrivetrainStates {
+	public enum DTStates {
 		TELEOP, //Normal driver control
 		DIST_DRIVE, //A drive to a set distance
 		TURN, //A turn to a degree
-		DRIVE_TO_WALL; //A distance drive designed to go slowly and end when it hits a wall
+		DRIVE_TO_WALL_DIST, // A faster drive to a distance then switches to the final drive.
+		DRIVE_TO_WALL_FINAL; //A drive designed to go slowly and end when it hits a wall.
 	}
 	
-	public DriveTrainStates DTState = TELEOP;
+	private DTStates DTState = DTStates.TELEOP;
 
 	public static double DRIVEACCEL = 0.05;
 
@@ -55,15 +56,18 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
 	private double P = 0, I = 0, D = 0;
-	private double driveSpeed = 0, turnSpeed = 0;
+	private double driveSpeed = 0, turnSpeed = 0, targetDrive = 0, targetTurn = 0;
 	
 	private CANEncoder encoderL, encoderR;
 	//private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID drivePID;
-	//private Heading heading;
+	private Heading heading;
 	//private Solenoid shifter;
 
 	private boolean driveComp = true;
+	private final double SLOW_VELOCITY = 500;
+	private double targetDistance = 0;
+	private final double DTW_SLOW_SPEED = 0.4, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 36; 
 	
 	/**
 	 * Creates an instance of DriveTrain.
@@ -340,12 +344,10 @@ public class DriveTrain extends DifferentialDrive {
 	 * @param drive - the forward/backward value from -1 to 1.
 	 * @param turn - the turn value from -1 to 1.
 	 */
-	public void accelDrive(double drive, double turn) {
-		drive = driveAccelCurve(drive);
-		turn = turnAccelCurve(turn);
-		Common.dashNum("Drive output", drive);
-		Common.dashNum("Turn output", turn);
-		arcadeDrive(drive, -turn);
+	public void teleopDrive(double drive, double turn) {
+		DTState = DTStates.TELEOP;
+		this.targetDrive = drive;
+		this.targetTurn = turn;
 	}
 	
 	
@@ -412,33 +414,125 @@ public class DriveTrain extends DifferentialDrive {
 		return current;
 	}*/
 
-	public void drivebyPID()
-    {
-    	double outputDrive = calcDrive(), outputTurn = 0;// outputTurn = -heading.turnRate();
-    	Common.dashNum("drivePIDOUT", outputDrive);
-    	Common.dashNum("TurnPIDOUT ", outputTurn);
-    	/*if(turning){
-    		drivePID.setTarget(encoder.getDistance());
-    		outputDrive = 0;
-    	}*/
-    	
-    	arcadeDrive(outputDrive, outputTurn);
+	/**
+	 * Gets the drive train state.
+	 * 
+	 * @return The state the drive train is in.
+	 */
+	public DTStates getState() {
+		return DTState;
 	}
 	
+	/**
+	 * Starts a distance drive.
+	 * 
+	 * @param distance The distance to drive in inches.
+	 */
 	public void driveDistance(double distance) {
-    	drivePID.setTarget(this.getAverageDist() + distance);
-    	driveComp = Math.abs(getAverageDist() - drivePID.getTarget()) <= 2.0;
+		resetEncoders();
+		drivePID.setTarget(distance);
+		heading.setHeadingHold(true);
+		DTState = DTStates.DIST_DRIVE;
+		driveComp = false;
 	}
-	
-	public double calcDrive() {
-    	//Common.debug("DT:CalcDrive");
-    	return drivePID.calc(getAverageDist());
-    }
+
 
 	/**
-	 * Added an update for the Drive PID.
+	 * Moves the robot at a constant speed until it reaches the distance or has a slow velocity for 5 cycles
+	 * 
+	 * @param distance The distance to drive.
+	 */
+	public void driveToWall(double distance)  {
+		targetDistance = distance;
+		heading.setHeadingHold(true);
+		driveComp = false;
+		DTState = DTStates.DRIVE_TO_WALL_DIST;
+	}
+
+	/**
+	 * Turns the robot to the target heading.
+	 * 
+	 * @param targetTurn The target heading from 360 to 0 to turn to.
+	 */
+	public void turn(double targetTurn) {
+		heading.setHeading(targetTurn);
+		DTState = DTStates.TURN;
+		driveComp = false;
+	}
+
+	/**
+	 * Returns if the current drive is complete.
+	 * 
+	 * @return true if the current drive is complete.
+	 */
+	public boolean driveComplete() {
+		return driveComp;
+	}
+
+	/**
+	 * A function to run the drivetrain motors and update PID system.
 	 */
 	public void update() {
+		double drive = 0, turn = 0; 
+		switch(DTState) {
+			case TELEOP:
+				drive = driveAccelCurve(targetDrive);
+				turn = -turnAccelCurve(targetTurn);
+				break;
+			case DIST_DRIVE:
+				//set high gear
+				driveComp = Math.abs(getAverageDist() - drivePID.getTarget()) <= 2.0;
+				if (!driveComp) {
+					drive = drivePID.calc(getAverageDist());
+					turn = heading.turnRate();//turn rate was negative
+    				Common.dashNum("drivePIDOUT", drive);
+					Common.dashNum("TurnPIDOUT ", turn);					
+				}
+				break;
+			case DRIVE_TO_WALL_DIST:
+				//set high gear
+				if (Math.abs(getAverageDist() - targetDistance) <= FINAL_DRIVE_DIST) {
+					if (targetDistance > 0) {
+						drive = driveAccelCurve(DTW_FAST_SPEED);
+					} else {
+						drive = driveAccelCurve(-DTW_FAST_SPEED);
+					}
+					turn = heading.turnRate();
+					
+				} else {
+					if (targetDistance > 0) {
+						drive = driveAccelCurve(DTW_SLOW_SPEED);
+					} else {
+						drive = driveAccelCurve(-DTW_SLOW_SPEED);
+					}
+					turn = heading.turnRate();
+					DTState = DTStates.DRIVE_TO_WALL_FINAL;
+				}
+				break;
+			case DRIVE_TO_WALL_FINAL:
+				driveComp = getAverageVelocity() <= SLOW_VELOCITY;
+				if (!driveComp) {
+					if (targetDistance > 0) {
+						drive = driveAccelCurve(DTW_SLOW_SPEED);
+					} else {
+						drive = driveAccelCurve(-DTW_SLOW_SPEED);
+					}
+					turn = heading.turnRate();
+				} else {
+					drive = driveAccelCurve(0);
+					turn = heading.turnRate();
+				}
+
+				break;
+			case TURN:
+				driveComp = Math.abs(heading.getAngle() - heading.getTargetAngle()) <= 1.0; //accuracy was chosen randomly
+				drive = 0;
+				turn = heading.turnRate();
+				break;
+		}
+		Common.dashNum("Drive output", drive);
+		Common.dashNum("Turn output", turn);
+		arcadeDrive(drive, turn);
 		drivePID.update();
 	}
 
