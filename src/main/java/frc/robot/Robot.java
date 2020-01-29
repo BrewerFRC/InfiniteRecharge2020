@@ -12,17 +12,16 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
   DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
+  Timer timer = new Timer();
 
   
   // class - name - = - new class
-  XboxController a = new XboxController(0);
   ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
 
   @Override
@@ -34,20 +33,11 @@ class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    if (driver.getPressed(buttons.x)) {
-      dt.resetEncoders();
-    }
 
-    //colorWheel.update();
+  
     
     
-   // Common.dashBool("time passed", timer.hasPeriodPassed(5));
-  }
-
-  @Override 
-  public void disabledPeriodic() {
-    
-    debug();
+    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
@@ -64,13 +54,33 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    //colorWheel
+    
+    
+    if (driver.getPressed(Xbox.buttons.dPadUp) == true){
+      colorWheel.startCounting();
+      
+    }
+    
+    if (driver.getPressed(Xbox.buttons.dPadDown)){
+        colorWheel.startFinding();
+        
+    }
+    colorWheel.update();
+    //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+    if (driver.getPressed(Xbox.buttons.x)) {
+    timer.reset();
+    timer.start();
+    }
+    
     
     /*if (a.getBButton() == true){
       colorWheel.resetPieCount();
      
     }*/
 
-    if (driver.when(buttons.x)) {
+    if (driver.when(Xbox.buttons.x)) {
       dt.driveDistance(100);
     }
 
@@ -87,16 +97,11 @@ class Robot extends TimedRobot {
   }
 
   private void debug() {
-    Common.dashNum("DT Average Distance", dt.getAverageDist());
-    Common.dashNum("DT Average Velocity", dt.getAverageVelocity());
-    Common.dashNum("DT left distance", dt.getLeftDist());
-    Common.dashNum("DT left velocity", dt.getLeftVelocity());
-    Common.dashNum("DT right distance", dt.getRightDist());
-    Common.dashNum("DT right velocity", dt.getRightVelocity());
-
+    colorWheel.debug();
   }
-}  
+  
 
   
     
 
+}
