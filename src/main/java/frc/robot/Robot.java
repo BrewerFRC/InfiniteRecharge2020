@@ -69,10 +69,7 @@ class Robot extends TimedRobot {
     }
     colorWheel.update();
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
-    if (driver.getPressed(Xbox.buttons.x)) {
-    timer.reset();
-    timer.start();
-    }
+    
     
     
     /*if (a.getBButton() == true){
@@ -81,7 +78,7 @@ class Robot extends TimedRobot {
     }*/
 
     if (driver.when(Xbox.buttons.x)) {
-      dt.driveDistance(100);
+      dt.driveToWall(100);
     }
 
     dt.update();

@@ -55,7 +55,8 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, middleL, backL);
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
-	private double P = 0, I = 0, D = 0;
+	private double P = 0.009, I = 0, D = 0;
+	private final double MAX_OUTPUT = .4;
 	private double driveSpeed = 0, turnSpeed = 0, targetDrive = 0, targetTurn = 0;
 	
 	private CANEncoder encoderL, encoderR;
@@ -67,7 +68,7 @@ public class DriveTrain extends DifferentialDrive {
 	private boolean driveComp = true;
 	private final double SLOW_VELOCITY = 500;
 	private double targetDistance = 0;
-	private final double DTW_SLOW_SPEED = 0.4, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 36; 
+	private final double DTW_SLOW_SPEED = 0.3, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 36; 
 	
 	/**
 	 * Creates an instance of DriveTrain.
@@ -77,6 +78,7 @@ public class DriveTrain extends DifferentialDrive {
 		super(left, right);
 		
 		initMotors();
+		heading = new Heading();
 		encoderL = new CANEncoder(frontL);
 		encoderR =  new CANEncoder(frontR);
 		encoderL.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
@@ -87,9 +89,9 @@ public class DriveTrain extends DifferentialDrive {
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
-		drivePID = new PID(P, I, D, false, false, "DrivePID");
-		drivePID.setOutputLimits(-.4, 0.4);
-		drivePID.setMinMagnitude(0.0);
+		drivePID = new PID(P, I, D, true, false, "DrivePID");
+		drivePID.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
+		drivePID.setMinMagnitude(0.1);
 
 		
 		instance = this;
@@ -443,7 +445,9 @@ public class DriveTrain extends DifferentialDrive {
 	 * @param distance The distance to drive.
 	 */
 	public void driveToWall(double distance)  {
+		resetEncoders();
 		targetDistance = distance;
+		Common.debug("Target distance: "+targetDistance);
 		heading.setHeadingHold(true);
 		driveComp = false;
 		DTState = DTStates.DRIVE_TO_WALL_DIST;
@@ -491,7 +495,7 @@ public class DriveTrain extends DifferentialDrive {
 				break;
 			case DRIVE_TO_WALL_DIST:
 				//set high gear
-				if (Math.abs(getAverageDist() - targetDistance) <= FINAL_DRIVE_DIST) {
+				if (Math.abs(getAverageDist() - targetDistance) > FINAL_DRIVE_DIST) {
 					if (targetDistance > 0) {
 						drive = driveAccelCurve(DTW_FAST_SPEED);
 					} else {
@@ -500,6 +504,7 @@ public class DriveTrain extends DifferentialDrive {
 					turn = heading.turnRate();
 					
 				} else {
+					Common.debug("Completing DRIVE_TO_WALL_DIST: "+getAverageDist());
 					if (targetDistance > 0) {
 						drive = driveAccelCurve(DTW_SLOW_SPEED);
 					} else {
@@ -532,6 +537,10 @@ public class DriveTrain extends DifferentialDrive {
 		}
 		Common.dashNum("Drive output", drive);
 		Common.dashNum("Turn output", turn);
+		Common.dashNum("Average Distance", this.getAverageDist());
+		Common.dashNum("Average velocity", getAverageVelocity());
+		Common.dashStr("Drivetrain state", getState().toString());
+		Common.dashBool("drive comp", driveComp);
 		arcadeDrive(drive, turn);
 		drivePID.update();
 	}
