@@ -23,7 +23,7 @@ public class Constants {
     
 
     //Motors
-    public static final int DRIVE_FL = 13, DRIVE_ML = 14, DRIVE_BL =15, DRIVE_FR = 11, DRIVE_MR =10, DRIVE_BR = 12, CAN_MAGAZINE_MOTOR = 16;
+    public static final int DRIVE_FL = 13, DRIVE_ML = 14, DRIVE_BL =15, DRIVE_FR = 11, DRIVE_MR =10, DRIVE_BR = 12, CAN_MAGAZINE_MOTOR = 16, FLYWHEEL_LEFT_CAN_ID = 4, FLYWHEEL_RIGHT_CAN_ID = 5;
 
     //Devices
     public static final int PCM_CAN_ID = 2;
@@ -31,6 +31,7 @@ public class Constants {
     //Pneumatics - Solenoids
     public static final int SOL_SHIFTER = 0; 
     public static final int SOL_INTAKE_ARM = 1; 
+    public static final int SOL_FLAPPER = 2; 
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
