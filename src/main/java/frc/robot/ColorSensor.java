@@ -10,10 +10,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 //import jdk.nashorn.internal.runtime.regexp.joni.constants.TargetInfo;
-import edu.wpi.first.wpilibj.DriverStation;
+
 
 class ColorSensor {
-    String gameData;
     ColorSensorV3 colorSensor;
     boolean blueStoreR, redStoreR, greenStoreR, yellowStoreR;
     Color detectedColor;
@@ -27,34 +26,7 @@ public ColorSensor(I2C.Port port) {
      
 }
 
-    // Read the game data and translate the color to the color that is 90 degrees offset
-    // The function will return R, G, B or Y, if there is good game data, otherwise it returns '?'.
-    public String colorToLocate() {
-        char targetColor;
-        gameData =  DriverStation.getInstance().getGameSpecificMessage();
-        if(gameData.length() > 0) {
-            switch (gameData.charAt(0)) {
-                case 'B' :
-                    targetColor = 'R';
-                    break;
-                case 'G' :
-                    targetColor = 'Y';
-                    break;
-                case 'R' :
-                    targetColor = 'B';
-                    break;
-                case 'Y' :
-                    targetColor = 'G';
-                    break;
-                default :
-                    targetColor = '?';
-                    break;
-            }
-        } else {
-            targetColor = '?';
-        }
-        return  ""+targetColor;
-    }
+
 
     public String getColor(double r, double b, double g, double threshold) {
         double blueR = 0.12; 
