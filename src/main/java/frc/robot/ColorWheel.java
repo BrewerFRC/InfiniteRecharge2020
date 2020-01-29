@@ -14,12 +14,14 @@ class ColorWheel{
     ColorSensor colorSensor1;
     ColorSensor colorSensor2;
     Spark motor;
-    String verifiedColorChar1, verifiedColorChar2, targetColor1, targetColor2;; 
+    String verifiedColorChar1, verifiedColorChar2; 
     double pieAmount1, pieAmount2;
     String targetColor;
     
-    public static final double MAX_POWER = 0.5;
-    
+    public static final double ROTATION_POWER = 1;
+    public static final double POSITION_POWER = 0.6;
+    public static final double MAX_POWER = 1;
+
     private enum States {
 		IDLE, 			//Motors stopped. 
         START_COUNTING, //Resets counter starts motor and goes to COUNTING
@@ -45,8 +47,7 @@ class ColorWheel{
     //SmartDashboard.putString("colorChar", ""+colorChar);
     SmartDashboard.putNumber("S1-pieSlices", pieAmount1);
     SmartDashboard.putNumber("S2-pieSlices", pieAmount2);
-    SmartDashboard.putString("S1-targetColor", ""+targetColor1); 
-    SmartDashboard.putString("S2-targetColor", ""+targetColor2); 
+    SmartDashboard.putString("targetColor", ""+targetColor); 
     SmartDashboard.putBoolean("targetColorVerified", targetColorVerified());
     SmartDashboard.putBoolean("rotationVerified", rotationVerified());
     }
@@ -91,7 +92,7 @@ class ColorWheel{
      */    
     }
     public boolean targetColorVerified(){
-        if ((verifiedColorChar1.equals(targetColor1)) && (verifiedColorChar2.equals(targetColor2))){
+        if ((verifiedColorChar1.equals(targetColor)) && (verifiedColorChar2.equals(targetColor))){
             return true;
         }
         else{
@@ -163,24 +164,23 @@ class ColorWheel{
     public void update(){
         colorSensor1.update();
         colorSensor2.update();
-        //verifiedColorChar1 = colorSensor1.getVerifiedColor(2);
-        //verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
-        //pieAmount1 = colorSensor1.getPieCount(2);
-        //pieAmount2 = colorSensor2.getPieCount(2);
-        //targetColor1 = colorSensor1.colorToLocate();
-        //targetColor2 = colorSensor2.colorToLocate();
+        verifiedColorChar1 = colorSensor1.getVerifiedColor(2);
+        verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
+        pieAmount1 = colorSensor1.getPieCount(2);
+        pieAmount2 = colorSensor2.getPieCount(2);
+        targetColor = this.colorToLocate();
         switch (state) {
             case IDLE :
                 setMotor(0);
                 break;
             case START_COUNTING :
                 resetPieCount();
-                setMotor(MAX_POWER);
+                setMotor(ROTATION_POWER);
                 state = States.COUNTING;
                 break;
             case START_FINDING :
                 targetColor = colorToLocate();
-                setMotor(MAX_POWER);
+                setMotor(POSITION_POWER);
                 state = States.FINDING;
                 break;
             case COUNTING :
