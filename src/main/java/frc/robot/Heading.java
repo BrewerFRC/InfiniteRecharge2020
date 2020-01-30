@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  */
 public class Heading {
 	private static final double P = 0.025, I = 0, D = 1.5;
+	private static final double maxOutput = .4, minOutput = 0;
 	
 	private ADXRS450_Gyro gyro;
 	//PID takes cumulative angles
@@ -27,8 +28,8 @@ public class Heading {
 		pid = new PID(P, I, D, true, false, "gyro");
 		//PID is dealing with error; an error of 0 is always desired.
 		pid.setTarget(0.0);
-		pid.setMinMagnitude(0.0);
-		pid.setOutputLimits(-1, 1);
+		pid.setMinMagnitude(minOutput);
+		pid.setOutputLimits(-maxOutput, maxOutput);
 		gyro = new ADXRS450_Gyro();	
 	}
 	
@@ -164,7 +165,7 @@ public class Heading {
 			resetPID();
 			this.headingHold = true;
 			//Set target angle to current heading.
-			//setHeading(getHeading());
+			setHeading(getHeading());
 		}
 		else {
 			resetPID();

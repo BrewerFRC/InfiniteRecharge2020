@@ -68,14 +68,24 @@ public class Magazine {
 			case IDLE:
 			// Motors Off.  May contain a ball.
 			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
+			// If a ball is detected only the Top sensor then go to BREACH_LOADED.
 				stop();
+				if (bottomSensorTriggered() && !fullyLoaded()) {
+					state = States.LOAD_BALL;
+				} else if (topSensorTriggered()) {
+					state = States.BREACH_LOADED;
+				}	
 				break;
 				
 			case EMPTY:
 			// Motors Off.  No balls in magazine.
 			// Empty is assumed when breach LOAD_BREACH or UNLOAD_BREACH time out or DUMP_BALLS completes.
 			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
+				Common.debug("EMPTY");
 				stop();
+				if (bottomSensorTriggered() == true) {
+					state = States.LOAD_BALL;
+				}
 				break;
 				
 			case LOAD_BALL:
@@ -88,6 +98,7 @@ public class Magazine {
 				} else {
 					state = States.IDLE;
 				}
+				Common.debug("LOAD BALL");
 				break;
 				
 			case BEGIN_LOAD_BREACH:
@@ -97,26 +108,30 @@ public class Magazine {
 			// magazine condition, and then go to LOAD_BREACH
 				timer.reset();
 				state = States.LOAD_BREACH;
+				Common.debug("BEGIN LOAD BREACH");
 				break;
 				
 			case LOAD_BREACH:
 			// Look to see if ball has made it to the Top sensor.  If yes, then BREACH_LOADED.
 			// If timeout timer runs out, then we mustn't have any balls in magazine, go to EMPTY.
 			// Otherwise continue to run magaine motors inward.
+				load();
 				if (topSensorTriggered() == true) {
 					state = States.BREACH_LOADED;
 				} else if (timer.get() >= MAX_RUNTIME) {
 					state = States.EMPTY;
 				}
+				Common.debug("LOAD BREACH");
 				break;
 				
 			case BREACH_LOADED:
 			// Stop the magazine motors.
 			// If Top sensor looses sight of ball, then go to BEGIN_LOAD_BREACH.
 				stop();
-				if (topSensorTriggered() == true) {
+				if (topSensorTriggered() == false) {
 					state = States.BEGIN_LOAD_BREACH;
 				}
+				Common.debug("BREACH LOADED");
 				break;
 			
 			case SHOOT_BALL:
@@ -135,6 +150,7 @@ public class Magazine {
 				if (bottomSensorTriggered() == true) {
 					state = States.LOAD_BALL;
 				} else {
+
 					timer.reset();
 					unload();
 					state = States.UNLOAD_BREACH;
@@ -183,6 +199,8 @@ public class Magazine {
 	 */
 	public void debug(){
 		Common.dashNum("time elapsed", timer.get());
+		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
+		Common.dashStr("state", state.name());
 	}
 
 	public boolean bottomSensorTriggered(){
@@ -237,18 +255,19 @@ public class Magazine {
 	private void setPower(double power) {
 		if (power >= MAX_POWER) {
 			power = MAX_POWER;
-			magMot.set(power);
 		} else if (power <= -MAX_POWER) {
 			power = -MAX_POWER;
-			magMot.set(power);
 		}
+		magMot.set(-
+		power);
 	}
 
  	/**
 	 * Stop the magazine motor.
 	 */
 	public void stop() {
-		power = 0.0;
+		Common.debug("should be stopping");
+		power = 0;
 		setPower(power);
 	}
 	

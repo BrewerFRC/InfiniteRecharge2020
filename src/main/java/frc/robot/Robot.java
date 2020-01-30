@@ -15,9 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
-  //DriveTrain dt = new DriveTrain();
+  DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
+  Intake intake = new Intake();
   Timer timer = new Timer();
 
   
@@ -48,7 +49,7 @@ class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     
-    debug();
+    //debug();
   }
 
 
@@ -69,28 +70,51 @@ class Robot extends TimedRobot {
     }
     colorWheel.update();
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
-    if (driver.getPressed(Xbox.buttons.x)) {
-    timer.reset();
-    timer.start();
+    
+    
+    
+    /*if (a.getBButton() == true){
+      colorWheel.resetPieCount();
+     
+    }*/
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    //dt.accelDrive(drive, turn);
+    //Common.dashNum("Back Neo", dt.backL.get());
+    //Common.dashNum("drive", drive);
+    //Common.dashNum("turn", turn);
+   // debug();
+
+    // *** INTAKE
+
+    if (driver.getPressed(Xbox.buttons.a)){
+      intake.startIntake();
     }
-    
-    
-    debug();
+      if (driver.getPressed(Xbox.buttons.b)) {
+      intake.stopIntake();
+    }
+    intake.update();
+
+
+    if (driver.when(Xbox.buttons.x)) {
+      dt.driveToWall(100);
+    }
+
+    dt.update();
+    Common.dashNum("Back Neo", dt.backL.get());
+    //debug();
   }
 
 
   @Override
   public void testPeriodic() {
   
-    debug();
+    //debug();
   }
-
+  
+/***
   private void debug() {
     colorWheel.debug();
   }
-  
-
-  
-    
-
-}
+  */
+} 
