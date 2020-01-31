@@ -169,6 +169,8 @@ class ColorWheel{
         pieAmount1 = colorSensor1.getPieCount(2);
         pieAmount2 = colorSensor2.getPieCount(2);
         targetColor = this.colorToLocate();
+
+        
         switch (state) {
             case IDLE :
                 setMotor(0);
