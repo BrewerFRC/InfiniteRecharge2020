@@ -233,6 +233,10 @@ public class Magazine {
 			return false;
 		}
 	}
+
+	public boolean isShooting() {
+		return state == States.SHOOT_BALL;
+	}
 	
 	/**
 	 * The magazine enters an EMPTY state if balls were not seen during a load breach or unload breach action, or 
