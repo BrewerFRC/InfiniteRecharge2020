@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  * @author Evan McCoy
  */
 public class Heading {
-	private static final double P = 0.08, I = 0, D = 0;
+	private static final double P = 0.08, I = 0, D = 12; //D might not be accurate
 	private static final double MAX_OUTPUT = .8, MIN_OUTPUT = 0;// MIN was .13
 	
 	private ADXRS450_Gyro gyro;
