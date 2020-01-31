@@ -96,10 +96,6 @@ class Robot extends TimedRobot {
     intake.update();
 
 
-    if (driver.when(Xbox.buttons.x)) {
-      dt.driveToWall(100);
-    }
-
     dt.update();
     Common.dashNum("Back Neo", dt.backL.get());
     //debug();
