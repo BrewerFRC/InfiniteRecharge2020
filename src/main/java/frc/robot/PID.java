@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PID {
 	//Terms
 	private String name;
+	private boolean debugging;
 	private double p;
 	private double i;
 	private double d;
@@ -44,7 +45,7 @@ public class PID {
 	 * @param forward whether or not to cummulate calculations.
 	 * @param name the name of the pid object, used for NetworkTables posting.
 	 */
-	public PID(double p, double i, double d, boolean inverted, boolean forward, String name) {
+	public PID(double p, double i, double d, boolean inverted, boolean forward,  String name, boolean debug) {
 		this.name = name;
 		this.p = p;
 		this.i = i;
@@ -53,19 +54,23 @@ public class PID {
 		this.forward = forward;
 		this.deltaTime = (long)(1.0/Constants.REFRESH_RATE*1000);
 		
-		//SmartDashboard.putNumber(this.name + "P", this.p);
-		//SmartDashboard.putNumber(this.name + "I", this.i);
-		//SmartDashboard.putNumber(this.name + "D", this.d);
+		this.debugging = debug;
+		if (this.debugging) {
+			SmartDashboard.putNumber(this.name + "P", this.p);
+			SmartDashboard.putNumber(this.name + "I", this.i);
+			SmartDashboard.putNumber(this.name + "D", this.d);
+		}
 	}
 	
 	/**
 	 * Update the scaler terms with the latest NetworkTables values.
 	 */
 	public void update() {
-		//this.p = SmartDashboard.getNumber(this.name + "P", this.p);
-		//this.i = SmartDashboard.getNumber(this.name + "I", this.i);
-		//this.d = SmartDashboard.getNumber(this.name + "D", this.d);
-		//SmartDashboard.putNumber(this.name + "DShow", this.d);
+		if (debugging) {
+			this.p = SmartDashboard.getNumber(this.name + "P", this.p);
+			this.i = SmartDashboard.getNumber(this.name + "I", this.i);
+			this.d = SmartDashboard.getNumber(this.name + "D", this.d);
+		}
 		SmartDashboard.putNumber(this.name + " Target", getTarget());
 	}
 	
@@ -73,9 +78,11 @@ public class PID {
 	 * Post the current PID coefficients to SmartDashboard.
 	 */
 	public void postCoefficients() {
-		//SmartDashboard.putNumber(this.name + "P", this.p);
-		//SmartDashboard.putNumber(this.name + "I", this.i);
-		//SmartDashboard.putNumber(this.name + "D", this.d);
+		if (debugging) {
+			SmartDashboard.putNumber(this.name + "P", this.p);
+			SmartDashboard.putNumber(this.name + "I", this.i);
+			SmartDashboard.putNumber(this.name + "D", this.d);
+		}
 	}
 	
 	/**

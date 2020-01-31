@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
-  DriveTrain dt = new DriveTrain();
+  public DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
   Xbox operator =  new Xbox(1);
   Intake intake = new Intake();
@@ -52,6 +52,10 @@ class Robot extends TimedRobot {
     //debug();
   }
 
+  @Override
+  public void teleopInit() {
+    dt.teleopDrive(0, 0);
+  }
 
   @Override
   public void teleopPeriodic() {
@@ -97,11 +101,21 @@ class Robot extends TimedRobot {
 
 
     if (driver.when(Xbox.buttons.x)) {
-      dt.driveToWall(100);
+      dt.driveDistance(100);
+    } else if (driver.when(Xbox.buttons.a)) {
+      dt.driveDistance(-100);
+    } else if (driver.when(Xbox.buttons.b)) {
+      dt.turn(180);
+    } else if (driver.when(Xbox.buttons.y)) {
+      dt.turn(0);
+    }
+
+    if (driver.when(Xbox.buttons.start)) {
+      dt.heading.setAngle(10);
     }
 
     dt.update();
-    Common.dashNum("Back Neo", dt.backL.get());
+    //Common.dashNum("Back Neo", dt.backL.get());
     //debug();
   }
 

@@ -25,11 +25,12 @@ public class PositionByVelocityPID {
 	private PID position;
 	private PID velocity;
 	private double minimumPosition = 0, maximumPosition = 0;
-	
+
+	//Add debugging variable
 	public PositionByVelocityPID(double minPosition, double maxPosition, double minVelocity, double maxVelocity, double minPower, double maxPower, double minPowerMagnitude, String name) {
-		position = new PID(0, 0, 0, false, false, name + "Position");
+		position = new PID(0, 0, 0, false, false, name + "Position", false);
 		position.setOutputLimits(minVelocity, maxVelocity);
-		velocity = new PID(0, 0, 0, false, true, name + "Velocity");
+		velocity = new PID(0, 0, 0, false, true, name + "Velocity", false);
 		velocity.setOutputLimits(minPower, maxPower);
 		velocity.setMinMagnitude(minPowerMagnitude);
 		minimumPosition = minPosition;

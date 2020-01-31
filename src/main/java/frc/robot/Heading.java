@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  * @author Evan McCoy
  */
 public class Heading {
-	private static final double P = 0.025, I = 0, D = 1.5;
-	private static final double maxOutput = .4, minOutput = 0;
+	private static final double P = 0.08, I = 0, D = 0;
+	private static final double MAX_OUTPUT = .8, MIN_OUTPUT = 0;// MIN was .13
 	
 	private ADXRS450_Gyro gyro;
 	//PID takes cumulative angles
@@ -25,11 +25,11 @@ public class Heading {
 	 * @param d the derivative scaler.
 	 */
 	public Heading() {
-		pid = new PID(P, I, D, true, false, "gyro");
+		pid = new PID(P, I, D, true, false, "gyro", true);
 		//PID is dealing with error; an error of 0 is always desired.
 		pid.setTarget(0.0);
-		pid.setMinMagnitude(minOutput);
-		pid.setOutputLimits(-maxOutput, maxOutput);
+		pid.setMinMagnitude(MIN_OUTPUT);
+		pid.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
 		gyro = new ADXRS450_Gyro();	
 	}
 	
@@ -183,19 +183,14 @@ public class Heading {
 	}
 	
 	/**
-	 * This returns the PID-recommended turn power required to turn to target heading.  If heading hold is off, turn rate is always 0.
+	 * This returns the PID-recommended turn power required to turn to target heading.
 	 * 
 	 * @return double the PID recommended turn rate.
 	 */
 	public double turnRate() {
 		pid.update();
-		if (headingHold) {
-			double turnRate = pid.calc(gyro.getAngle());
-			return turnRate;
-		}
-		else {
-			return 0.0;
-		}
+		double turnRate = pid.calc(gyro.getAngle());
+		return turnRate;
 	}
 	
 	/**

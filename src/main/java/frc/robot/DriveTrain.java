@@ -30,7 +30,8 @@ public class DriveTrain extends DifferentialDrive {
 		DIST_DRIVE, //A drive to a set distance
 		TURN, //A turn to a degree
 		DRIVE_TO_WALL_DIST, // A faster drive to a distance then switches to the final drive.
-		DRIVE_TO_WALL_FINAL; //A drive designed to go slowly and end when it hits a wall.
+		DRIVE_TO_WALL_FINAL, //A drive designed to go slowly and end when it hits a wall.
+		HOLD;
 	}
 	
 	private DTStates DTState = DTStates.TELEOP;
@@ -45,7 +46,7 @@ public class DriveTrain extends DifferentialDrive {
 	/*
 		Changed neos to public for testing, change back soon
 	*/
-	public static final CANSparkMax
+	private static final CANSparkMax
 			frontL = new CANSparkMax(Constants.DRIVE_FL, CANSparkMax.MotorType.kBrushless),
 			frontR = new CANSparkMax(Constants.DRIVE_FR, CANSparkMax.MotorType.kBrushless),
 			middleL = new CANSparkMax(Constants.DRIVE_ML, CANSparkMax.MotorType.kBrushless),
@@ -56,13 +57,14 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
 	private double P = 0.009, I = 0, D = 0;
-	private final double MAX_OUTPUT = .4;
+	private final double MAX_OUTPUT = 0.4, MIN_OUTPUT = 0.13;
+
 	private double driveSpeed = 0, turnSpeed = 0, targetDrive = 0, targetTurn = 0;
 	
 	private CANEncoder encoderL, encoderR;
 	//private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID drivePID;
-	private Heading heading;
+	public Heading heading;
 	//private Solenoid shifter;
 
 	private boolean driveComp = true;
@@ -89,9 +91,9 @@ public class DriveTrain extends DifferentialDrive {
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
-		drivePID = new PID(P, I, D, true, false, "DrivePID");
+		drivePID = new PID(P, I, D, true, false, "DrivePID", true);
 		drivePID.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
-		drivePID.setMinMagnitude(0.1);
+		drivePID.setMinMagnitude(MIN_OUTPUT);
 
 		
 		instance = this;
@@ -465,6 +467,16 @@ public class DriveTrain extends DifferentialDrive {
 	}
 
 	/**
+	 * Sets the robot to hold state to hold it's position
+	 */
+	public void hold() {
+		resetEncoders();
+		heading.setHeadingHold(true);
+		DTState = DTStates.HOLD;
+		driveComp = false;
+	}
+
+	/**
 	 * Returns if the current drive is complete.
 	 * 
 	 * @return true if the current drive is complete.
@@ -491,6 +503,8 @@ public class DriveTrain extends DifferentialDrive {
 					turn = heading.turnRate();//turn rate was negative
     				Common.dashNum("drivePIDOUT", drive);
 					Common.dashNum("TurnPIDOUT ", turn);					
+				} else {
+					hold();
 				}
 				break;
 			case DRIVE_TO_WALL_DIST:
@@ -524,8 +538,7 @@ public class DriveTrain extends DifferentialDrive {
 					}
 					turn = heading.turnRate();
 				} else {
-					drive = driveAccelCurve(0);
-					turn = heading.turnRate();
+					hold();
 				}
 
 				break;
@@ -533,8 +546,17 @@ public class DriveTrain extends DifferentialDrive {
 				driveComp = Math.abs(heading.getAngle() - heading.getTargetAngle()) <= 1.0; //accuracy was chosen randomly
 				drive = 0;
 				turn = heading.turnRate();
+				if (driveComp) {
+					DTState = DTStates.HOLD;
+				}
+				break;
+			case HOLD:
+				drive = driveAccelCurve(0);
+				turn = heading.turnRate();
 				break;
 		}
+		Common.dashNum("Heading PID output", heading.turnRate());
+		Common.dashNum("Angle", heading.getAngle());
 		Common.dashNum("Drive output", drive);
 		Common.dashNum("Turn output", turn);
 		Common.dashNum("Average Distance", this.getAverageDist());
