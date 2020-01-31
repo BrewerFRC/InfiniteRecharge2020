@@ -55,6 +55,10 @@ public class Intake {
 
 	}
 
+	public boolean isIdle() {
+		return state == States.IDLE;
+	}
+
 	/**
 	 * Sets the intake motor power.  Positive values will run motes inward.
 	 * Will limit the maximum power sent to the motor based on MAX_POWER.
