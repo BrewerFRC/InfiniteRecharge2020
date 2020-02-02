@@ -4,6 +4,7 @@ public class Shooter {
     Magazine mag = new Magazine();
     Intake intake = new Intake();
     Flywheel flywheel = new Flywheel();
+
     
     public void init() {
     }
