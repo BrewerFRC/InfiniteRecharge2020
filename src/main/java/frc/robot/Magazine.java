@@ -81,9 +81,10 @@ public class Magazine {
 			// Motors Off.  No balls in magazine.
 			// Empty is assumed when breach LOAD_BREACH or UNLOAD_BREACH time out or DUMP_BALLS completes.
 			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
-				Common.debug("EMPTY");
+				
 				stop();
 				if (bottomSensorTriggered() == true) {
+					Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				}
 				break;
@@ -94,11 +95,12 @@ public class Magazine {
 				if (bottomSensorTriggered() == true) {
 					load();
 				} else if (topSensorTriggered() == true){
+					Common.debug("Mag: Idle");
 					state = States.IDLE;
 				} else {
+					Common.debug("Mag: Idle");
 					state = States.IDLE;
 				}
-				Common.debug("LOAD BALL");
 				break;
 				
 			case BEGIN_LOAD_BREACH:
@@ -107,8 +109,8 @@ public class Magazine {
 			// Otherwise, run motor toward Top sensor, initialize timeout timer for breach load to handle empty
 			// magazine condition, and then go to LOAD_BREACH
 				timer.reset();
+				Common.debug("Mag: Load Breach");
 				state = States.LOAD_BREACH;
-				Common.debug("BEGIN LOAD BREACH");
 				break;
 				
 			case LOAD_BREACH:
@@ -117,11 +119,12 @@ public class Magazine {
 			// Otherwise continue to run magaine motors inward.
 				load();
 				if (topSensorTriggered() == true) {
+					Common.debug("Breach Loaded");
 					state = States.BREACH_LOADED;
 				} else if (timer.get() >= MAX_RUNTIME) {
+					Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				}
-				Common.debug("LOAD BREACH");
 				break;
 				
 			case BREACH_LOADED:
@@ -129,15 +132,16 @@ public class Magazine {
 			// If Top sensor looses sight of ball, then go to BEGIN_LOAD_BREACH.
 				stop();
 				if (topSensorTriggered() == false) {
+					Common.debug("Mag: Begin Load Breach");
 					state = States.BEGIN_LOAD_BREACH;
 				}
-				Common.debug("BREACH LOADED");
 				break;
 			
 			case SHOOT_BALL:
 			//moves 1 ball in to flywheel.  When Top sensor clears, goes to BEGIN_LOAD_BREACH
 				load();
 				if (topSensorTriggered() == false) {
+					Common.debug("Mag: Begin Load Breach");
 					state = States.BEGIN_LOAD_BREACH;
 				}
 				break;
@@ -148,11 +152,13 @@ public class Magazine {
 			// Otherwise, run motors toward Bottom sensor, begin timeout timer to handle empty magazine condition,
 			// and then go to UNLOAD_BREACH:
 				if (bottomSensorTriggered() == true) {
+					Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else {
 
 					timer.reset();
 					unload();
+					Common.debug("Mag: Unload Breach");
 					state = States.UNLOAD_BREACH;
 				}
 				break;
@@ -162,8 +168,10 @@ public class Magazine {
 			// and we just need to move that balls back in a bit past the Bottom sensor by going to LOAD_BALL.
 			// If the timeout timer expires, then the magazine must be empty, so go to EMPTY state.
 				if (bottomSensorTriggered() == true) {
+					Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else if (timer.get() >= MAX_RUNTIME) {
+					Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				}
 				
@@ -173,12 +181,14 @@ public class Magazine {
 			// Advance to DUMP_BALLS state.
 				timer.reset();
 				unload();
+				Common.debug("Mag: Dump Balls");
 				state = States.DUMP_BALLS;
 				break;
 				
 			case DUMP_BALLS:
 			// Continue to dump balls until timeout occurs. Go to EMPTY state.
 				if (timer.get() >= MAX_RUNTIME) {
+					Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				} else {
 					unload();
@@ -236,6 +246,14 @@ public class Magazine {
 
 	public boolean isShooting() {
 		return state == States.SHOOT_BALL;
+	}
+
+	public boolean readyToFire() {
+		return state == States.BREACH_LOADED;
+	}
+
+	public boolean isIdle() {
+		return state == States.IDLE;
 	}
 	
 	/**

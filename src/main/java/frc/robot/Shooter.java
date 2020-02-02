@@ -1,11 +1,14 @@
 package frc.robot;
 
 public class Shooter {
-    Magazine mag = new Magazine();
-    Intake intake = new Intake();
-    Flywheel flywheel = new Flywheel();
+    private Magazine mag = new Magazine();
+    private Intake intake = new Intake();
+    private Flywheel flywheel = new Flywheel();
     
-    public void init() {
+    public void update() {
+        mag.update();
+        intake.update();
+        //flywheel.update();
     }
     
     public void debug() {
@@ -39,10 +42,10 @@ public class Shooter {
      * sets the magazine to shoot ball
      * sets the flywheel to ready to throw
      */
-    public void shootBall() {
+    public void fireBall() {
         intake.stopIntake();
         mag.shootBall();
-        //flywheel.ready to load {i dont have actal function names this is a placeholder}
+        //flywheel.atRPM {i dont have actual function names this is a placeholder}
     }
 
     /**
@@ -51,6 +54,9 @@ public class Shooter {
      * sets the flywheel to idle
      */
     public void eject() {
+        intake.stopIntake();
+        mag.dumpBalls();
+        //flywheel.stop();
     }
 
     /**
@@ -60,5 +66,23 @@ public class Shooter {
      * will chieck if intake is idle and if magazine is in a shooting state
      */
     public void toggleIntake() {
+        if (intake.isIdle()) {
+            intake.startIntake();
+            mag.stop();
+            //flyWheel.stop();
+        } else {
+            intake.stopIntake();
+            mag.unloadBreach();
+            //flyWheel.stop();
+        }
+    }
+    public boolean readyToLoad() {
+        return (mag.isIdle() && flywheel.isIdle());
+    }
+    public boolean readyToFire() {
+        return (mag.readyToFire() && intake.isIdle() && flywheel.readyToFire());
+    }
+    public boolean empty() {
+        return mag.empty();
     }
 }
