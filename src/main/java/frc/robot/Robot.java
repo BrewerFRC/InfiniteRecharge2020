@@ -22,8 +22,6 @@ class Robot extends TimedRobot {
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
-  private SHOT_LENGTH = "long";
-
   
   // class - name - = - new class
   ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
@@ -62,21 +60,21 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    colorWheel.update();
-    shooter.update();
-
-    if (driver.getPressed(Xbox.buttons.a)) {
-      shooter.toggleIntake();
-    }
-    if (driver.getPressed(Xbox.buttons.b)) {
-      if (shooter.readyToLoad()) {
-      }
-    }
-    if (driver.getPressed(Xbox.buttons.dPadUp)) {
-
+    if (driver.when(Xbox.buttons.x)) {
+      dt.driveDistance(100);
+    } else if (driver.when(Xbox.buttons.a)) {
+      dt.driveDistance(-100);
+    } else if (driver.when(Xbox.buttons.b)) {
+      dt.turn(180);
+    } else if (driver.when(Xbox.buttons.y)) {
+      dt.turn(0);
     }
 
-    
+    if (driver.when(Xbox.buttons.start)) {
+      dt.heading.setAngle(10);
+    }
+
+    dt.update();
   }
 
 
