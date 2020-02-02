@@ -4,8 +4,6 @@ public class Shooter {
     private Magazine mag = new Magazine();
     private Intake intake = new Intake();
     private Flywheel flywheel = new Flywheel();
-
-    private boolean READYTOLOAD = true;
     
     public void update() {
         mag.update();
@@ -79,6 +77,12 @@ public class Shooter {
         }
     }
     public boolean readyToLoad() {
-        return READYTOLOAD;
+        return (mag.isIdle() && flywheel.isIdle());
+    }
+    public boolean readyToFire() {
+        return (mag.readyToFire() && intake.isIdle() && flywheel.readyToFire());
+    }
+    public boolean empty() {
+        return mag.empty();
     }
 }
