@@ -29,7 +29,7 @@ public class Auto {
 
         //Trench(T)
         T_INIT,
-        T_SPACE_DRIVE,
+        T_SHOOT_DRIVE,
         T_ALIGN,
         T_FIRST_FIRE,
         T_RETURN_TO_HEADING,
@@ -45,8 +45,14 @@ public class Auto {
 
     public final static double OFF_LINE_DIST = 0, //Distance to drive back before shooting
     WALL_DIST = 0, //Distance to wall from starting point
-    SPIN_UP_DIST = 0; //Distance to spin up from wall
-    
+    SPIN_UP_DIST = 0, //Distance to spin up from wall
+    T_SHOOT_DIST = 0, //Distance to move forward to shoot for trench
+    TRENCH_RUN_DIST = 0; //Length to run into trench
+
+    public final static double T_FIRST_SHOOT_ANGLE = 0, //Angle of first trench shoot
+    T_TRENCH_ANGLE = 0, //Angle to run down the trench, probably zero might want to set it based on start?
+    T_FINAL_SHOOT_ANGLE = 0; //Final shoot angle of trench
+
 
     private autoStates autoState;
 
@@ -125,7 +131,42 @@ public class Auto {
         }
     }
 
-
+    /**
+     * A function to function to run the trench run path
+     * 
+     * @param shoot Whether or not to shoot at the end of the path.
+     */
+    public void trenchRun(boolean shoot) {
+        switch (autoState) {
+            case T_INIT:
+                dt.driveDistance(T_SHOOT_DIST);
+                autoState = autoStates.T_SHOOT_DRIVE;
+                break;
+            case T_SHOOT_DRIVE:
+                if (dt.driveComplete()) {
+                    shooter.prepFire("meduim");
+                    dt.turn(T_FIRST_SHOOT_ANGLE);
+                    autoState = autoStates.T_ALIGN;
+                }
+                break;
+            case T_FIRST_FIRE:
+                shooter.fireBall();
+                if (shooter.empty()) {
+                    dt.turn(T_TRENCH_ANGLE);
+                    autoState = autoStates.T_RETURN_TO_HEADING;
+                }
+                break;
+            case T_RETURN_TO_HEADING:
+                if(dt.driveComplete()) {
+                    shooter.runIntake();
+                    dt.driveDistance(TRENCH_RUN_DIST);
+                }
+                break;
+            case T_TRENCH_RUN:
+                
+                break;
+        }
+    }
 
 
 
