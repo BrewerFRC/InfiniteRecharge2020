@@ -24,10 +24,17 @@ public class Flywheel {
         SPIN_UP,
         READY_TO_FIRE;
     }
+
+    public enum speed {
+        SHORT,
+        MEDIUM,
+        LONG;
+    }
+
     private States state = States.IDLE;
     private final static double LONG_POWER = 1, MEDIUM_POWER = 0.7, SHORT_POWER = 0.5; 
-    private final static int LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 800;
-    private final static int LONG_MIN = 4800, MEDIUM_MIN = 3800, SHORT_MIN = 700;
+    private final static double LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 800;
+    private final static double LONG_TOLERANCE = 200, MEDIUM_TOLERANCE = 200, SHORT_TOLERANCE = 100;
 
     /**
      * FlyWheel.
@@ -51,6 +58,8 @@ public class Flywheel {
         */
         flywheelLeft.restoreFactoryDefaults();
         flywheelRight.restoreFactoryDefaults();
+        flywheelLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        flywheelRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
         left_pidController = flywheelLeft.getPIDController();
         right_pidController = flywheelRight.getPIDController();
         left_encoder = flywheelLeft.getEncoder();
@@ -68,30 +77,31 @@ public class Flywheel {
 
     private void setMotors(double power){
         flywheelLeft.set(power);
-        flywheelRight.set(-power);   }
+        flywheelRight.set(-power);
+    }
 
     /**
      * change our state to spin_up, make fly_wheel and max_spark is ready, make sure the max_spark rpm is inbetween the set and mimimal rpm threshold, the set stait to ready_to_lonch
      *@param distance is string of either long, medium, and small to change the fly_wheel moter
      */
-	public void start(String distance){
+	public void start(speed distance){
         switch (distance) {
-            case "long" :
+            case LONG :
                 targetPower = LONG_POWER;
                 targetRPM = LONG_RPM;
-                toleranceRPM = LONG_MIN;
+                toleranceRPM = LONG_TOLERANCE;
                 hoodDown();
                 break;
-            case "medium" :
+            case MEDIUM :
                 targetPower = MEDIUM_POWER;
                 targetRPM = MEDIUM_RPM;
-                toleranceRPM = MEDIUM_MIN;
+                toleranceRPM = MEDIUM_TOLERANCE;
                 hoodDown();
                 break;
-            case "short" :
+            case SHORT :
                 targetPower = SHORT_POWER;
                 targetRPM = SHORT_RPM;
-                toleranceRPM = SHORT_MIN;
+                toleranceRPM = SHORT_TOLERANCE;
                 hoodUp();
                 break;           
             default :
@@ -133,7 +143,7 @@ public class Flywheel {
      * 
      */
 	public double getRPM(){
-        return (left_encoder.getVelocity() + right_encoder.getVelocity()) /2;
+        return (left_encoder.getVelocity() + -right_encoder.getVelocity()) /2;
     }
 
     /**
