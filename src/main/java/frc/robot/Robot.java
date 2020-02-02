@@ -22,6 +22,11 @@ class Robot extends TimedRobot {
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
+<<<<<<< HEAD
+=======
+  
+
+>>>>>>> d11d29b57b771f2f216b7424833138e62d64a91c
   
   // class - name - = - new class
   ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
