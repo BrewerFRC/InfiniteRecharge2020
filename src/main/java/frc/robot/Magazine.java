@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMax;
@@ -27,7 +28,7 @@ import com.revrobotics.SparkMax;
 
 public class Magazine {
 
-	private static final CANSparkMax magMot = new CANSparkMax(Constants.CAN_MAGAZINE_MOTOR, CANSparkMax.MotorType.kBrushless);
+	private static final Spark magMot = new Spark(Constants.PWM_MAGAZINE_MOTOR);
 	private DigitalInput topBeamBreak = new DigitalInput(Constants.DIO_TOP_BEAMBREAK);
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
 	Timer timer = new Timer();

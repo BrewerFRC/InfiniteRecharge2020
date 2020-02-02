@@ -35,7 +35,7 @@ public class Auto {
         T_RETURN_TO_HEADING,
         T_TRENCH_RUN,
         T_READY_TO_FIRE,
-        T_FIRE,
+        T_FINAL_FIRE,
         T_COMPLETE,
 
         //Generator Pickup(GP)
@@ -158,12 +158,35 @@ public class Auto {
                 break;
             case T_RETURN_TO_HEADING:
                 if(dt.driveComplete()) {
-                    shooter.runIntake();
+                    shooter.intakeOn();
                     dt.driveDistance(TRENCH_RUN_DIST);
+                    autoState = autoStates.T_TRENCH_RUN;
                 }
                 break;
             case T_TRENCH_RUN:
-                
+                if (dt.driveComplete()) {
+                    if (shoot) {
+                        shooter.prepFire("long"); //not sure if long or medium
+                        dt.turn(T_FINAL_SHOOT_ANGLE);
+                        autoState = autoStates.T_READY_TO_FIRE;
+                    } else {
+                        autoState = autoStates.T_COMPLETE;
+                    }
+                }
+                break;
+            case T_READY_TO_FIRE:
+                if (shooter.readyToFire() && dt.driveComplete()) {
+                    autoState = autoStates.T_FINAL_FIRE;
+                }
+                break;
+            case T_FINAL_FIRE:
+                shooter.fireBall();
+                if (shooter.empty()) {
+                    autoState = autoStates.T_COMPLETE;
+                }
+                break;
+            case T_COMPLETE:
+                dt.hold();
                 break;
         }
     }
