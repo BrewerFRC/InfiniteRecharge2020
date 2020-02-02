@@ -20,6 +20,9 @@ class Robot extends TimedRobot {
   Xbox operator =  new Xbox(1);
   Intake intake = new Intake();
   Timer timer = new Timer();
+  Shooter shooter = new Shooter();
+
+  
 
   
   // class - name - = - new class
@@ -59,20 +62,55 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    //colorWheel
-    
-    
-    if (driver.getPressed(Xbox.buttons.dPadUp) == true){
-      colorWheel.startCounting();
-      
-    }
-    
-    if (driver.getPressed(Xbox.buttons.dPadDown)){
-        colorWheel.startFinding();
-        
-    }
+    /* SAMS CODE FOR CONTROL SCHEME
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
     colorWheel.update();
+    shooter.update();
+
+    //DRIVER
+    if (driver.getPressed(Xbox.buttons.a)) {
+      shooter.toggleIntake();
+    }
+    if (driver.getPressed(Xbox.buttons.b)) {
+      shooter.prepFire("long");
+    }
+    if (driver.getPressed(Xbox.buttons.y)) {
+      shooter.prepFire("short");
+    }
+    if (driver.getPressed(Xbox.buttons.x)) {
+      shooter.prepFire("medium");
+    }
+    if (driver.getPressed(Xbox.buttons.rightTrigger)) {
+      shooter.fireBall();
+    }
+    if (driver.getPressed(Xbox.buttons.leftBumper))  {
+      //dt.shiftDown();
+    }
+    if (driver.getPressed(Xbox.buttons.rightBumper))  {
+      //dt.shiftUp();
+    }
+    //driver.deadzone(driver.getX(GenericHID.Hand.kLeft), driver.deadzone(driver.getY(Hand.kRight)));
+    if (driver.getPressed(Xbox.buttons.start)) {
+      shooter.eject();
+    }
+
+    //OPERATOR
+    if (operator.getPressed(Xbox.buttons.a)) {
+      shooter.toggleIntake();
+    }
+    if (operator.getPressed(Xbox.buttons.dPadUp)) {
+      colorWheel.startCounting();
+    }
+    if (operator.getPressed(Xbox.buttons.dPadDown)) {
+      colorWheel.startFinding();
+    }
+    if (driver.getPressed(Xbox.buttons.start)) {
+      shooter.eject();
+    }
+    */
+
+    //OLD TELEOP CODE FOLLOWS
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
     
     
@@ -89,7 +127,7 @@ class Robot extends TimedRobot {
     //Common.dashNum("turn", turn);
    // debug();
 
-    // *** INTAKE
+    //*** INTAKE
 
     if (driver.getPressed(Xbox.buttons.a)){
       intake.startIntake();
