@@ -68,7 +68,7 @@ public class Shooter {
     public void toggleIntake() {
         if (intake.isIdle()) {
             intake.startIntake();
-            mag.stop();
+            mag.unloadBreach();
             //flyWheel.stop();
         } else {
             intake.stopIntake();
