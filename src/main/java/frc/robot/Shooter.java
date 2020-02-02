@@ -76,6 +76,9 @@ public class Shooter {
             //flyWheel.stop();
         }
     }
+    public void intakeOn() {
+        intake.startIntake();
+    }
     public boolean readyToLoad() {
         return (mag.isIdle() && flywheel.isIdle());
     }
