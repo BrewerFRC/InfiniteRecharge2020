@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class Intake {
 	
 	private final static Spark intakeMot = new Spark(Constants.PWM_INTAKE_MOTOR);
-	private final static Solenoid arm = new Solenoid(Constants.SOL_INTAKE_ARM);
+	//private final static Solenoid arm = new Solenoid(Constants.SOL_INTAKE_ARM);
 	private final static double MAX_POWER = .4; // This is a placeholder constant.
 	private Timer timer = new Timer();  
 	private final double MAX_RUNTIME = 2.0;
@@ -113,14 +113,14 @@ public class Intake {
 	 */
 	private void setIntakeUp(){
 		motorStop();
-		arm.set(true);
+		//arm.set(true);
 	}
 
 	/**
 	 * Set intake arms in down position through pnuematic control.
 	 */
 	private void setIntakeDown() {
-		arm.set(false);
+		//arm.set(false);
 	}
 
 	/** 

@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Flywheel {
     private final static CANSparkMax flywheelLeft = new CANSparkMax(Constants.FLYWHEEL_LEFT_CAN_ID, MotorType.kBrushless);
     private final static CANSparkMax flywheelRight = new CANSparkMax(Constants.FLYWHEEL_RIGHT_CAN_ID, MotorType.kBrushless);
-    private final static Solenoid hood = new Solenoid(Constants.SOL_FLAPPER);
-    private double targetPower, targetRPM, toleranceRPM, setPoint, processVariable;
+    //private final static Solenoid hood = new Solenoid(Constants.SOL_FLAPPER);
+    private double targetPower, targetRPM, toleranceRPM, setPoint = 0, processVariable;
 
     
     private CANPIDController left_pidController, right_pidController;
@@ -52,7 +52,7 @@ public class Flywheel {
         Retain until RPM drops below minimum moves to Spin Up
         
      */
-    public void init(){
+    public Flywheel() {
             /**
         * The RestoreFactoryDefaults method can be used to reset the configuration parameters
         * in the SPARK MAX to their factory default state. If no argument is passed, these
@@ -67,7 +67,7 @@ public class Flywheel {
         left_encoder = flywheelLeft.getEncoder();
         right_encoder = flywheelRight.getEncoder();
         // PID coefficients
-        kP = 5e-5; 
+        kP = 5e-4; 
         kI = 0;
         kD = 0; 
         kIz = 0; 
@@ -110,36 +110,7 @@ public class Flywheel {
       
 
     }
-
-    /**
-     * 
-     */
-	public void debug(){
-        Common.dashNum("FW: encoder velocity", getRPM());
-        // display PID coefficients on SmartDashboard
-        Common.dashNum("FW: P Gain", kP);
-        Common.dashNum("FW: I Gain", kI);
-        Common.dashNum("FW: D Gain", kD);
-        Common.dashNum("FW: I Zone", kIz);
-        Common.dashNum("FW: Feed Forward", kFF);
-        Common.dashNum("FW: Max Output", kMaxOutput);
-        Common.dashNum("FW: Min Output", kMinOutput);
-
-        // display Smart Motion coefficients
-        Common.dashNum("FW: Max Velocity", maxVel);
-        Common.dashNum("FW: Min Velocity", minVel);
-        Common.dashNum("FW: Max Acceleration", maxAcc);
-        Common.dashNum("FW: Allowed Closed Loop Error", allowedErr);
-        Common.dashNum("FW: Set Position", 0);
-        Common.dashNum("FW: Set Velocity", 0);
-
-        // button to toggle between velocity and smart motion modes
-        Common.dashBool("FW: Mode", true);
-        Common.dashNum("SetPoint", setPoint);
-        Common.dashNum("Process Variable", processVariable);
-        Common.dashNum("Output", flywheelLeft.getAppliedOutput());
-
-    }
+   
 
     private void setMotors(double power){
         flywheelLeft.set(power);
@@ -147,7 +118,7 @@ public class Flywheel {
     }
 
     private void setVelocity() {
-        setPoint = Common.getNum("FW: Set Velocity", 0);
+        setPoint = Common.getNum("SetPoint", 0);
         left_pidController.setReference(setPoint, ControlType.kVelocity);
         processVariable = left_encoder.getVelocity();
     }
@@ -203,14 +174,14 @@ public class Flywheel {
      * put the hood up for short
      */
 	private void hoodUp(){
-        hood.set(true);
+        //hood.set(true);
     }
 
     /**
      * put the hood down for long and medium
      */
 	private void hoodDown(){
-        hood.set(false);
+        //hood.set(false);
     }
 
     /**
@@ -234,17 +205,17 @@ public class Flywheel {
 
     public void update(){
         // read PID coefficients from SmartDashboard
-        double p = Common.getNum("P Gain", 0);
+        double p = Common.getNum("P Gain", kP);
         double i = Common.getNum("I Gain", 0);
         double d = Common.getNum("D Gain", 0);
         double iz = Common.getNum("I Zone", 0);
         double ff = Common.getNum("Feed Forward", 0);
         double max = Common.getNum("Max Output", 0);
         double min = Common.getNum("Min Output", 0);
-        double maxV = Common.getNum("Max Velocity", 0);
-        double minV = Common.getNum("Min Velocity", 0);
-        double maxA = Common.getNum("Max Acceleration", 0);
-        double allE = Common.getNum("Allowed Closed Loop Error", 0);
+        //double maxV = Common.getNum("Max Velocity", 0);
+        //double minV = Common.getNum("Min Velocity", 0);
+        //double maxA = Common.getNum("Max Acceleration", 0);
+        //double allE = Common.getNum("Allowed Closed Loop Error", 0);
 
 
         // if PID coefficients on SmartDashboard have changed, write new values to controller
@@ -258,10 +229,10 @@ public class Flywheel {
             kMinOutput = min; kMaxOutput = max; 
         }
 
-        if((maxV != maxVel)) { left_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
-        if((minV != minVel)) { left_pidController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; }
-        if((maxA != maxAcc)) { left_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
-        if((allE != allowedErr)) { left_pidController.setSmartMotionAllowedClosedLoopError(allE,0); allowedErr = allE; }
+        //if((maxV != maxVel)) { left_pidController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
+        //if((minV != minVel)) { left_pidController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; }
+        //if((maxA != maxAcc)) { left_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
+        //if((allE != allowedErr)) { left_pidController.setSmartMotionAllowedClosedLoopError(allE,0); allowedErr = allE; }
         
         switch (state) {
             case IDLE :
@@ -280,7 +251,37 @@ public class Flywheel {
                 }
                 break;
         }
-                
+        debug();
+    }
+
+     /**
+     * 
+     */
+	public void debug(){
+        Common.dashNum("FW: encoder velocity", getRPM());
+        // display PID coefficients on SmartDashboard
+        Common.dashNum("FW: P Gain", kP);
+        Common.dashNum("FW: I Gain", kI);
+        Common.dashNum("FW: D Gain", kD);
+        Common.dashNum("FW: I Zone", kIz);
+        Common.dashNum("FW: Feed Forward", kFF);
+        Common.dashNum("FW: Max Output", kMaxOutput);
+        Common.dashNum("FW: Min Output", kMinOutput);
+
+        // display Smart Motion coefficients
+        Common.dashNum("FW: Max Velocity", maxVel);
+        Common.dashNum("FW: Min Velocity", minVel);
+        Common.dashNum("FW: Max Acceleration", maxAcc);
+        Common.dashNum("FW: Allowed Closed Loop Error", allowedErr);
+        Common.dashNum("FW: Set Position", 0);
+        Common.dashNum("FW: Set Velocity", 0);
+
+        // button to toggle between velocity and smart motion modes
+        Common.dashBool("FW: Mode", true);
+        //Common.dashNum("SetPoint", setPoint);
+        Common.dashNum("Process Variable", processVariable);
+        Common.dashNum("Output", flywheelLeft.getAppliedOutput());
+        Common.dashStr("FW State", state.toString());
     }
     
 }

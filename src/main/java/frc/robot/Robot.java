@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
 class Robot extends TimedRobot {
-  public DriveTrain dt = new DriveTrain();
+  //public DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
-  Xbox operator =  new Xbox(1);
-  Intake intake = new Intake();
+  //box operator =  new Xbox(1);
+  //Intake intake = new Intake();
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
@@ -57,7 +57,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    dt.teleopDrive(0, 0);
+    //dt.teleopDrive(0, 0);
   }
 
   @Override
@@ -97,7 +97,7 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-    if (operator.getPressed(Xbox.buttons.a)) {
+    /*if (operator.getPressed(Xbox.buttons.a)) {
       shooter.toggleIntake();
     }
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
@@ -111,7 +111,7 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }
+    }*/
     
 
     //OLD TELEOP CODE FOLLOWS
@@ -126,7 +126,7 @@ class Robot extends TimedRobot {
     
    // debug();
 
-    dt.update();
+    //dt.update();
     colorWheel.update();
     shooter.update();
   }
