@@ -72,7 +72,7 @@ public class Flywheel {
         kD = 0; 
         kIz = 0; 
         kFF = 0.000156; 
-        kMaxOutput = .75; 
+        kMaxOutput = .4; 
         kMinOutput = 0;
         maxRPM = 5000;
 
@@ -196,8 +196,7 @@ public class Flywheel {
      */
 	public void stop() {
         state = States.IDLE;
-        setMotors(0); 
-        setPoint = 0;
+        setMotors(0);
     }
 
     /**
@@ -225,8 +224,9 @@ public class Flywheel {
      * tells us if we're ready to throw
      * @return
      */
-	private boolean atRPM(){
-        return Common.between(getRPM(), targetRPM - toleranceRPM, targetRPM + toleranceRPM);
+	public boolean atRPM(){
+        return Common.between(getRPM(), setPoint - toleranceRPM, setPoint + toleranceRPM);
+        //return Common.between(getRPM(), targetRPM - toleranceRPM, targetRPM + toleranceRPM);
     } 
     public boolean readyToFire() {
         return (state == States.READY_TO_FIRE);

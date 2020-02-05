@@ -10,11 +10,11 @@ public class Shooter {
     public void update() {
         mag.update();
         intake.update();
-        //flywheel.update();
+        flywheel.update();
         if (mag.fullyLoaded() && intake.isLoading()) {
             intake.stopIntake();
         }
-        if (mag.isEmpty()  /*&& flywheel.isReadyToFire*/) {
+        if (mag.isEmpty()  && flywheel.readyToFire()) {
             flywheel.stop();
         }
 
@@ -32,7 +32,7 @@ public class Shooter {
      * sets the flywheel to spin up
      */
     public void prepFire(Distance distance) {
-        if (mag.isIdle() || mag.isEmpty() == false) {
+        if (mag.isIdle() || !mag.isEmpty()) {
             intake.stopIntake();
             mag.loadBreach();
             flywheel.start(distance);
@@ -46,10 +46,10 @@ public class Shooter {
      * sets the flywheel to idle
      */
     public void prepLoad() {
-        if (mag.isShootBall() || mag.isEmpty() == false) {
+        if (mag.isShootBall() || !mag.isEmpty()) {
             intake.stopIntake();
             mag.unloadBreach();
-            //flywheel.stop()
+            flywheel.stop();
         }
     }
 
@@ -59,10 +59,9 @@ public class Shooter {
      * sets the flywheel to ready to throw
      */
     public void fireBall() {
-        if (mag.isBreachLoaded()) {
+        if (mag.isBreachLoaded() && flywheel.atRPM()) {
             intake.stopIntake();
             mag.shootBall();
-            //flywheel.atRPM {i dont have actual function names this is a placeholder}
         }
     }
 
@@ -75,7 +74,7 @@ public class Shooter {
         if (mag.isIdle()) {
             intake.stopIntake();
             mag.dumpBalls();
-            //flywheel.stop();
+            flywheel.stop();
         }
     }
 
@@ -90,11 +89,11 @@ public class Shooter {
             if (intake.isIdle()) {
                 intake.startIntake();
                 mag.unloadBreach();
-                //flyWheel.stop();
+                flywheel.stop();
             } else {
                 intake.stopIntake();
                 mag.unloadBreach();
-                //flyWheel.stop();
+                flywheel.stop();
             }
     }
     public void intakeOn() {

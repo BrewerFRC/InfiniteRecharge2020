@@ -62,24 +62,22 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    /* SAMS CODE FOR CONTROL SCHEME
+    //SAMS CODE FOR CONTROL SCHEME
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
-    colorWheel.update();
-    shooter.update();
 
     //DRIVER
-    if (driver.getPressed(Xbox.buttons.a)) {
+    /*if (driver.getPressed(Xbox.buttons.a)) {
       shooter.toggleIntake();
-    }
+    }*/
     if (driver.getPressed(Xbox.buttons.b)) {
-      shooter.prepFire("long");
+      shooter.prepFire(Flywheel.Distance.LONG);
     }
     if (driver.getPressed(Xbox.buttons.y)) {
-      shooter.prepFire("short");
+      shooter.prepFire(Flywheel.Distance.SHORT);
     }
     if (driver.getPressed(Xbox.buttons.x)) {
-      shooter.prepFire("medium");
+      shooter.prepFire(Flywheel.Distance.MEDIUM);
     }
     if (driver.getPressed(Xbox.buttons.rightTrigger)) {
       shooter.fireBall();
@@ -94,6 +92,9 @@ class Robot extends TimedRobot {
     if (driver.getPressed(Xbox.buttons.start)) {
       shooter.eject();
     }
+    if (driver.getPressed(Xbox.buttons.back)) {
+      shooter.prepLoad();
+    }
 
     //OPERATOR
     if (operator.getPressed(Xbox.buttons.a)) {
@@ -105,10 +106,13 @@ class Robot extends TimedRobot {
     if (operator.getPressed(Xbox.buttons.dPadDown)) {
       colorWheel.startFinding();
     }
-    if (driver.getPressed(Xbox.buttons.start)) {
+    if (operator.getPressed(Xbox.buttons.start)) {
       shooter.eject();
     }
-    */
+    if (operator.getPressed(Xbox.buttons.back)) {
+      shooter.prepLoad();
+    }
+    
 
     //OLD TELEOP CODE FOLLOWS
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
@@ -119,42 +123,12 @@ class Robot extends TimedRobot {
       colorWheel.resetPieCount();
      
     }*/
-    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
-    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
-    //dt.accelDrive(drive, turn);
-    //Common.dashNum("Back Neo", dt.backL.get());
-    //Common.dashNum("drive", drive);
-    //Common.dashNum("turn", turn);
+    
    // debug();
 
-    //*** INTAKE
-
-    if (driver.getPressed(Xbox.buttons.a)){
-      intake.startIntake();
-    }
-      if (driver.getPressed(Xbox.buttons.b)) {
-      intake.stopIntake();
-    }
-    intake.update();
-
-
-    if (driver.when(Xbox.buttons.x)) {
-      dt.driveDistance(100);
-    } else if (driver.when(Xbox.buttons.a)) {
-      dt.driveDistance(-100);
-    } else if (driver.when(Xbox.buttons.b)) {
-      dt.turn(180);
-    } else if (driver.when(Xbox.buttons.y)) {
-      dt.turn(0);
-    }
-
-    if (driver.when(Xbox.buttons.start)) {
-      dt.heading.setAngle(10);
-    }
-
     dt.update();
-    //Common.dashNum("Back Neo", dt.backL.get());
-    //debug();
+    colorWheel.update();
+    shooter.update();
   }
 
 
