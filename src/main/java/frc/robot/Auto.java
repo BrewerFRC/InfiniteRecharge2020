@@ -57,7 +57,7 @@ public class Auto {
             break;
             case SFA_BACK_UP:
                 if (dt.driveComplete()) {
-                    shooter.prepFire("medium");
+                    //shooter.prepFire("medium");
                     autoState = autoStates.SFA_READY_FIRE;
                 }
             break;

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.Flywheel.Distance;
+
 public class Shooter {
     private Magazine mag = new Magazine();
     private Intake intake = new Intake();
@@ -15,10 +17,13 @@ public class Shooter {
         if (mag.isEmpty()  /*&& flywheel.isReadyToFire*/) {
             flywheel.stop();
         }
-        
+
     }
     
     public void debug() {
+        mag.debug();
+        intake.debug();
+        flywheel.debug();
     }
     /**
      * Prepares shooter for throwing. Provide distance either 'long', 'medium' or 'short'.
@@ -26,11 +31,11 @@ public class Shooter {
      * sets the magazine to load breach
      * sets the flywheel to spin up
      */
-    public void prepFire(String distance) {
+    public void prepFire(Distance distance) {
         if (mag.isIdle() || mag.isEmpty() == false) {
             intake.stopIntake();
             mag.loadBreach();
-            //flywheel.start(distance);
+            flywheel.start(distance);
         } 
     }
 

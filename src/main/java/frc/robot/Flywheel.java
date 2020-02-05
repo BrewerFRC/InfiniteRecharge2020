@@ -68,12 +68,12 @@ public class Flywheel {
         right_encoder = flywheelRight.getEncoder();
         // PID coefficients
         kP = 5e-5; 
-        kI = 1e-6;
+        kI = 0;
         kD = 0; 
         kIz = 0; 
         kFF = 0.000156; 
-        kMaxOutput = 1; 
-        kMinOutput = -1;
+        kMaxOutput = .75; 
+        kMinOutput = 0;
         maxRPM = 5000;
 
         // Smart Motion Coefficients
@@ -142,8 +142,11 @@ public class Flywheel {
     }
 
     private void setMotors(double power){
-        //flywheelLeft.set(power);
+        flywheelLeft.set(power);
         //flywheelRight.set(-power);
+    }
+
+    private void setVelocity() {
         setPoint = Common.getNum("FW: Set Velocity", 0);
         left_pidController.setReference(setPoint, ControlType.kVelocity);
         processVariable = left_encoder.getVelocity();
@@ -193,7 +196,8 @@ public class Flywheel {
      */
 	public void stop() {
         state = States.IDLE;
-        setMotors(0);  
+        setMotors(0); 
+        setPoint = 0;
     }
 
     /**
@@ -264,7 +268,8 @@ public class Flywheel {
                 stop();
                 break;
             case SPIN_UP :
-                setMotors(targetPower);
+                //setMotors(targetPower);
+                setVelocity();
                 if (atRPM()) {
                     state = States.READY_TO_FIRE;
                 }
