@@ -59,6 +59,14 @@ public class Intake {
 		return state == States.IDLE;
 	}
 
+	public boolean isLoading() {
+		return state == States.LOADING;
+	}
+
+	public boolean isEjecting() {
+		return state == States.EJECTING;
+	}
+
 	/**
 	 * Sets the intake motor power.  Positive values will run motes inward.
 	 * Will limit the maximum power sent to the motor based on MAX_POWER.

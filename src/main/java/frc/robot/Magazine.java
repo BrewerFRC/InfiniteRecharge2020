@@ -96,7 +96,7 @@ public class Magazine {
 				if (bottomSensorTriggered() == true) {
 					load();
 				} else if (topSensorTriggered() == true){
-					Common.debug("Mag: Idle");
+					Common.debug("Mag: Idle Top Sensor Triggered");
 					state = States.IDLE;
 				} else {
 					Common.debug("Mag: Idle");
@@ -211,7 +211,7 @@ public class Magazine {
 	public void debug(){
 		Common.dashNum("time elapsed", timer.get());
 		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
-		Common.dashStr("state", state.name());
+		Common.dashStr("Mag: State", state.name());
 	}
 
 	public boolean bottomSensorTriggered(){
@@ -245,11 +245,11 @@ public class Magazine {
 		}
 	}
 
-	public boolean isShooting() {
+	public boolean isShootBall() {
 		return state == States.SHOOT_BALL;
 	}
 
-	public boolean readyToFire() {
+	public boolean isBreachLoaded() {
 		return state == States.BREACH_LOADED;
 	}
 
@@ -263,8 +263,8 @@ public class Magazine {
 	 *
 	 * @returns: boolean true when magazine is assumed to be empty.
 	 */
-	public boolean empty() {
-		return (state == States.EMPTY);
+	public boolean isEmpty() {
+		return state == States.EMPTY;
 	}
 	
 	/*
@@ -289,7 +289,6 @@ public class Magazine {
 	 * Stop the magazine motor.
 	 */
 	public void stop() {
-		Common.debug("should be stopping");
 		power = 0;
 		setPower(power);
 	}

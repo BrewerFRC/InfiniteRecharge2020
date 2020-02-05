@@ -9,6 +9,13 @@ public class Shooter {
         mag.update();
         intake.update();
         //flywheel.update();
+        if (mag.fullyLoaded() && intake.isLoading()) {
+            intake.stopIntake();
+        }
+        if (mag.isEmpty()  /*&& flywheel.isReadyToFire*/) {
+            flywheel.stop();
+        }
+        
     }
     
     public void debug() {
@@ -20,9 +27,11 @@ public class Shooter {
      * sets the flywheel to spin up
      */
     public void prepFire(String distance) {
-        intake.stopIntake();
-        mag.loadBreach();
-        //flywheel.start(distance); 
+        if (mag.isIdle() || mag.isEmpty() == false) {
+            intake.stopIntake();
+            mag.loadBreach();
+            //flywheel.start(distance);
+        } 
     }
 
     /**
@@ -32,9 +41,11 @@ public class Shooter {
      * sets the flywheel to idle
      */
     public void prepLoad() {
-        intake.stopIntake();
-        mag.unloadBreach();
-        //flywheel.stop()
+        if (mag.isShootBall() || mag.isEmpty() == false) {
+            intake.stopIntake();
+            mag.unloadBreach();
+            //flywheel.stop()
+        }
     }
 
     /**
@@ -43,9 +54,11 @@ public class Shooter {
      * sets the flywheel to ready to throw
      */
     public void fireBall() {
-        intake.stopIntake();
-        mag.shootBall();
-        //flywheel.atRPM {i dont have actual function names this is a placeholder}
+        if (mag.isBreachLoaded()) {
+            intake.stopIntake();
+            mag.shootBall();
+            //flywheel.atRPM {i dont have actual function names this is a placeholder}
+        }
     }
 
     /**
@@ -54,9 +67,11 @@ public class Shooter {
      * sets the flywheel to idle
      */
     public void eject() {
-        intake.stopIntake();
-        mag.dumpBalls();
-        //flywheel.stop();
+        if (mag.isIdle()) {
+            intake.stopIntake();
+            mag.dumpBalls();
+            //flywheel.stop();
+        }
     }
 
     /**
@@ -66,15 +81,16 @@ public class Shooter {
      * will chieck if intake is idle and if magazine is in a shooting state
      */
     public void toggleIntake() {
-        if (intake.isIdle()) {
-            intake.startIntake();
-            mag.unloadBreach();
-            //flyWheel.stop();
-        } else {
-            intake.stopIntake();
-            mag.unloadBreach();
-            //flyWheel.stop();
-        }
+        if (mag.isIdle() && flywheel.isIdle())
+            if (intake.isIdle()) {
+                intake.startIntake();
+                mag.unloadBreach();
+                //flyWheel.stop();
+            } else {
+                intake.stopIntake();
+                mag.unloadBreach();
+                //flyWheel.stop();
+            }
     }
     public void intakeOn() {
         intake.startIntake();
@@ -83,9 +99,9 @@ public class Shooter {
         return (mag.isIdle() && flywheel.isIdle());
     }
     public boolean readyToFire() {
-        return (mag.readyToFire() && intake.isIdle() && flywheel.readyToFire());
+        return (mag.isBreachLoaded() && intake.isIdle() && flywheel.readyToFire());
     }
     public boolean empty() {
-        return mag.empty();
+        return mag.isEmpty();
     }
 }
