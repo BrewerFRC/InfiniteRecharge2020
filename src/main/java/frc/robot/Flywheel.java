@@ -33,9 +33,9 @@ public class Flywheel {
     }
 
     private States state = States.IDLE;
-    private final static double LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 2000;
-    private final static double LONG_TOLERANCE = 200, MEDIUM_TOLERANCE = 200, SHORT_TOLERANCE = 100;
-    private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+    private final static double LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 500;
+    private final static double LONG_TOLERANCE = 20, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 10;
+    private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     // SMARTMOTION VARIABLES - CAN THESE BE REMOVED?
     private double maxVel, minVel, maxAcc, allowedErr;
 
@@ -61,17 +61,18 @@ public class Flywheel {
         right_pidController = flywheelRight.getPIDController();
         left_encoder = flywheelLeft.getEncoder();
         right_encoder = flywheelRight.getEncoder();
+        left_encoder.setVelocityConversionFactor(42.0/36);
+        right_encoder.setVelocityConversionFactor(42.0/36);
 	    flywheelRight.follow(flywheelLeft, true);  //set follow with inversion
 
         // PID coefficients
-        kP = 5e-4; 
+        kP = 0.001; 
         kI = 0;
-        kD = 0; 
+        kD = 10; 
         kIz = 0; 
-        kFF = 0.000156; 
-        kMaxOutput = .4; 
+        kFF = 0.00018; 
+        kMaxOutput = 1.0; 
         kMinOutput = 0;
-        maxRPM = 5000;
         
          // set PID coefficients for left motor only, since right motor will just follow
         left_pidController.setP(kP);
@@ -112,6 +113,11 @@ public class Flywheel {
         debug();
         //============================
     }
+
+    public void init() {
+        state = States.IDLE;
+
+    }
    
     /** 
      * change our state to spin_up, make fly_wheel and max_spark is ready, make sure the max_spark rpm is inbetween the set and mimimal rpm threshold, the set stait to ready_to_lonch
@@ -138,7 +144,7 @@ public class Flywheel {
         }
         state = States.SPIN_UP;
         // TESTING =============
-        Common.dashNum("FW: targetRPM", targetRPM);
+        setRPM(targetRPM);
         // =====================
     } 
     
@@ -154,7 +160,6 @@ public class Flywheel {
      */
 	public void stop() {
         state = States.IDLE;
-        setMotors(0);
     }
 
     /**
@@ -174,12 +179,12 @@ public class Flywheel {
     /**
      * Set motor RPM for PID using targetRPM.
      */
-    private void setRPM() {
+    private void setRPM(double RPM) {
         // TESTING ===============
-        targetRPM = Common.getNum("FW: targetRPM", targetRPM);
+        Common.dashNum("FW: targetRPM", RPM);
         // =======================
         // Set RPM of left motor. Right motor follows.
-        left_pidController.setReference(targetRPM, ControlType.kVelocity);
+        left_pidController.setReference(RPM, ControlType.kVelocity);
         //processVariable = left_encoder.getVelocity();
     }
 
@@ -187,7 +192,8 @@ public class Flywheel {
      * Current flywheel RPM
      */
 	private double getRPM(){
-        return (left_encoder.getVelocity() + -right_encoder.getVelocity()) /2;
+        return left_encoder.getVelocity() ;
+        //return (-left_encoder.getVelocity() + right_encoder.getVelocity()) /2;
     }
 
     /**
@@ -209,15 +215,16 @@ public class Flywheel {
     * Call every robot cycle.
     */
     public void update(){
+        double rpm = Common.getNum("FW: targetRPM",0);
         // TESTING ===================================
         // read PID coefficients from SmartDashboard
-        double p = Common.getNum("P Gain", kP);
-        double i = Common.getNum("I Gain", kI);
-        double d = Common.getNum("D Gain", kD);
-        double iz = Common.getNum("I Zone", kIz);
-        double ff = Common.getNum("Feed Forward", kFF);
-        double max = Common.getNum("Max Output", kMinOutput);
-        double min = Common.getNum("Min Output", kMaxOutput);
+        double p = Common.getNum("FW: P Gain", kP);
+        double i = Common.getNum("FW: I Gain", kI);
+        double d = Common.getNum("FW: D Gain", kD);
+        double iz = Common.getNum("FW: I Zone", kIz);
+        double ff = Common.getNum("FW: Feed Forward", kFF);
+        double max = Common.getNum("FW: Max Output", kMinOutput);
+        double min = Common.getNum("FW: Min Output", kMaxOutput);
         //double maxV = Common.getNum("Max Velocity", 0);
         //double minV = Common.getNum("Min Velocity", 0);
         //double maxA = Common.getNum("Max Acceleration", 0);
@@ -241,10 +248,11 @@ public class Flywheel {
         
         switch (state) {
             case IDLE :
-                stop();
+                targetRPM = 0;
+                setRPM(targetRPM);
                 break;
             case SPIN_UP :
-                setRPM();
+                setRPM(targetRPM);
                 if (atRPM()) {
                     state = States.READY_TO_FIRE;
                 }
@@ -264,7 +272,11 @@ public class Flywheel {
 	public void debug(){
         Common.dashNum("FW: targetRPM", targetRPM);
         Common.dashNum("FW: encoder rpm", getRPM());
-        Common.dashNum("FW: Output", flywheelLeft.getAppliedOutput());
+        Common.dashNum("FW: L Output", flywheelLeft.getAppliedOutput());
+        Common.dashNum("FW: R Output", flywheelRight.getAppliedOutput());
+        Common.dashNum("FW: L Amps", flywheelLeft.getOutputCurrent());
+        Common.dashNum("FW: R Amps", flywheelRight.getOutputCurrent());
+
         Common.dashStr("FW: State", state.toString());
 
         // display PID coefficients on SmartDashboard

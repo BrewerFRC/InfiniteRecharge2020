@@ -30,18 +30,12 @@ class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    
-
+    shooter.init();
   }
 
 
   @Override
   public void robotPeriodic() {
-
-  
-    
-    
-    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
@@ -67,9 +61,9 @@ class Robot extends TimedRobot {
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
 
     //DRIVER
-    /*if (driver.getPressed(Xbox.buttons.a)) {
+    if (driver.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
-    }*/
+    }
     if (driver.getPressed(Xbox.buttons.b)) {
       shooter.prepFire(Flywheel.Distance.LONG);
     }
@@ -97,7 +91,7 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-    /*if (operator.getPressed(Xbox.buttons.a)) {
+    /*if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
     }
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
@@ -129,6 +123,8 @@ class Robot extends TimedRobot {
     //dt.update();
     colorWheel.update();
     shooter.update();
+    shooter.debug();
+    colorWheel.debug();
   }
 
 

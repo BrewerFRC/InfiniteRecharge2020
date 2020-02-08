@@ -35,5 +35,6 @@ public class Constants {
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
+    public static final int MAGAZINE_PDP_PORT = 8;
 
 }

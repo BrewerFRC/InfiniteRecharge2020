@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.Flywheel.Distance;
 
 public class Shooter {
@@ -25,6 +26,12 @@ public class Shooter {
         intake.debug();
         flywheel.debug();
     }
+
+    public void init() {
+        mag.init();
+        intake.init();
+        flywheel.init();
+    }
     /**
      * Prepares shooter for throwing. Provide distance either 'long', 'medium' or 'short'.
      * sets the intake to up and motors off
@@ -32,7 +39,7 @@ public class Shooter {
      * sets the flywheel to spin up
      */
     public void prepFire(Distance distance) {
-        if (mag.isIdle() || !mag.isEmpty()) {
+        if (mag.isIdle() || !mag.isEmpty() || mag.isJammed()){
             intake.stopIntake();
             mag.loadBreach();
             flywheel.start(distance);
@@ -40,6 +47,7 @@ public class Shooter {
     }
 
     /**
+     * 
      * Prepare shooter to intake balls
      * sets the intake to up and off
      * sets the magazine to ready to load
@@ -59,7 +67,7 @@ public class Shooter {
      * sets the flywheel to ready to throw
      */
     public void fireBall() {
-        if (mag.isBreachLoaded() && flywheel.atRPM()) {
+        if (mag.isBreachLoaded() && flywheel.readyToFire()) {
             intake.stopIntake();
             mag.shootBall();
         }
@@ -83,18 +91,24 @@ public class Shooter {
      * sets the magazine to idle
      * sets the flywheel to off
      * will chieck if intake is idle and if magazine is in a shooting state
+     * use whenPressed not WhilePressed for this because you dont want to call it 50 times a second
      */
     public void toggleIntake() {
-        if (mag.isIdle() && flywheel.isIdle())
-            if (intake.isIdle()) {
+        if (intake.isIdle()) {
+            if (mag.breachingStates()) {
+                mag.unloadBreach();
+                flywheel.stop();
+                Common.debug("SH: toggleIntake unloading breach");
+
+            } else if (mag.isReadyToIntake()) {
                 intake.startIntake();
-                mag.unloadBreach();
                 flywheel.stop();
-            } else {
-                intake.stopIntake();
-                mag.unloadBreach();
-                flywheel.stop();
+                Common.debug("SH: toggleIntake starting intake");
             }
+        } else {
+            intake.stopIntake();
+            Common.debug("SH: toggleIntake stoping intake");
+        }
     }
     public void intakeOn() {
         intake.startIntake();
