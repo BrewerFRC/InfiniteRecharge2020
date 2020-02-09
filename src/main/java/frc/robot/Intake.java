@@ -28,10 +28,11 @@ public class Intake {
 	private Timer timer = new Timer();  
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
+	private double power = 0;
 
 	private enum States {
 		IDLE, 			//No motor movement, intake is up.
-		LOADING,			// Entered through a button press, constantly runs the polycord inwards. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
+		LOADING,			// Entered through a button press. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
 		EJECTING;          //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
 
 	}
@@ -87,7 +88,8 @@ public class Intake {
 	* Turn off the intake motor(s).
 	*/
 	public void motorStop(){
-		setMotorPower(0);
+		power = 0;
+		setMotorPower(power);
 	}
 
 	/**
@@ -96,7 +98,8 @@ public class Intake {
 	 * This function does NOT employ safeties to protect from overloading the magazine.
 	 */
 	private void motorIn(){
-		setMotorPower(MAX_POWER);
+		power = MAX_POWER;
+		setMotorPower(power);
 	}
 
 	/**
@@ -104,7 +107,8 @@ public class Intake {
 	 * The motor speed is a constant, based on observation of best mechanical performance.
 	 */
 	private void motorOut(){
-		setMotorPower(-MAX_POWER);
+		power = -MAX_POWER;
+		setMotorPower(power);
 	}
 
 	/**
