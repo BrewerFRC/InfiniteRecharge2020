@@ -40,7 +40,10 @@ public class Auto {
         T_COMPLETE,
 
         //Generator Pickup(GP)
-
+        GP_INIT,
+        GP_DRIVE,
+        GP_ALIGN,
+        GP_FIRE,
         GP_COMPLETE;
     }
 
@@ -48,11 +51,13 @@ public class Auto {
     WALL_DIST = 0, //Distance to wall from starting point
     SPIN_UP_DIST = 0, //Distance to spin up from wall
     T_SHOOT_DIST = 0, //Distance to move forward to shoot for trench
-    TRENCH_RUN_DIST = 0; //Length to run into trench
+    TRENCH_RUN_DIST = 0, //Length to run into trench
+    GP_DRIVE_DIST = 120; //Length to move to trench in inches 
 
     public final static double T_FIRST_SHOOT_ANGLE = 0, //Angle of first trench shoot
     T_TRENCH_ANGLE = 0, //Angle to run down the trench, probably zero might want to set it based on start?
-    T_FINAL_SHOOT_ANGLE = 0; //Final shoot angle of trench
+    T_FINAL_SHOOT_ANGLE = 0, //Final shoot angle of trench
+    GP_TURN = 18.8; //turn angle to shoot
 
 
     private autoStates autoState;
@@ -192,14 +197,37 @@ public class Auto {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
+    public void generatorPickup() {
+        switch (autoState) {
+            case GP_INIT:
+                shooter.toggleIntake();
+                dt.driveDistance(GP_DRIVE_DIST);
+                autoState = autoState.GP_DRIVE;
+                break;
+            case GP_DRIVE:
+                if (dt.driveComplete()) {
+                    dt.turn(GP_TURN);
+                    shooter.prepFire(Distance.LONG);
+                    shooter.toggleIntake();
+                    autoState = autoState.GP_ALIGN;
+                }
+                break;
+            case GP_ALIGN:
+                if (dt.driveComplete() && shooter.readyToFire()) {
+                    shooter.fireBall();
+                    autoState = autoState.GP_FIRE;
+                }
+                break;
+            case GP_FIRE:
+                if (shooter.empty()) {
+                    autoState = autoState.GP_COMPLETE;
+                } else {
+                    shooter.fireBall();
+                }
+                break;
+            case GP_COMPLETE:
+                dt.hold();
+                break;
+        }
+    }
 }
