@@ -18,7 +18,6 @@ public class Shooter {
         if (mag.isEmpty()  && flywheel.readyToFire()) {
             flywheel.stop();
         }
-
     }
     
     public void debug() {
@@ -79,7 +78,7 @@ public class Shooter {
      * sets the flywheel to idle
      */
     public void eject() {
-        if (mag.isIdle()) {
+        if ((mag.isShootBall() == false) && (mag.isEmpty() == false)) {
             intake.stopIntake();
             mag.dumpBalls();
             flywheel.stop();

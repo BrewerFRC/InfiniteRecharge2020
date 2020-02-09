@@ -297,6 +297,14 @@ public class Magazine {
 	public boolean isJammed() {
 		return state == States.JAMMED;
 	}
+
+	public boolean isBeginDumpBalls() {
+		return state == States.BEGIN_DUMP_BALLS;
+	}
+
+	public boolean isDumpBalls() {
+		return state == States.DUMP_BALLS;
+	}
 	
 	/**
 	 * The magazine enters an EMPTY state if balls were not seen during a load breach or unload breach action, or 
@@ -388,7 +396,7 @@ public class Magazine {
 	 * ??? Let's work on this later.
 	 */
 	public void dumpBalls() {
-
+			state = States.BEGIN_DUMP_BALLS;
 	}
 	
 	/**
@@ -421,5 +429,5 @@ public class Magazine {
 		if (state == States.BREACH_LOADED || state == States.BEGIN_LOAD_BREACH ) {
 			state = States.BEGIN_UNLOAD_BREACH;
 		}
-	}	
+	}
 } // End Magazine class
