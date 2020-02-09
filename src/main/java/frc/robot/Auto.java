@@ -197,6 +197,9 @@ public class Auto {
         }
     }
 
+    /**
+     * A function to pick up and shoot from the generator.
+     */
     public void generatorPickup() {
         switch (autoState) {
             case GP_INIT:
