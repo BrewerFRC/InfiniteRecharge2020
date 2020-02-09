@@ -17,8 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 class Robot extends TimedRobot {
   //public DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
-  //box operator =  new Xbox(1);
-  //Intake intake = new Intake();
+  //Xbox operator =  new Xbox(1);
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
@@ -57,8 +56,8 @@ class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //SAMS CODE FOR CONTROL SCHEME
-    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
-    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    //double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    //double turn = -driver.deadzone(driver.getX(Hand.kLeft));
 
     //DRIVER
     if (driver.when(Xbox.buttons.a)) {
