@@ -9,7 +9,7 @@ package frc.robot;
  */
 public class Constants {
     //PWM
-    static final int PWM_INTAKE_MOTOR = 0, PWM_COLORWHEEL_MOTOR = 1, PWM_MAGAZINE_MOTOR = 2;
+    static final int PWM_INTAKE_MOTOR = 0, PWM_COLORWHEEL_MOTOR = 1, PWM_MAGAZINE_MOTOR = 2, PWM_LEFT_CLIMBER = 3, PWM_RIGHT_CLIMBER = 4;
 
     //DIO
     public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1;
@@ -29,9 +29,7 @@ public class Constants {
     public static final int PCM_CAN_ID = 2;
     
     //Pneumatics - Solenoids
-    public static final int SOL_SHIFTER = 0; 
-    public static final int SOL_INTAKE_ARM = 1; 
-    public static final int SOL_FLAPPER = 2; 
+    public static final int SOL_SHIFTER = 0, SOL_INTAKE_ARM = 1, SOL_FLAPPER = 2, SOL_LEFT_RACHET= 3, SOL_RIGHT_RACHET = 4; 
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
