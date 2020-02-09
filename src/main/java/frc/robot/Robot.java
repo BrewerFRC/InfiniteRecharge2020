@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.Timer;
 class Robot extends TimedRobot {
   public DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
-  Xbox operator =  new Xbox(1);
-  Intake intake = new Intake();
+  //box operator =  new Xbox(1);
+  //Intake intake = new Intake();
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
@@ -28,18 +28,12 @@ class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    
-
+    shooter.init();
   }
 
 
   @Override
   public void robotPeriodic() {
-
-  
-    
-    
-    Common.dashBool("time passed", timer.hasPeriodPassed(5));
   }
 
 
@@ -55,11 +49,12 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    dt.teleopDrive(0, 0);
+    //dt.teleopDrive(0, 0);
   }
 
   @Override
   public void teleopPeriodic() {
+
     if (driver.when(Xbox.buttons.x)) {
       dt.driveDistance(100);
     } else if (driver.when(Xbox.buttons.a)) {
@@ -75,6 +70,76 @@ class Robot extends TimedRobot {
     }
 
     dt.update();
+    /*
+    //SAMS CODE FOR CONTROL SCHEME
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+
+    //DRIVER
+    if (driver.when(Xbox.buttons.a)) {
+      shooter.toggleIntake();
+    }
+    if (driver.getPressed(Xbox.buttons.b)) {
+      shooter.prepFire(Flywheel.Distance.LONG);
+    }
+    if (driver.getPressed(Xbox.buttons.y)) {
+      shooter.prepFire(Flywheel.Distance.SHORT);
+    }
+    if (driver.getPressed(Xbox.buttons.x)) {
+      shooter.prepFire(Flywheel.Distance.MEDIUM);
+    }
+    if (driver.getPressed(Xbox.buttons.rightTrigger)) {
+      shooter.fireBall();
+    }
+    if (driver.getPressed(Xbox.buttons.leftBumper))  {
+      //dt.shiftDown();
+    }
+    if (driver.getPressed(Xbox.buttons.rightBumper))  {
+      //dt.shiftUp();
+    }
+    //driver.deadzone(driver.getX(GenericHID.Hand.kLeft), driver.deadzone(driver.getY(Hand.kRight)));
+    if (driver.getPressed(Xbox.buttons.start)) {
+      shooter.eject();
+    }
+    if (driver.getPressed(Xbox.buttons.back)) {
+      shooter.prepLoad();
+    }
+
+    //OPERATOR
+    if (operator.when(Xbox.buttons.a)) {
+      shooter.toggleIntake();
+    }
+    if (operator.getPressed(Xbox.buttons.dPadUp)) {
+      colorWheel.startCounting();
+    }
+    if (operator.getPressed(Xbox.buttons.dPadDown)) {
+      colorWheel.startFinding();
+    }
+    if (operator.getPressed(Xbox.buttons.start)) {
+      shooter.eject();
+    }
+    if (operator.getPressed(Xbox.buttons.back)) {
+      shooter.prepLoad();
+    }
+    */
+
+    //OLD TELEOP CODE FOLLOWS
+    //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+    
+    
+    
+    /*if (a.getBButton() == true){
+      colorWheel.resetPieCount();
+     
+    }*/
+    
+   // debug();
+
+    //dt.update();
+    colorWheel.update();
+    shooter.update();
+    shooter.debug();
+    colorWheel.debug();
   }
 
 

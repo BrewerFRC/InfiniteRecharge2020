@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.Flywheel.Distance;
 
 /**
  * A class to control the robot during the autonomous period.
@@ -77,7 +78,7 @@ public class Auto {
                 break;
             case SFA_BACK_UP:
                 if (dt.driveComplete()) {
-                    shooter.prepFire("medium");
+                    //shooter.prepFire("medium");
                     autoState = autoStates.SFA_READY_FIRE;
                 }
                 break;
@@ -110,7 +111,7 @@ public class Auto {
                 break;
             case LAY_WAIT_FOR_SPIN:
                 if (dt.getAverageDist() <= SPIN_UP_DIST) {
-                    shooter.prepFire("short");
+                    shooter.prepFire(Distance.SHORT);
                     autoState = autoStates.LAY_COMPLETE_DRIVE;
                 }
                 break;
@@ -144,7 +145,7 @@ public class Auto {
                 break;
             case T_SHOOT_DRIVE:
                 if (dt.driveComplete()) {
-                    shooter.prepFire("meduim");
+                    shooter.prepFire(Distance.MEDIUM);
                     dt.turn(T_FIRST_SHOOT_ANGLE);
                     autoState = autoStates.T_ALIGN;
                 }
@@ -166,7 +167,7 @@ public class Auto {
             case T_TRENCH_RUN:
                 if (dt.driveComplete()) {
                     if (shoot) {
-                        shooter.prepFire("long"); //not sure if long or medium
+                        shooter.prepFire(Distance.LONG);//not sure if long or medium
                         dt.turn(T_FINAL_SHOOT_ANGLE);
                         autoState = autoStates.T_READY_TO_FIRE;
                     } else {

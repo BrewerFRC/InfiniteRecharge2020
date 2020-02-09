@@ -23,15 +23,16 @@ import edu.wpi.first.wpilibj.Timer;
 public class Intake {
 	
 	private final static Spark intakeMot = new Spark(Constants.PWM_INTAKE_MOTOR);
-	private final static Solenoid arm = new Solenoid(Constants.SOL_INTAKE_ARM);
+	//private final static Solenoid arm = new Solenoid(Constants.SOL_INTAKE_ARM);
 	private final static double MAX_POWER = .4; // This is a placeholder constant.
 	private Timer timer = new Timer();  
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
+	private double power = 0;
 
 	private enum States {
 		IDLE, 			//No motor movement, intake is up.
-		LOADING,			// Entered through a button press, constantly runs the polycord inwards. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
+		LOADING,			// Entered through a button press. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
 		EJECTING;          //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
 
 	}
@@ -59,6 +60,14 @@ public class Intake {
 		return state == States.IDLE;
 	}
 
+	public boolean isLoading() {
+		return state == States.LOADING;
+	}
+
+	public boolean isEjecting() {
+		return state == States.EJECTING;
+	}
+
 	/**
 	 * Sets the intake motor power.  Positive values will run motes inward.
 	 * Will limit the maximum power sent to the motor based on MAX_POWER.
@@ -79,7 +88,8 @@ public class Intake {
 	* Turn off the intake motor(s).
 	*/
 	public void motorStop(){
-		setMotorPower(0);
+		power = 0;
+		setMotorPower(power);
 	}
 
 	/**
@@ -88,7 +98,8 @@ public class Intake {
 	 * This function does NOT employ safeties to protect from overloading the magazine.
 	 */
 	private void motorIn(){
-		setMotorPower(MAX_POWER);
+		power = MAX_POWER;
+		setMotorPower(power);
 	}
 
 	/**
@@ -96,7 +107,8 @@ public class Intake {
 	 * The motor speed is a constant, based on observation of best mechanical performance.
 	 */
 	private void motorOut(){
-		setMotorPower(-MAX_POWER);
+		power = -MAX_POWER;
+		setMotorPower(power);
 	}
 
 	/**
@@ -105,14 +117,14 @@ public class Intake {
 	 */
 	private void setIntakeUp(){
 		motorStop();
-		arm.set(true);
+		//arm.set(true);
 	}
 
 	/**
 	 * Set intake arms in down position through pnuematic control.
 	 */
 	private void setIntakeDown() {
-		arm.set(false);
+		//arm.set(false);
 	}
 
 	/** 

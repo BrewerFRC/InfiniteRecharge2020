@@ -1,8 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Talon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMax;
 
@@ -28,14 +30,19 @@ import com.revrobotics.SparkMax;
 
 public class Magazine {
 
-	private static final Spark magMot = new Spark(Constants.PWM_MAGAZINE_MOTOR);
+	//private static final Spark magMot = new Spark(Constants.PWM_MAGAZINE_MOTOR);
+	private static final Talon magMot = new Talon(Constants.PWM_MAGAZINE_MOTOR);
 	private DigitalInput topBeamBreak = new DigitalInput(Constants.DIO_TOP_BEAMBREAK);
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
-	Timer timer = new Timer();
+	private PowerDistributionPanel pdp = new PowerDistributionPanel();
+	private Timer timer = new Timer();
+	private Timer jamTimer =  new Timer();
+
 	
-	private final double MAX_POWER = 0.2;  //Max power to run magazines polycord
+	private final double MAX_POWER = .6;  //Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
 	private double power = 0;
+	private final double JAM_TIME = 1, JAM_AMP = 15; 
 	
 	private enum States {
 		IDLE, 				//Motors stopped. May have ball.
@@ -48,7 +55,8 @@ public class Magazine {
 		BEGIN_UNLOAD_BREACH,//Begin moving balls toward Bottom sensor and start a timer
 		UNLOAD_BREACH,		//Continue moving balls until Bottom sensor triggers or timer expires
 		BEGIN_DUMP_BALLS,	//Start moving balls outward and start timer
-		DUMP_BALLS;			//Run magazine outward to dump any balls by waiting for timeout
+		DUMP_BALLS,			//Run magazine outward to dump any balls by waiting for timeout
+		JAMMED;             //Magazine lock out if over current for too long
 	}
 	private States state = States.IDLE;
 	/**
@@ -65,6 +73,20 @@ public class Magazine {
 	 *	Move balls to Top sensor
 	 */
 	public void update() {
+		if (pdp.getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+			if (jamTimer.get() > 0) {
+				if (jamTimer.get() >= JAM_TIME) {
+					stop();
+					state = States.JAMMED;
+				}
+			} else {
+				jamTimer.reset();
+				jamTimer.start();
+			}
+		} else {
+			jamTimer.stop();
+			jamTimer.reset();
+		}
 		switch (state) {
 			case IDLE:
 			// Motors Off.  May contain a ball.
@@ -93,12 +115,15 @@ public class Magazine {
 			case LOAD_BALL:
 			// Run motors inward.
 			// Once ball is loaded past Lower sensor or Top sensor triggers, then go to IDLE.
-				if (bottomSensorTriggered() == true) {
-					load();
-				} else if (topSensorTriggered() == true){
-					Common.debug("Mag: Idle");
+				if (topSensorTriggered() == true){
+					stop();
+					Common.debug("Mag: Idle Top Sensor Triggered");
 					state = States.IDLE;
+				} else if (bottomSensorTriggered() == true) {
+					load();
+					Common.debug("Mag: loading bottom sensor triggered");
 				} else {
+					stop();
 					Common.debug("Mag: Idle");
 					state = States.IDLE;
 				}
@@ -120,6 +145,7 @@ public class Magazine {
 			// Otherwise continue to run magaine motors inward.
 				load();
 				if (topSensorTriggered() == true) {
+					stop();
 					Common.debug("Breach Loaded");
 					state = States.BREACH_LOADED;
 				} else if (timer.get() >= MAX_RUNTIME) {
@@ -156,7 +182,6 @@ public class Magazine {
 					Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else {
-
 					timer.reset();
 					unload();
 					Common.debug("Mag: Unload Breach");
@@ -169,12 +194,14 @@ public class Magazine {
 			// and we just need to move that balls back in a bit past the Bottom sensor by going to LOAD_BALL.
 			// If the timeout timer expires, then the magazine must be empty, so go to EMPTY state.
 				if (bottomSensorTriggered() == true) {
+					stop();
 					Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else if (timer.get() >= MAX_RUNTIME) {
 					Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				}
+				break;
 				
 			case BEGIN_DUMP_BALLS:
 			// This state is intitiated by dumpBalls().
@@ -195,12 +222,17 @@ public class Magazine {
 					unload();
 				}
 				break;
+
+			case JAMMED:
+				stop();
+				break;
 		}  // End switch
 	}	
 	/**
 	 * Set intake motor off and initialize state to IDLE.
 	 */
 	public void init(){
+		state = States.IDLE;
 		timer.reset();
 		timer.start();
 	}
@@ -211,7 +243,8 @@ public class Magazine {
 	public void debug(){
 		Common.dashNum("time elapsed", timer.get());
 		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
-		Common.dashStr("state", state.name());
+		Common.dashStr("Mag: State", state.name());
+		Common.dashNum("Mag: amps", pdp.getCurrent(8));
 	}
 
 	public boolean bottomSensorTriggered(){
@@ -245,16 +278,32 @@ public class Magazine {
 		}
 	}
 
-	public boolean isShooting() {
+	public boolean isShootBall() {
 		return state == States.SHOOT_BALL;
 	}
 
-	public boolean readyToFire() {
+	public boolean isBeginLoadBreach() {
+		return state == States.BEGIN_LOAD_BREACH;
+	}
+
+	public boolean isBreachLoaded() {
 		return state == States.BREACH_LOADED;
 	}
 
 	public boolean isIdle() {
 		return state == States.IDLE;
+	}
+
+	public boolean isJammed() {
+		return state == States.JAMMED;
+	}
+
+	public boolean isBeginDumpBalls() {
+		return state == States.BEGIN_DUMP_BALLS;
+	}
+
+	public boolean isDumpBalls() {
+		return state == States.DUMP_BALLS;
 	}
 	
 	/**
@@ -263,10 +312,21 @@ public class Magazine {
 	 *
 	 * @returns: boolean true when magazine is assumed to be empty.
 	 */
-	public boolean empty() {
-		return (state == States.EMPTY);
+	public boolean isEmpty() {
+		return state == States.EMPTY;
+	}
+
+	public boolean isReadyToIntake() {
+		return state == States.IDLE || state == States.EMPTY || state == States.LOAD_BALL;
+	}
+
+	public boolean breachingStates() {
+		return state == States.BEGIN_LOAD_BREACH || state == States.LOAD_BREACH || state == States.BREACH_LOADED;
 	}
 	
+	public boolean dumpingStates() {
+		return state == States.BEGIN_DUMP_BALLS || state == States.DUMP_BALLS;
+	}
 	/*
 	* Power the magazine motor.
 	* Positive values pull balls into the magazine. Negative values dump balls out.
@@ -281,15 +341,13 @@ public class Magazine {
 		} else if (power <= -MAX_POWER) {
 			power = -MAX_POWER;
 		}
-		magMot.set(-
-		power);
+		magMot.set(-power);
 	}
 
  	/**
 	 * Stop the magazine motor.
 	 */
 	public void stop() {
-		Common.debug("should be stopping");
 		power = 0;
 		setPower(power);
 	}
@@ -338,7 +396,7 @@ public class Magazine {
 	 * ??? Let's work on this later.
 	 */
 	public void dumpBalls() {
-
+			state = States.BEGIN_DUMP_BALLS;
 	}
 	
 	/**
@@ -371,5 +429,5 @@ public class Magazine {
 		if (state == States.BREACH_LOADED || state == States.BEGIN_LOAD_BREACH ) {
 			state = States.BEGIN_UNLOAD_BREACH;
 		}
-	}	
+	}
 } // End Magazine class
