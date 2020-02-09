@@ -11,7 +11,23 @@ import edu.wpi.first.networktables.*;
  */
 public class Limelight2 {
 
-    final private String TABLE = "limelight";
+    private String table;
+
+    /**
+     * A constructor that uses the default table "limelight"
+     */
+    public Limelight2() {
+        table = "limelight";
+    }
+
+    /**
+     * A constructor that uses a given table
+     * 
+     * @param table The table of the target limelight 
+     */
+    public Limelight2(String table) {
+        this.table = table;
+    }
 
     /**
      * A function to return data from limelight
@@ -31,7 +47,7 @@ public class Limelight2 {
      * camtran	Results of a 3D position solution, 6 numbers: Translation (x,y,z) Rotation(pitch,yaw,roll)
      */
     public double getDouble( String entry) {
-        return NetworkTableInstance.getDefault().getTable(TABLE).getEntry(entry).getDouble(0);
+        return NetworkTableInstance.getDefault().getTable(table).getEntry(entry).getDouble(0);
     }
 
     public Boolean hasTarget() {
@@ -129,7 +145,7 @@ public class Limelight2 {
     }
 
     private void setControl(String entry, double  value) {
-        NetworkTableInstance.getDefault().getTable(TABLE).getEntry(entry).setNumber(value);
+        NetworkTableInstance.getDefault().getTable(table).getEntry(entry).setNumber(value);
     }
 
     public void setLimelight(boolean On) {
