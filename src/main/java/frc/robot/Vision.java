@@ -25,6 +25,7 @@ public class Vision {
      * @return The result of a PID with the input of the horizoffset.
      */
     public double calcTurn() {
+        
         if (ll.hasTarget()) {
             return visionPID.calc(ll.getHorizOffset());
         }
