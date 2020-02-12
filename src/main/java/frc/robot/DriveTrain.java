@@ -31,6 +31,8 @@ public class DriveTrain extends DifferentialDrive {
 		TURN, //A turn to a degree
 		DRIVE_TO_WALL_DIST, // A faster drive to a distance then switches to the final drive.
 		DRIVE_TO_WALL_FINAL, //A drive designed to go slowly and end when it hits a wall.
+		FIND_TARGET,
+		TURN_TO_TARGET,
 		HOLD;
 	}
 	
@@ -65,9 +67,10 @@ public class DriveTrain extends DifferentialDrive {
 	//private double IPC_HIGH = 1, IPC_LOW = 1;
 	private PID drivePID;
 	public Heading heading;
+	public Vision vis;
 	//private Solenoid shifter;
 
-	private boolean driveComp = true;
+	private boolean driveComp = true, visExit = true;
 	private final double SLOW_VELOCITY = 500;
 	private double targetDistance = 0;
 	private final double DTW_SLOW_SPEED = 0.3, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 36; 
@@ -81,12 +84,12 @@ public class DriveTrain extends DifferentialDrive {
 		
 		initMotors();
 		heading = new Heading();
+		vis =  new Vision();
 		encoderL = new CANEncoder(frontL);
 		encoderR =  new CANEncoder(frontR);
 		encoderL.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
 		encoderR.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
 		Common.dashNum("conversion factor", encoderL.getPositionConversionFactor());
-		//heading = new Heading();
 		//shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.Sol_SHIFTER);
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
@@ -467,13 +470,23 @@ public class DriveTrain extends DifferentialDrive {
 	}
 
 	/**
+	 * Enters FIND_TARGET and starts finding the target.
+	 * 
+	 * @param exit whether or no the robot will exit into TELOP every cycle.
+	 */
+	public void visionTrack(boolean exit) {
+		driveComp = false;
+
+	}
+
+	/**
 	 * Sets the robot to hold state to hold it's position
 	 */
 	public void hold() {
 		resetEncoders();
 		heading.setHeadingHold(true);
 		DTState = DTStates.HOLD;
-		driveComp = false;
+		//driveComp = false; Maybe should be hear, doesn't seem like it.
 	}
 
 	/**
@@ -549,6 +562,14 @@ public class DriveTrain extends DifferentialDrive {
 				if (driveComp) {
 					DTState = DTStates.HOLD;
 				}
+				break;
+			case FIND_TARGET:
+				if (vis.ll.hasTarget()) {
+					//DTState
+				}
+				break;
+			case TURN_TO_TARGET:
+				
 				break;
 			case HOLD:
 				drive = driveAccelCurve(0);

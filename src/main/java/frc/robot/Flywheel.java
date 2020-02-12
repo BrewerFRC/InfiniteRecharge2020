@@ -33,8 +33,8 @@ public class Flywheel {
     }
 
     private States state = States.IDLE;
-    private final static double LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 500;
-    private final static double LONG_TOLERANCE = 20, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 10;
+    private final static double LONG_RPM = 5400, MEDIUM_RPM = 5000, SHORT_RPM = 2500;
+    private final static double LONG_TOLERANCE = 100, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 50;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     // SMARTMOTION VARIABLES - CAN THESE BE REMOVED?
     private double maxVel, minVel, maxAcc, allowedErr;
@@ -270,6 +270,7 @@ public class Flywheel {
      *  Display flywheel debug 
      */
 	public void debug(){
+        Common.dashBool("FW: at RPM", atRPM());
         Common.dashNum("FW: targetRPM", targetRPM);
         Common.dashNum("FW: encoder rpm", getRPM());
         Common.dashNum("FW: L Output", flywheelLeft.getAppliedOutput());
