@@ -476,7 +476,8 @@ public class DriveTrain extends DifferentialDrive {
 	 */
 	public void visionTrack(boolean exit) {
 		driveComp = false;
-
+		visExit = exit;
+		DTState = DTStates.FIND_TARGET;
 	}
 
 	/**
@@ -565,11 +566,25 @@ public class DriveTrain extends DifferentialDrive {
 				break;
 			case FIND_TARGET:
 				if (vis.ll.hasTarget()) {
-					//DTState
+					DTState = DTStates.TURN_TO_TARGET;
+				} else {
+					drive = 0; 
+					turn = -0.3; //Should be left
+					if (visExit) {
+						DTState = DTStates.TELEOP;
+					}
 				}
 				break;
 			case TURN_TO_TARGET:
-				
+				if (!vis.getAtTarget()) {
+					drive =  vis.calcDrive();
+					turn = vis.calcTurn();
+					if (!vis.ll.hasTarget()) {
+						DTState = DTStates.FIND_TARGET;
+					}
+				} else {
+					hold();
+				}
 				break;
 			case HOLD:
 				drive = driveAccelCurve(0);
