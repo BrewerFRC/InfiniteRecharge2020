@@ -568,8 +568,8 @@ public class DriveTrain extends DifferentialDrive {
 				if (vis.ll.hasTarget()) {
 					DTState = DTStates.TURN_TO_TARGET;
 				} else {
-					drive = 0; 
-					turn = -0.3; //Should be left
+					drive = driveAccelCurve(0); 
+					turn = turnAccelCurve(-0.3); //Should be left
 					if (visExit) {
 						DTState = DTStates.TELEOP;
 					}
