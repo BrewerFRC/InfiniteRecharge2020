@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -17,7 +18,8 @@ import edu.wpi.first.wpilibj.Timer;
 class Robot extends TimedRobot {
   //public DriveTrain dt = new DriveTrain();
   Xbox driver = new Xbox(0);
-  //Xbox operator =  new Xbox(1);
+  Xbox operator =  new Xbox(1);
+  Climber climber = new Climber();
   Timer timer = new Timer();
   Shooter shooter = new Shooter();
 
@@ -90,8 +92,12 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-    /*if (operator.when(Xbox.buttons.a)) {
+
+    if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
+    }
+    if (operator.getPressed(Xbox.buttons.b)) {
+      climber.setRatchet(true);
     }
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
@@ -104,8 +110,9 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }*/
-    
+    }
+    //climber.setLeftPower(operator.deadzone(driver.getY(GenericHID.Hand.kLeft)));
+    //climber.setRightPower(operator.deadzone(driver.getY(GenericHID.Hand.kRight)));
 
     //OLD TELEOP CODE FOLLOWS
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
