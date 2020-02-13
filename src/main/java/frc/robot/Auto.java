@@ -48,15 +48,15 @@ public class Auto {
     }
 
     public final static double OFF_LINE_DIST = 0, //Distance to drive back before shooting
-    WALL_DIST = 0, //Distance to wall from starting point
-    SPIN_UP_DIST = 0, //Distance to spin up from wall
-    T_SHOOT_DIST = 0, //Distance to move forward to shoot for trench
-    TRENCH_RUN_DIST = 0, //Length to run into trench
-    GP_DRIVE_DIST = 120; //Length to move to trench in inches 
+    WALL_DIST = -120, //Distance to wall from starting point
+    SPIN_UP_DIST = -36, //Distance to spin up from wall
+    T_SHOOT_DIST = 24, //Distance to move forward to shoot for trench
+    TRENCH_RUN_DIST = 195-24, //Length to run into trench
+    GP_DRIVE_DIST = 120; //Length to move to generator in inches Sam wrote this and I am unsure about it -Brent
 
     public final static double T_FIRST_SHOOT_ANGLE = 0, //Angle of first trench shoot
-    T_TRENCH_ANGLE = 0, //Angle to run down the trench, probably zero might want to set it based on start?
-    T_FINAL_SHOOT_ANGLE = 0, //Final shoot angle of trench
+    T_TRENCH_ANGLE = 360-25, //Angle to run down the trench, probably zero might want to set it based on start?
+    T_FINAL_SHOOT_ANGLE = 360-12, //Final shoot angle of trench
     GP_TURN = 18.8; //turn angle to shoot
 
 
