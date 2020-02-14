@@ -12,7 +12,7 @@ public class Constants {
     static final int PWM_INTAKE_MOTOR = 0, PWM_COLORWHEEL_MOTOR = 1, PWM_MAGAZINE_MOTOR = 2, PWM_LEFT_CLIMBER = 3, PWM_RIGHT_CLIMBER = 4;
 
     //DIO
-    public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1;
+    public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1, DIO_LEFT_CLIMBER = 2, DIO_RIGHT_CLIMBER = 3;
 
 
     //ANA

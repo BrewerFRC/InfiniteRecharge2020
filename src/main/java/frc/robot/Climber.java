@@ -20,6 +20,7 @@ public class Climber{
     public Climber() {
         leftClimb = new Spark(Constants.PWM_LEFT_CLIMBER);
         rightClimb = new Spark(Constants.PWM_RIGHT_CLIMBER);
+        rightClimb.setInverted(true);
 
         leftRatchet = new Solenoid(Constants.SOL_LEFT_RACHET);
         rightRatchet = new Solenoid(Constants.SOL_RIGHT_RACHET);
@@ -57,8 +58,8 @@ public class Climber{
      * @param power The power from -1.0 to 1.0 to be set.
      */
     public void setLeftPower(double power) {
-        if (ratchetEngaged && power > 0 ) {
-            leftClimb.set(power * RATCHET_POWER);
+        if (ratchetEngaged && power > RATCHET_POWER ) {
+            leftClimb.set(RATCHET_POWER);
         } else {
             leftClimb.set(power);
         }
@@ -71,8 +72,8 @@ public class Climber{
      * @param power The power from -1.0 to 1.0 to be set.
      */
     public void setRightPower(double power) {
-        if (ratchetEngaged && power > 0 ) {
-            rightClimb.set(power * RATCHET_POWER);
+        if (ratchetEngaged && power > RATCHET_POWER ) {
+            rightClimb.set(RATCHET_POWER);
         } else {
             rightClimb.set(power);
         }
