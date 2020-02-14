@@ -133,6 +133,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * Shifts the drivetrain gearbox to high gear.
 	 */
 	public void shiftHigh() {
+		Common.debug("Shifting high");
 		shifter.set(false);
 	}
 	
@@ -140,6 +141,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * Shifts the drivetrain gearbox to low gear.
 	 */
 	public void shiftLow() {
+		Common.debug("Shifting low");
 		shifter.set(true);
 	}
 	
@@ -149,6 +151,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return - is low
 	 */
 	public boolean isShiftedLow() {
+		
 		return shifter.get();
 	}
 	

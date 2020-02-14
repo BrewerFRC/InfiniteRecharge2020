@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Compressor;
 
 class Robot extends TimedRobot {
-  //public DriveTrain dt = new DriveTrain();
+  private DriveTrain dt = new DriveTrain();
   private Xbox driver = new Xbox(0);
   private Xbox operator =  new Xbox(1);
   private Climber climber = new Climber();
@@ -64,8 +64,9 @@ class Robot extends TimedRobot {
     
 
     //SAMS CODE FOR CONTROL SCHEME
-    //double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
-    //double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    dt.teleopDrive(drive, turn);
 
     //DRIVER
     if (driver.when(Xbox.buttons.a)) {
@@ -83,11 +84,11 @@ class Robot extends TimedRobot {
     if (driver.getPressed(Xbox.buttons.rightTrigger)) {
       shooter.fireBall();
     }
-    if (driver.getPressed(Xbox.buttons.leftBumper))  {
-      //dt.shiftDown();
+    if (driver.when(Xbox.buttons.leftBumper))  {
+      dt.shiftLow();
     }
-    if (driver.getPressed(Xbox.buttons.rightBumper))  {
-      //dt.shiftUp();
+    else if (driver.when(Xbox.buttons.rightBumper))  {
+      dt.shiftHigh();
     }
     //driver.deadzone(driver.getX(GenericHID.Hand.kLeft), driver.deadzone(driver.getY(Hand.kRight)));
     if (driver.getPressed(Xbox.buttons.start)) {
@@ -102,7 +103,7 @@ class Robot extends TimedRobot {
     if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
     }
-    if (operator.getPressed(Xbox.buttons.b)) {
+    /*if (operator.getPressed(Xbox.buttons.b)) {
       climber.setRatchet(true);
     }
     if (operator.getPressed(Xbox.buttons.x)) {
@@ -123,8 +124,7 @@ class Robot extends TimedRobot {
     climber.setLeftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
     climber.setRightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
-    //OLD TELEOP CODE FOLLOWS
-    //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+   
     
     
     
@@ -135,7 +135,7 @@ class Robot extends TimedRobot {
     
    // debug();
 
-    //dt.update();
+    dt.update();
     colorWheel.update();
     shooter.update();
     shooter.debug();

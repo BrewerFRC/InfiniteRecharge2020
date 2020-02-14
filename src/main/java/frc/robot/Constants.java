@@ -26,7 +26,7 @@ public class Constants {
     FLYWHEEL_LEFT_CAN_ID = 16, FLYWHEEL_RIGHT_CAN_ID = 17;
 
     //Devices
-    public static final int PCM_CAN_ID = 2;
+    public static final int PCM_CAN_ID = 1;
     
     //Pneumatics - Solenoids
     public static final int SOL_SHIFTER = 0, SOL_INTAKE_OUT_ARM = 1, SOL_INTAKE_IN_ARM = 2, SOL_FLAPPER = 3, SOL_LEFT_RACHET= 4, SOL_RIGHT_RACHET = 5; 
