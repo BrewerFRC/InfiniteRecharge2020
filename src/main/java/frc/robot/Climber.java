@@ -14,7 +14,7 @@ public class Climber{
     private Solenoid leftRatchet, rightRatchet;
     private boolean ratchetEngaged = false;
     
-    private final double RATCHET_POWER = 0.3;
+    private final double RATCHET_POWER = 0.3, RATCHET_AMPS = 100;
 
 
     public Climber() {
@@ -35,6 +35,12 @@ public class Climber{
         leftRatchet.set(engaged);
         rightRatchet.set(engaged);
         ratchetEngaged = engaged;
+    }
+
+    public void update() {
+        /*if (Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) >= RATCHET_AMPS || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) >= RATCHET_AMPS) {
+            setRatchet(true);
+        }*/
     }
     /**
      * Gets if the the ratchet is engaged.

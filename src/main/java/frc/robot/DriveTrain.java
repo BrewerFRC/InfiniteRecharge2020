@@ -38,7 +38,7 @@ public class DriveTrain extends DifferentialDrive {
 	
 	private DTStates DTState = DTStates.TELEOP;
 
-	public static double DRIVEACCEL = 0.05;
+	public static double HIGH_DRIVE_ACCEL = 0.05, LOW_DRIVE_ACCEL = 0.05;
 
 	public static final double TURNACCEL = .06;
 
@@ -68,7 +68,7 @@ public class DriveTrain extends DifferentialDrive {
 	private PID drivePID;
 	public Heading heading;
 	public Vision vis;
-	//private Solenoid shifter;
+	private Solenoid shifter;
 
 	private boolean driveComp = true, visExit = true;
 	private final double SLOW_VELOCITY = 500;
@@ -90,7 +90,7 @@ public class DriveTrain extends DifferentialDrive {
 		encoderL.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
 		encoderR.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
 		Common.dashNum("conversion factor", encoderL.getPositionConversionFactor());
-		//shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.Sol_SHIFTER);
+		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_SHIFTER);
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
@@ -132,14 +132,14 @@ public class DriveTrain extends DifferentialDrive {
 	/**
 	 * Shifts the drivetrain gearbox to high gear.
 	 */
-	/*public void shiftHigh() {
+	public void shiftHigh() {
 		shifter.set(false);
 	}
 	
 	/**
 	 * Shifts the drivetrain gearbox to low gear.
 	 */
-	/*public void shiftLow() {
+	public void shiftLow() {
 		shifter.set(true);
 	}
 	
@@ -148,7 +148,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return - is low
 	 */
-	/*public boolean isShiftedLow() {
+	public boolean isShiftedLow() {
 		return shifter.get();
 	}
 	
@@ -265,25 +265,21 @@ public class DriveTrain extends DifferentialDrive {
 	}*/
 	
 	/**
-	 * Gets the drive acceleration value based on the elevator height and gear.
+	 * Gets the drive acceleration value based on gear.
 	 * 
 	 * @return - the drive acceleration value
 	 */
-	/*public double getDriveAccel() {
-		Elevator e = Robot.getElevator();
-		double percentHeight = e.getInches() / e.ELEVATOR_HEIGHT;
+	public double getDriveAccel() {
 		
 		if (isShiftedLow()) {
 			Common.dashStr("Gear", "Low");
-			Common.dashNum("Calculated Acceleration", (1.0 - percentHeight) * (ACCEL_LG_LE - ACCEL_LG_HE) + ACCEL_LG_HE);
-			return (1.0 - percentHeight) * (ACCEL_LG_LE - ACCEL_LG_HE) + ACCEL_LG_HE;
+			return LOW_DRIVE_ACCEL;
 		}
 		else {
 			Common.dashStr("Gear", "High");
-			Common.dashNum("Calculated Acceleration", (1.0 - percentHeight) * (ACCEL_HG_LE - ACCEL_HG_HE) + ACCEL_HG_HE);
-			return (1.0 - percentHeight) * (ACCEL_HG_LE - ACCEL_HG_HE) + ACCEL_HG_HE;
+			return  HIGH_DRIVE_ACCEL;
 		}
-	}*/
+	}
 	
 	/**
 	 * Gradually accelerate to a specified drive value.
@@ -293,6 +289,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the allowed drive value for this cycle.
 	 */
 	public double driveAccelCurve(double target) {
+		double driveAccel = getDriveAccel();
 
 		if (Math.abs(target) > DRIVE_MAX) {
 			if (target > 0 ) {
@@ -304,12 +301,12 @@ public class DriveTrain extends DifferentialDrive {
 
 		//If the magnitude of current is greater than the minimum
 		//If the difference is greater than the allowed acceleration
-		if (Math.abs(driveSpeed - target) > DRIVEACCEL) {
+		if (Math.abs(driveSpeed - target) > driveAccel) {
 			//Accelerate in the correct direction
             if (driveSpeed > target) {
-                driveSpeed = driveSpeed - DRIVEACCEL;
+                driveSpeed = driveSpeed - driveAccel;
             } else {
-                driveSpeed = driveSpeed + DRIVEACCEL;
+                driveSpeed = driveSpeed + driveAccel;
             }
 		}
 		

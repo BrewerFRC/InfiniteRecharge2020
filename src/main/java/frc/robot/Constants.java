@@ -29,10 +29,10 @@ public class Constants {
     public static final int PCM_CAN_ID = 2;
     
     //Pneumatics - Solenoids
-    public static final int SOL_SHIFTER = 0, SOL_INTAKE_ARM = 1, SOL_FLAPPER = 2, SOL_LEFT_RACHET= 3, SOL_RIGHT_RACHET = 4; 
+    public static final int SOL_SHIFTER = 0, SOL_INTAKE_OUT_ARM = 1, SOL_INTAKE_IN_ARM = 2, SOL_FLAPPER = 3, SOL_LEFT_RACHET= 4, SOL_RIGHT_RACHET = 5; 
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
-    public static final int MAGAZINE_PDP_PORT = 8;
+    public static final int MAGAZINE_PDP_PORT = 8, LEFT_CLIMBER_PDP = 4, RIGHT_CLIMBER_PDP = 5;
 
 }

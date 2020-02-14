@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Flywheel {
     private final static CANSparkMax flywheelLeft = new CANSparkMax(Constants.FLYWHEEL_LEFT_CAN_ID, MotorType.kBrushless);
     private final static CANSparkMax flywheelRight = new CANSparkMax(Constants.FLYWHEEL_RIGHT_CAN_ID, MotorType.kBrushless);
-    //private final static Solenoid hood = new Solenoid(Constants.SOL_FLAPPER);
+    private final static Solenoid hood = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_FLAPPER);
     private double targetPower, targetRPM, toleranceRPM, setPoint = 0, processVariable;
 
     
@@ -167,14 +167,14 @@ public class Flywheel {
      * Put the hood up for short shots
      */
 	private void hoodUp(){
-        //hood.set(true);
+        hood.set(true);
     }
 
     /**
      * Put the hood down for long and medium shots
      */
 	private void hoodDown(){
-        //hood.set(false);
+        hood.set(false);
     }
 
     /**
