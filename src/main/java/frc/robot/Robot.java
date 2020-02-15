@@ -7,20 +7,24 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Compressor;
 
 class Robot extends TimedRobot {
-  public DriveTrain dt = new DriveTrain();
-  Xbox driver = new Xbox(0);
-  //box operator =  new Xbox(1);
-  //Intake intake = new Intake();
-  Timer timer = new Timer();
-  Shooter shooter = new Shooter();
+  private DriveTrain dt = new DriveTrain();
+  private Xbox driver = new Xbox(0);
+  private Xbox operator =  new Xbox(1);
+  private Climber climber = new Climber();
+  private Shooter shooter = new Shooter();
+  private Compressor compressor = new Compressor(Constants.PCM_CAN_ID);
+	private static PowerDistributionPanel pdp = new PowerDistributionPanel();
 
   
   // class - name - = - new class
@@ -49,6 +53,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    compressor.setClosedLoopControl(true);
     //dt.teleopDrive(0, 0);
   }
 
@@ -69,11 +74,12 @@ class Robot extends TimedRobot {
       dt.heading.setAngle(10);
     }
 
-    dt.update();
+    
     /*
     //SAMS CODE FOR CONTROL SCHEME
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    dt.teleopDrive(drive, turn);
 
     //DRIVER
     if (driver.when(Xbox.buttons.a)) {
@@ -91,11 +97,11 @@ class Robot extends TimedRobot {
     if (driver.getPressed(Xbox.buttons.rightTrigger)) {
       shooter.fireBall();
     }
-    if (driver.getPressed(Xbox.buttons.leftBumper))  {
-      //dt.shiftDown();
+    if (driver.when(Xbox.buttons.leftBumper))  {
+      dt.shiftLow();
     }
-    if (driver.getPressed(Xbox.buttons.rightBumper))  {
-      //dt.shiftUp();
+    else if (driver.when(Xbox.buttons.rightBumper))  {
+      dt.shiftHigh();
     }
     //driver.deadzone(driver.getX(GenericHID.Hand.kLeft), driver.deadzone(driver.getY(Hand.kRight)));
     if (driver.getPressed(Xbox.buttons.start)) {
@@ -109,22 +115,28 @@ class Robot extends TimedRobot {
     if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
     }
+    /*if (operator.getPressed(Xbox.buttons.b)) {
+      climber.setRatchet(true);
+    }
+    if (operator.getPressed(Xbox.buttons.x)) {
+      climber.setRatchet(false);
+    }/*
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
     }
     if (operator.getPressed(Xbox.buttons.dPadDown)) {
       colorWheel.startFinding();
-    }
+    }*/
     if (operator.getPressed(Xbox.buttons.start)) {
       shooter.eject();
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
     }
-    */
+    //climber.setLeftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
+    //climber.setRightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
-    //OLD TELEOP CODE FOLLOWS
-    //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
+   
     
     
     
@@ -135,18 +147,23 @@ class Robot extends TimedRobot {
     
    // debug();
 
-    //dt.update();
+    dt.update();
     colorWheel.update();
     shooter.update();
     shooter.debug();
     colorWheel.debug();
   }
 
+  
+
+  @Override
+  public void testInit() {
+    compressor.setClosedLoopControl(true);
+  }
 
   @Override
   public void testPeriodic() {
-  
-    //debug();
+    
   }
   
 /***
@@ -154,4 +171,7 @@ class Robot extends TimedRobot {
     colorWheel.debug();
   }
   */
+  public static PowerDistributionPanel getPDP() {
+    return pdp;
+  }
 } 

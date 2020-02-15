@@ -12,7 +12,7 @@ public class Constants {
     static final int PWM_INTAKE_MOTOR = 0, PWM_COLORWHEEL_MOTOR = 1, PWM_MAGAZINE_MOTOR = 2, PWM_LEFT_CLIMBER = 3, PWM_RIGHT_CLIMBER = 4;
 
     //DIO
-    public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1;
+    public static final int DIO_TOP_BEAMBREAK = 0, DIO_BOTTOM_BEAMBREAK = 1, DIO_LEFT_CLIMBER = 2, DIO_RIGHT_CLIMBER = 3;
 
 
     //ANA
@@ -26,13 +26,13 @@ public class Constants {
     FLYWHEEL_LEFT_CAN_ID = 16, FLYWHEEL_RIGHT_CAN_ID = 17;
 
     //Devices
-    public static final int PCM_CAN_ID = 2;
+    public static final int PCM_CAN_ID = 1;
     
     //Pneumatics - Solenoids
-    public static final int SOL_SHIFTER = 0, SOL_INTAKE_ARM = 1, SOL_FLAPPER = 2, SOL_LEFT_RACHET= 3, SOL_RIGHT_RACHET = 4; 
+    public static final int SOL_SHIFTER = 0, SOL_INTAKE_OUT_ARM = 1, SOL_INTAKE_IN_ARM = 2, SOL_FLAPPER = 3, SOL_LEFT_RACHET= 4, SOL_RIGHT_RACHET = 5; 
     
     //Miscellaneous
     public static double REFRESH_RATE = 20;
-    public static final int MAGAZINE_PDP_PORT = 8;
+    public static final int MAGAZINE_PDP_PORT = 8, LEFT_CLIMBER_PDP = 4, RIGHT_CLIMBER_PDP = 5;
 
 }

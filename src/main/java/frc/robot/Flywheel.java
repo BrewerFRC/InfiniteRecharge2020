@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Flywheel {
     private final static CANSparkMax flywheelLeft = new CANSparkMax(Constants.FLYWHEEL_LEFT_CAN_ID, MotorType.kBrushless);
     private final static CANSparkMax flywheelRight = new CANSparkMax(Constants.FLYWHEEL_RIGHT_CAN_ID, MotorType.kBrushless);
-    //private final static Solenoid hood = new Solenoid(Constants.SOL_FLAPPER);
+    private final static Solenoid hood = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_FLAPPER);
     private double targetPower, targetRPM, toleranceRPM, setPoint = 0, processVariable;
 
     
@@ -33,8 +33,8 @@ public class Flywheel {
     }
 
     private States state = States.IDLE;
-    private final static double LONG_RPM = 5000, MEDIUM_RPM = 4000, SHORT_RPM = 500;
-    private final static double LONG_TOLERANCE = 20, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 10;
+    private final static double LONG_RPM = 5100, MEDIUM_RPM = 4800, SHORT_RPM = 1969;
+    private final static double LONG_TOLERANCE = 75, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 50;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     // SMARTMOTION VARIABLES - CAN THESE BE REMOVED?
     private double maxVel, minVel, maxAcc, allowedErr;
@@ -166,14 +166,14 @@ public class Flywheel {
      * Put the hood up for short shots
      */
 	private void hoodUp(){
-        //hood.set(true);
+        hood.set(true);
     }
 
     /**
      * Put the hood down for long and medium shots
      */
 	private void hoodDown(){
-        //hood.set(false);
+        hood.set(false);
     }
 
     /**
@@ -270,6 +270,7 @@ public class Flywheel {
      *  Display flywheel debug 
      */
 	public void debug(){
+        Common.dashBool("FW: at RPM", atRPM());
         Common.dashNum("FW: targetRPM", targetRPM);
         Common.dashNum("FW: encoder rpm", getRPM());
         Common.dashNum("FW: L Output", flywheelLeft.getAppliedOutput());

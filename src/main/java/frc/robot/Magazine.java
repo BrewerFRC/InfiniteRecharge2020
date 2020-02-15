@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
@@ -34,12 +33,11 @@ public class Magazine {
 	private static final Talon magMot = new Talon(Constants.PWM_MAGAZINE_MOTOR);
 	private DigitalInput topBeamBreak = new DigitalInput(Constants.DIO_TOP_BEAMBREAK);
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
-	private PowerDistributionPanel pdp = new PowerDistributionPanel();
 	private Timer timer = new Timer();
 	private Timer jamTimer =  new Timer();
 
 	
-	private final double MAX_POWER = .6;  //Max power to run magazines polycord
+	private final double MAX_POWER = 0.8;  //Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
 	private double power = 0;
 	private final double JAM_TIME = 1, JAM_AMP = 15; 
@@ -73,7 +71,7 @@ public class Magazine {
 	 *	Move balls to Top sensor
 	 */
 	public void update() {
-		if (pdp.getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+		if (Robot.getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
 			if (jamTimer.get() > 0) {
 				if (jamTimer.get() >= JAM_TIME) {
 					stop();
@@ -244,7 +242,7 @@ public class Magazine {
 		Common.dashNum("time elapsed", timer.get());
 		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
 		Common.dashStr("Mag: State", state.name());
-		Common.dashNum("Mag: amps", pdp.getCurrent(8));
+		Common.dashNum("Mag: amps", Robot.getPDP().getCurrent(8));
 	}
 
 	public boolean bottomSensorTriggered(){
@@ -341,7 +339,7 @@ public class Magazine {
 		} else if (power <= -MAX_POWER) {
 			power = -MAX_POWER;
 		}
-		magMot.set(-power);
+		magMot.set(power);
 	}
 
  	/**
