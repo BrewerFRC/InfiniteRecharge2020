@@ -22,8 +22,8 @@ public class Climber{
         rightClimb = new Spark(Constants.PWM_RIGHT_CLIMBER);
         rightClimb.setInverted(true);
 
-        leftRatchet = new Solenoid(Constants.SOL_LEFT_RACHET);
-        rightRatchet = new Solenoid(Constants.SOL_RIGHT_RACHET);
+        //leftRatchet = new Solenoid(Constants.SOL_LEFT_RACHET);
+        //rightRatchet = new Solenoid(Constants.SOL_RIGHT_RACHET);
     }
 
     /**
