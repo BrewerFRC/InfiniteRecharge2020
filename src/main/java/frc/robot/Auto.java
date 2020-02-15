@@ -47,17 +47,17 @@ public class Auto {
         GP_COMPLETE;
     }
 
-    public final static double OFF_LINE_DIST = 0, //Distance to drive back before shooting
+    public final static double OFF_LINE_DIST = 84, //Distance to drive FORWARD before shooting
     WALL_DIST = -120, //Distance to wall from starting point
-    SPIN_UP_DIST = -36, //Distance to spin up from wall
+    SPIN_UP_DIST = -24, //Distance to spin up from wall
     T_SHOOT_DIST = 24, //Distance to move forward to shoot for trench
     TRENCH_RUN_DIST = 195-24, //Length to run into trench
-    GP_DRIVE_DIST = 120; //Length to move to generator in inches Sam wrote this and I am unsure about it -Brent
+    GP_DRIVE_DIST = 84; //Length to move to generator in inches
 
     public final static double T_FIRST_SHOOT_ANGLE = 0, //Angle of first trench shoot
     T_TRENCH_ANGLE = 360-25, //Angle to run down the trench, probably zero might want to set it based on start?
     T_FINAL_SHOOT_ANGLE = 360-12, //Final shoot angle of trench
-    GP_TURN = 18.8; //turn angle to shoot
+    GP_TURN = 19; //turn angle to shoot was 20
 
 
     private autoStates autoState;
@@ -65,11 +65,16 @@ public class Auto {
     public Auto(DriveTrain dt, Shooter shooter) {
         this.dt = dt;
         this.shooter = shooter;
+        autoState = autoStates.GP_INIT;
     }
 
 
     public void update() {
+        generatorPickup();
+    }
 
+    public autoStates getState() {
+        return autoState;
     }
 
     /**
@@ -83,7 +88,7 @@ public class Auto {
                 break;
             case SFA_BACK_UP:
                 if (dt.driveComplete()) {
-                    //shooter.prepFire("medium");
+                    shooter.prepFire(Distance.MEDIUM);
                     autoState = autoStates.SFA_READY_FIRE;
                 }
                 break;
@@ -204,14 +209,14 @@ public class Auto {
         switch (autoState) {
             case GP_INIT:
                 shooter.toggleIntake();
-                dt.driveDistance(GP_DRIVE_DIST);
+                dt.driveToWall(this.GP_DRIVE_DIST);
                 autoState = autoState.GP_DRIVE;
                 break;
             case GP_DRIVE:
                 if (dt.driveComplete()) {
                     dt.turn(GP_TURN);
-                    shooter.prepFire(Distance.LONG);
-                    shooter.toggleIntake();
+                    shooter.prepFire(Distance.MEDIUM);
+                    //shooter.toggleIntake();
                     autoState = autoState.GP_ALIGN;
                 }
                 break;

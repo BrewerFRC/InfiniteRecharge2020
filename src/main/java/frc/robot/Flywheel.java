@@ -33,7 +33,7 @@ public class Flywheel {
     }
 
     private States state = States.IDLE;
-    private final static double LONG_RPM = 5100, MEDIUM_RPM = 4800, SHORT_RPM = 1969;
+    private final static double LONG_RPM = 4800, MEDIUM_RPM = 4600, SHORT_RPM = 1969;
     private final static double LONG_TOLERANCE = 75, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 50;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     // SMARTMOTION VARIABLES - CAN THESE BE REMOVED?

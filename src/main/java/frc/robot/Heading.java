@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  * @author Brent Roberts
  */
 public class Heading {
-	private static final double P = 0.08, I = 0, D = 12; //D might not be accurate
-	private static final double MAX_OUTPUT = .4, MIN_OUTPUT = 0;// MIN was .13
+	private static final double P = 0.05, I = 0, D = 20; //D might not be accurate
+	private static final double MAX_OUTPUT = .75, MIN_OUTPUT = 0;// MIN was .13
 	
 	private ADXRS450_Gyro gyro;
 	//PID takes cumulative angles

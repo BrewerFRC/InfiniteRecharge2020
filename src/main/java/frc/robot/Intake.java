@@ -54,7 +54,7 @@ public class Intake {
 	 * Display Intake-specific debug data to Smartdashboard and/or console.
 	 */
 	public void debug(){
-
+		Common.dashStr("Intake State", state.toString());
 	}
 
 	public boolean isIdle() {

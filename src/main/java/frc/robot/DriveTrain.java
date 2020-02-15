@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 
@@ -33,6 +34,7 @@ public class DriveTrain extends DifferentialDrive {
 		DRIVE_TO_WALL_FINAL, //A drive designed to go slowly and end when it hits a wall.
 		FIND_TARGET,
 		TURN_TO_TARGET,
+		SLOW_DRIVE,
 		HOLD;
 	}
 	
@@ -42,7 +44,7 @@ public class DriveTrain extends DifferentialDrive {
 
 	public static final double TURNACCEL = .06;
 
-	public static final double TURNMAX = 0.5, DRIVE_MAX = 1.0;
+	public static final double TURNMAX = 0.75, DRIVE_MAX = 1.0;
 	
 	private static final double HIGH_DISTANCE_CONVERSION_FACTOR = 2.02; /* was 222/106.180550*/// low appears to be 37.452019/(12*Math.PI);	
 	/*
@@ -58,8 +60,8 @@ public class DriveTrain extends DifferentialDrive {
 	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, middleL, backL);
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, middleR, backR); 
 	
-	private double P = 0.009, I = 0, D = 0;
-	private final double MAX_OUTPUT = 0.4, MIN_OUTPUT = 0.13;
+	private double P = 0.01, I = 0, D = 0; // P was .009
+	private final double MAX_OUTPUT = 0.8, MIN_OUTPUT = 0.3;
 
 	private double driveSpeed = 0, turnSpeed = 0, targetDrive = 0, targetTurn = 0;
 	
@@ -71,9 +73,9 @@ public class DriveTrain extends DifferentialDrive {
 	private Solenoid shifter;
 
 	private boolean driveComp = true, visExit = true;
-	private final double SLOW_VELOCITY = 500;
+	private final double SLOW_VELOCITY = 200;
 	private double targetDistance = 0;
-	private final double DTW_SLOW_SPEED = 0.3, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 36; 
+	private final double DTW_SLOW_SPEED = 0.2, DTW_FAST_SPEED = 0.5, FINAL_DRIVE_DIST = 18; 
 	
 	/**
 	 * Creates an instance of DriveTrain.
@@ -127,6 +129,13 @@ public class DriveTrain extends DifferentialDrive {
 		middleR.setSmartCurrentLimit(40);
 		backL.setSmartCurrentLimit(40);
 		backR.setSmartCurrentLimit(40);
+
+		frontL.setIdleMode(IdleMode.kBrake);
+		frontR.setIdleMode(IdleMode.kBrake);
+		middleL.setIdleMode(IdleMode.kCoast);
+		middleR.setIdleMode(IdleMode.kCoast);
+		backL.setIdleMode(IdleMode.kCoast);
+		backR.setIdleMode(IdleMode.kCoast);
 	}
 	
 	/**
@@ -491,6 +500,20 @@ public class DriveTrain extends DifferentialDrive {
 	}
 
 	/**
+	 * Sets the dt to a slow drie state that moves the robt ata slow constant speed to to reach a target.
+	 * 
+	 * @param dist The target distance in inches to drive.
+	 */
+	public void slowDrive(double dist) {
+		resetEncoders();
+		heading.setHeadingHold(true);
+		driveComp = false;
+		Common.debug("Target distance: "+targetDistance);
+		targetDistance = dist;
+		DTState = DTStates.SLOW_DRIVE;
+	}
+
+	/**
 	 * Returns if the current drive is complete.
 	 * 
 	 * @return true if the current drive is complete.
@@ -506,17 +529,16 @@ public class DriveTrain extends DifferentialDrive {
 		double drive = 0, turn = 0; 
 		switch(DTState) {
 			case TELEOP:
-				drive = driveAccelCurve(targetDrive);
-				turn = -turnAccelCurve(targetTurn);
+				drive = targetDrive;
+				turn = -targetTurn;
 				break;
 			case DIST_DRIVE:
 				//set high gear
-				driveComp = Math.abs(getAverageDist() - drivePID.getTarget()) <= 2.0;
+				driveComp = Math.abs(getAverageDist() - drivePID.getTarget()) <= 2.0;//Should be 2
 				if (!driveComp) {
 					drive = drivePID.calc(getAverageDist());
 					turn = heading.turnRate();//turn rate was negative
-    				Common.dashNum("drivePIDOUT", drive);
-					Common.dashNum("TurnPIDOUT ", turn);					
+					//Common.dashNum("TurnPIDOUT ", turn);					
 				} else {
 					hold();
 				}
@@ -525,39 +547,38 @@ public class DriveTrain extends DifferentialDrive {
 				//set high gear
 				if (Math.abs(getAverageDist() - targetDistance) > FINAL_DRIVE_DIST) {
 					if (targetDistance > 0) {
-						drive = driveAccelCurve(DTW_FAST_SPEED);
+						drive = DTW_FAST_SPEED;
 					} else {
-						drive = driveAccelCurve(-DTW_FAST_SPEED);
+						drive = -DTW_FAST_SPEED;
 					}
 					turn = heading.turnRate();
 					
 				} else {
 					Common.debug("Completing DRIVE_TO_WALL_DIST: "+getAverageDist());
 					if (targetDistance > 0) {
-						drive = driveAccelCurve(DTW_SLOW_SPEED);
+						drive = DTW_SLOW_SPEED;
 					} else {
-						drive = driveAccelCurve(-DTW_SLOW_SPEED);
+						drive = -DTW_SLOW_SPEED;
 					}
 					turn = heading.turnRate();
 					DTState = DTStates.DRIVE_TO_WALL_FINAL;
 				}
 				break;
 			case DRIVE_TO_WALL_FINAL:
-				driveComp = getAverageVelocity() <= SLOW_VELOCITY;
+				driveComp = (Math.abs(getAverageVelocity()) <= SLOW_VELOCITY || Math.abs(getAverageDist() - targetDistance) <= 2.0);
 				if (!driveComp) {
 					if (targetDistance > 0) {
-						drive = driveAccelCurve(DTW_SLOW_SPEED);
+						drive = DTW_SLOW_SPEED;
 					} else {
-						drive = driveAccelCurve(-DTW_SLOW_SPEED);
+						drive = -DTW_SLOW_SPEED;
 					}
 					turn = heading.turnRate();
 				} else {
 					hold();
 				}
-
 				break;
 			case TURN:
-				driveComp = Math.abs(heading.getAngle() - heading.getTargetAngle()) <= 1.0; //accuracy was chosen randomly
+				driveComp = Math.abs(heading.getAngle() - heading.getTargetAngle()) <= 5.0; //was 1
 				drive = 0;
 				turn = heading.turnRate();
 				if (driveComp) {
@@ -568,8 +589,8 @@ public class DriveTrain extends DifferentialDrive {
 				if (vis.ll.hasTarget()) {
 					DTState = DTStates.TURN_TO_TARGET;
 				} else {
-					drive = driveAccelCurve(0); 
-					turn = turnAccelCurve(-0.3); //Should be left
+					drive = 0; 
+					turn = -0.3; //Should be left
 					if (visExit) {
 						DTState = DTStates.TELEOP;
 					}
@@ -587,19 +608,21 @@ public class DriveTrain extends DifferentialDrive {
 				}
 				break;
 			case HOLD:
-				drive = driveAccelCurve(0);
+				drive = 0;
 				turn = heading.turnRate();
 				break;
 		}
 		Common.dashNum("Heading PID output", heading.turnRate());
 		Common.dashNum("Angle", heading.getAngle());
+		Common.dashNum("Heading", heading.getHeading());
 		Common.dashNum("Drive output", drive);
 		Common.dashNum("Turn output", turn);
-		Common.dashNum("Average Distance", this.getAverageDist());
-		Common.dashNum("Average velocity", getAverageVelocity());
+		Common.dashNum("DT: Average Distance", this.getAverageDist());
+		Common.dashNum("DT: Average velocity", getAverageVelocity());
 		Common.dashStr("Drivetrain state", getState().toString());
-		Common.dashBool("drive comp", driveComp);
-		arcadeDrive(drive, turn);
+		Common.dashBool("Drive comp", driveComp);
+		Common.dashNum("drivePIDOUT", drive);
+		arcadeDrive(driveAccelCurve(drive), turnAccelCurve(turn));
 		drivePID.update();
 	}
 

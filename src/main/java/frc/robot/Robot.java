@@ -24,7 +24,8 @@ class Robot extends TimedRobot {
   private Climber climber = new Climber();
   private Shooter shooter = new Shooter();
   private Compressor compressor = new Compressor(Constants.PCM_CAN_ID);
-	private static PowerDistributionPanel pdp = new PowerDistributionPanel();
+  private static PowerDistributionPanel pdp = new PowerDistributionPanel();
+  private Auto auto =  new Auto(dt, shooter);
 
   
   // class - name - = - new class
@@ -43,11 +44,15 @@ class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
   }
 
   @Override
   public void autonomousPeriodic() {
-    
+    auto.update();
+    dt.update();
+    shooter.update();
+    Common.dashStr("Auto state", auto.getState().toString());
     //debug();
   }
 
@@ -60,22 +65,21 @@ class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    if (driver.when(Xbox.buttons.x)) {
-      dt.driveDistance(100);
+    /*if (driver.when(Xbox.buttons.x)) {
+      dt.turn(auto.GP_TURN);
+      //dt.driveToWall(-60);
     } else if (driver.when(Xbox.buttons.a)) {
-      dt.driveDistance(-100);
+      //dt.driveDistance(-100);
     } else if (driver.when(Xbox.buttons.b)) {
-      dt.turn(180);
+      dt.turn(90);
     } else if (driver.when(Xbox.buttons.y)) {
       dt.turn(0);
     }
 
     if (driver.when(Xbox.buttons.start)) {
-      dt.heading.setAngle(10);
-    }
-
+      dt.heading.reset();;
+    }*/
     
-    /*
     //SAMS CODE FOR CONTROL SCHEME
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
@@ -112,10 +116,10 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-    if (operator.when(Xbox.buttons.a)) {
+    /*if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
     }
-    /*if (operator.getPressed(Xbox.buttons.b)) {
+    if (operator.getPressed(Xbox.buttons.b)) {
       climber.setRatchet(true);
     }
     if (operator.getPressed(Xbox.buttons.x)) {
@@ -126,13 +130,13 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.dPadDown)) {
       colorWheel.startFinding();
-    }*/
+    }
     if (operator.getPressed(Xbox.buttons.start)) {
       shooter.eject();
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }
+    }*/
     //climber.setLeftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
     //climber.setRightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
@@ -164,6 +168,20 @@ class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     
+    
+  }
+
+  @Override
+  public void disabledInit() {
+    // TODO Auto-generated method stub
+    super.disabledInit();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    if (driver.when(Xbox.buttons.start)) {
+      dt.heading.reset();;
+    }
   }
   
 /***
