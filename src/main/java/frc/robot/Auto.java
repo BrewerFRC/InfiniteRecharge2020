@@ -57,6 +57,7 @@ public class Auto {
         GP_COMPLETE;
     }
 
+    //Distances
     public final static double OFF_LINE_DIST = 84, //Distance to drive FORWARD before shooting
     WALL_DIST = -120, //Distance to wall from starting point
     SPIN_UP_DIST = -24, //Distance to spin up from wall
@@ -64,11 +65,16 @@ public class Auto {
     TRENCH_RUN_DIST = 195-24, //Length to run into trench
     GP_DRIVE_DIST = 84; //Length to move to generator in inches
 
+    //Angles
     public final static double T_FIRST_SHOOT_ANGLE = 0, //Angle of first trench shoot
     T_TRENCH_ANGLE = 360-25, //Angle to run down the trench, probably zero might want to set it based on start?
     T_FINAL_SHOOT_ANGLE = 360-12, //Final shoot angle of trench
     GP_TURN = 19; //turn angle to shoot was 20
 
+    //Times
+    public final static long GP_PICKUP_TIME = 50;
+
+    private long autoTime;
 
     private autoStates autoState;
 
@@ -263,11 +269,12 @@ public class Auto {
                     dt.turn(GP_TURN);
                     shooter.prepFire(Distance.MEDIUM);
                     //shooter.toggleIntake();
+                    autoTime = Common.time()+ GP_PICKUP_TIME;
                     autoState = autoState.GP_ALIGN;
                 }
                 break;
             case GP_ALIGN:
-                if (dt.driveComplete() && shooter.readyToFire()) {
+                if (dt.driveComplete() && shooter.readyToFire() && autoTime >= Common.time()) {
                     shooter.fireBall();
                     autoState = autoState.GP_FIRE;
                 }
