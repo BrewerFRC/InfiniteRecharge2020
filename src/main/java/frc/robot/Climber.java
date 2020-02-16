@@ -51,7 +51,7 @@ public class Climber{
             power = holdingPower;
         } else if (isLocked() == false) {
             power = 0;
-            
+
         }
         leftClimber.set(power);
     }
