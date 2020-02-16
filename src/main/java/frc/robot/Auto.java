@@ -13,6 +13,16 @@ public class Auto {
     private Shooter shooter;
 
 
+    public enum autoPaths {
+        SHOOT_FROM_ANYWHERE,
+        LAYUP,
+        TRENCH,
+        TRENCH_SHOOT,
+        GENERATOR_PICKUP;
+    }
+
+    private autoPaths autoPath;
+
     public enum autoStates {
         //Shoot from anywhere(SFA)
         SFA_INIT,
@@ -65,12 +75,48 @@ public class Auto {
     public Auto(DriveTrain dt, Shooter shooter) {
         this.dt = dt;
         this.shooter = shooter;
-        autoState = autoStates.GP_INIT;
+        setAutoPath(autoPaths.SHOOT_FROM_ANYWHERE);
     }
 
+    public void setAutoPath(autoPaths path) {
+        autoPath = path;
+        switch (autoPath) {
+            case SHOOT_FROM_ANYWHERE:
+                autoState = autoStates.GP_INIT;
+                break;
+            case LAYUP:
+                autoState = autoStates.LAY_INIT;
+                break;
+            case TRENCH:
+                autoState = autoStates.T_INIT;
+                break;
+            case TRENCH_SHOOT:
+                autoState = autoStates.T_INIT;
+                break;
+            case GENERATOR_PICKUP:
+                autoState = autoStates.GP_INIT;
+                break;
+        }
+    }
 
     public void update() {
-        generatorPickup();
+        switch (autoPath) {
+            case SHOOT_FROM_ANYWHERE:
+                shootFromAnywhere();
+                break;
+            case LAYUP:
+                layup();
+                break;
+            case TRENCH:
+                trenchRun(false);
+                break;
+            case TRENCH_SHOOT:
+                trenchRun(true);
+                break;
+            case GENERATOR_PICKUP:
+                generatorPickup();
+                break;
+        }
     }
 
     public autoStates getState() {
