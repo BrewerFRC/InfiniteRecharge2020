@@ -25,14 +25,14 @@ public class Climber{
     private double power = 0;
     private double targetPowerL = 0;
     private double targetPowerR = 0;
-    private double HOLDINGPOWER = -.15;
+    private double HOLDINGPOWER = -.2;
     private boolean locked = false; // is ratchet locking enabled
     private boolean teleop = false; // is the climber under the control of the drivers
 
 
     public void update() {
         //auto lock ratchet when amperage crosses threshold
-        if (Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) > 4 || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) > 4)  {
+        if (Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) > 5 || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) > 5)  {
             locked = true;
         } 
         if (locked) {
