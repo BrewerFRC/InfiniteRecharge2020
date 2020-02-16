@@ -99,10 +99,20 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-
+    /*
     if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
-    }/*
+    }*/
+    if (operator.getPressed(Xbox.buttons.b)) {
+      climber.enableTeleop();
+    }
+    if (operator.getPressed(Xbox.buttons.x)) {
+      climber.lock();
+    }
+    if (operator.getPressed(Xbox.buttons.y)) {
+      climber.unlock();
+    }
+    /*
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
     }
@@ -134,6 +144,8 @@ class Robot extends TimedRobot {
     shooter.update();
     shooter.debug();
     colorWheel.debug();
+    climber.update();
+    climber.debug();
   }
 
   
