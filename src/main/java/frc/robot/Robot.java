@@ -101,12 +101,6 @@ class Robot extends TimedRobot {
 
     if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
-    }
-    if (operator.getPressed(Xbox.buttons.b)) {
-      climber.setRatchet(true);
-    }
-    if (operator.getPressed(Xbox.buttons.x)) {
-      climber.setRatchet(false);
     }/*
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
@@ -120,8 +114,8 @@ class Robot extends TimedRobot {
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
     }
-    climber.setLeftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
-    climber.setRightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+    climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
+    climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
     //OLD TELEOP CODE FOLLOWS
     //dt.accelDrive(driver.deadzone(driver.getX(GenericHID.Hand.kLeft)), driver.deadzone(driver.getY(Hand.kRight)));
