@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Auto.paths;
 import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -193,6 +194,18 @@ class Robot extends TimedRobot {
       dt.vis.ll.setLight(true);
     } else if (driver.when(buttons.leftBumper) || operator.when(buttons.leftBumper)) {
       dt.vis.ll.setLight(false);
+    }
+
+    if (driver.when(buttons.a)) {
+      auto.setAutoPath(Auto.paths.SHOOT_FROM_ANYWHERE);
+    } else if (driver.when(buttons.b)) {
+      auto.setAutoPath(paths.GENERATOR_PICKUP);
+    } else if (driver.when(buttons.x)) {
+      auto.setAutoPath(paths.LAYUP);
+    } else if (driver.when(buttons.y)) {
+      auto.setAutoPath(paths.TRENCH);
+    } else if (driver.when(buttons.dPadUp)) {
+      auto.setAutoPath(paths.TRENCH_SHOOT);
     }
   }
   

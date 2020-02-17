@@ -13,7 +13,7 @@ public class Auto {
     private Shooter shooter;
 
 
-    public enum autoPaths {
+    public static enum paths {
         SHOOT_FROM_ANYWHERE,
         LAYUP,
         TRENCH,
@@ -21,7 +21,7 @@ public class Auto {
         GENERATOR_PICKUP;
     }
 
-    private autoPaths autoPath;
+    private paths autoPath;
 
     public enum autoStates {
         //Shoot from anywhere(SFA)
@@ -81,25 +81,30 @@ public class Auto {
     public Auto(DriveTrain dt, Shooter shooter) {
         this.dt = dt;
         this.shooter = shooter;
-        setAutoPath(autoPaths.SHOOT_FROM_ANYWHERE);
+        setAutoPath(paths.SHOOT_FROM_ANYWHERE);
     }
 
-    public void setAutoPath(autoPaths path) {
+    public void setAutoPath(paths path) {
         autoPath = path;
         switch (autoPath) {
             case SHOOT_FROM_ANYWHERE:
-                autoState = autoStates.GP_INIT;
+                Common.debug("Setting auto to SFA");
+                autoState = autoStates.SFA_INIT;
                 break;
             case LAYUP:
+                Common.debug("setting auto to LAY");
                 autoState = autoStates.LAY_INIT;
                 break;
             case TRENCH:
+                Common.debug("setting auto to TRENCH");
                 autoState = autoStates.T_INIT;
                 break;
             case TRENCH_SHOOT:
+                Common.debug("setting auto to TRENCH SHOOT");
                 autoState = autoStates.T_INIT;
                 break;
             case GENERATOR_PICKUP:
+                Common.debug("setting auto to GP");
                 autoState = autoStates.GP_INIT;
                 break;
         }
