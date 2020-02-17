@@ -35,7 +35,7 @@ public class Climber{
         //auto lock ratchet when amperage crosses threshold
         updateLeftCurrent();
         updateRightCurrent();
-        if (getLeftCurrent() > 5 || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) > 5)  {
+        if (getLeftCurrent() > 5 || getRightCurrent() > 5)  {
             locked = true;
         } 
         if (locked) {
@@ -121,9 +121,9 @@ public class Climber{
     }
 
     /**
-     * Gets the left climber current post compplementary filter. 
+     * Gets the left climber current post complementary filter. 
      * 
-     * @return The left climber current post compplementary filter in PDP amps.
+     * @return The left climber current post complementary filter in PDP amps.
      */
     public double getLeftCurrent() {
         return leftCurrent;
@@ -137,9 +137,9 @@ public class Climber{
     }
 
     /**
-     * Gets the left climber current post compplementary filter. 
+     * Gets the left climber current post complementary filter. 
      * 
-     * @return The left climber current post compplementary filter in PDP amps.
+     * @return The left climber current post complementary filter in PDP amps.
      */
     public double getRightCurrent() {
         return rightCurrent;
@@ -148,6 +148,7 @@ public class Climber{
     public void debug() {
         Common.dashBool("CLMB: teleop mode", teleop);
         Common.dashBool("CLMB: locked", locked);
-        Common.dashNum("CLMB: left draw", Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP));
+        Common.dashNum("CLMB: left draw", getLeftCurrent());
+        Common.dashNum("CLMB: Left pdp read", Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP));
     }
 }
