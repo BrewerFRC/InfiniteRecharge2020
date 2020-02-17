@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Compressor;
@@ -180,14 +181,18 @@ class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    // TODO Auto-generated method stub
-    super.disabledInit();
+    dt.vis.ll.setLight(false);  
   }
 
   @Override
   public void disabledPeriodic() {
     if (driver.when(Xbox.buttons.start)) {
-      dt.heading.reset();;
+      dt.heading.reset();
+    }
+    if (driver.when(Xbox.buttons.rightBumper) || operator.when(buttons.rightBumper)) {
+      dt.vis.ll.setLight(true);
+    } else if (driver.when(buttons.leftBumper) || operator.when(buttons.leftBumper)) {
+      dt.vis.ll.setLight(false);
     }
   }
   

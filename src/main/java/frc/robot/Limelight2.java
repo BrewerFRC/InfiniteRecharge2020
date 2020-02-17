@@ -148,7 +148,12 @@ public class Limelight2 {
         NetworkTableInstance.getDefault().getTable(table).getEntry(entry).setNumber(value);
     }
 
-    public void setLimelight(boolean On) {
+    /**
+     * Turns the light on the limelight on or off.
+     * 
+     * @param On Whether to have the lights be on or off.
+     */
+    public void setLight(boolean On) {
         //set limelight on or off
         if (On) {
             setControl("ledMode", 0); //on

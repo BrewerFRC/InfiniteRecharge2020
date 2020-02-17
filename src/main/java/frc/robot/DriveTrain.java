@@ -34,7 +34,6 @@ public class DriveTrain extends DifferentialDrive {
 		DRIVE_TO_WALL_FINAL, //A drive designed to go slowly and end when it hits a wall.
 		FIND_TARGET,
 		TURN_TO_TARGET,
-		SLOW_DRIVE,
 		HOLD;
 	}
 	
@@ -91,7 +90,7 @@ public class DriveTrain extends DifferentialDrive {
 		encoderR =  new CANEncoder(frontR);
 		encoderL.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
 		encoderR.setPositionConversionFactor(this.HIGH_DISTANCE_CONVERSION_FACTOR);
-		Common.dashNum("conversion factor", encoderL.getPositionConversionFactor());
+		//Common.dashNum("conversion factor", encoderL.getPositionConversionFactor());
 		shifter = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_SHIFTER);
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
@@ -485,6 +484,7 @@ public class DriveTrain extends DifferentialDrive {
 	 */
 	public void visionTrack(boolean exit) {
 		driveComp = false;
+		vis.ll.setLight(true);
 		visExit = exit;
 		DTState = DTStates.FIND_TARGET;
 	}
@@ -497,20 +497,6 @@ public class DriveTrain extends DifferentialDrive {
 		heading.setHeadingHold(true);
 		DTState = DTStates.HOLD;
 		//driveComp = false; Maybe should be hear, doesn't seem like it.
-	}
-
-	/**
-	 * Sets the dt to a slow drie state that moves the robt ata slow constant speed to to reach a target.
-	 * 
-	 * @param dist The target distance in inches to drive.
-	 */
-	public void slowDrive(double dist) {
-		resetEncoders();
-		heading.setHeadingHold(true);
-		driveComp = false;
-		Common.debug("Target distance: "+targetDistance);
-		targetDistance = dist;
-		DTState = DTStates.SLOW_DRIVE;
 	}
 
 	/**
@@ -529,6 +515,7 @@ public class DriveTrain extends DifferentialDrive {
 		double drive = 0, turn = 0; 
 		switch(DTState) {
 			case TELEOP:
+				vis.ll.setLight(false);
 				drive = targetDrive;
 				turn = -targetTurn;
 				break;
