@@ -20,6 +20,7 @@ public class Climber{
     DigitalInput leftLimit = new DigitalInput(Constants.DIO_LEFT_CLIMBER);
     DigitalInput rightLimit = new DigitalInput(Constants.DIO_RIGHT_CLIMBER);
 
+    private double leftCurrent = 0, rightCurrent = 0;
     private double LEFTSERVOANGLE = 180;
     private double RIGHTSERVOANGLE = 0;
     private double power = 0;
@@ -32,7 +33,9 @@ public class Climber{
 
     public void update() {
         //auto lock ratchet when amperage crosses threshold
-        if (Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) > 5 || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) > 5)  {
+        updateLeftCurrent();
+        updateRightCurrent();
+        if (getLeftCurrent() > 5 || Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) > 5)  {
             locked = true;
         } 
         if (locked) {
@@ -108,6 +111,38 @@ public class Climber{
             power = 0;
         }
         rightClimber.set(-power);
+    }
+
+    /**
+     * Updates the left current using a complementary filter.
+     */
+    private void updateLeftCurrent() {
+        leftCurrent = leftCurrent * .9 + Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .1;
+    }
+
+    /**
+     * Gets the left climber current post compplementary filter. 
+     * 
+     * @return The left climber current post compplementary filter in PDP amps.
+     */
+    public double getLeftCurrent() {
+        return leftCurrent;
+    }
+
+     /**
+     * Updates the left current using a complementary filter.
+     */
+    private void updateRightCurrent() {
+        rightCurrent = rightCurrent * .9 + Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .1;
+    }
+
+    /**
+     * Gets the left climber current post compplementary filter. 
+     * 
+     * @return The left climber current post compplementary filter in PDP amps.
+     */
+    public double getRightCurrent() {
+        return rightCurrent;
     }
 
     public void debug() {
