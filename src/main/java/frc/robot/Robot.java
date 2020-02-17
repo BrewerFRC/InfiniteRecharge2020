@@ -116,15 +116,20 @@ class Robot extends TimedRobot {
     }
 
     //OPERATOR
-    /*if (operator.when(Xbox.buttons.a)) {
+    /*
+    if (operator.when(Xbox.buttons.a)) {
       shooter.toggleIntake();
-    }
+    }*/
     if (operator.getPressed(Xbox.buttons.b)) {
-      climber.setRatchet(true);
+      climber.enableTeleop();
     }
     if (operator.getPressed(Xbox.buttons.x)) {
-      climber.setRatchet(false);
-    }/*
+      climber.lock();
+    }
+    if (operator.getPressed(Xbox.buttons.y)) {
+      climber.unlock();
+    }
+    /*
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
     }
@@ -136,9 +141,9 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }*/
-    //climber.setLeftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
-    //climber.setRightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+    }
+    climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
+    climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
    
     
@@ -156,6 +161,8 @@ class Robot extends TimedRobot {
     shooter.update();
     shooter.debug();
     colorWheel.debug();
+    climber.update();
+    climber.debug();
   }
 
   
