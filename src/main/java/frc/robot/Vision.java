@@ -10,8 +10,8 @@ public class Vision {
     public Limelight2 ll = new Limelight2();
     private PID visionPID;
 
-    private final double P = 0.1, I = 0, D = 0, MAX_OUTPUT = .3;
-    private final double ACCEPTABLE_ERROR = 1;
+    private final double P = 0.3, I = 0, D = 0, MAX_OUTPUT = .3;
+    private final double ACCEPTABLE_ERROR = .5;
 
 
     public Vision() {
@@ -47,7 +47,7 @@ public class Vision {
      * @return True if the robot is aligned within acceptable error. 
      */
     public boolean getAtTarget() {
-        return ll.getHorizOffset() <= ACCEPTABLE_ERROR && ll.getHorizOffset() >= -ACCEPTABLE_ERROR;
+        return ll.getHorizOffset() <= ACCEPTABLE_ERROR && ll.getHorizOffset() >= -ACCEPTABLE_ERROR && ll.hasTarget();
     }
 
 

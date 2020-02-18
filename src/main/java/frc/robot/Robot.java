@@ -168,6 +168,7 @@ class Robot extends TimedRobot {
     dt.update();
     colorWheel.update();
     shooter.update();
+    debug();
     shooter.debug();
     colorWheel.debug();
     climber.update();
