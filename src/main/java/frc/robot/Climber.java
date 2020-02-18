@@ -65,7 +65,7 @@ public class Climber{
 
     public void lock() {
         leftRatchet.setAngle(90);
-        rightRatchet.setAngle(90);
+        rightRatchet.setAngle(140); //was 90
         locked = true;
     }
 
@@ -92,7 +92,6 @@ public class Climber{
     private void setLeftPower(double power) {
         if (power < 0) {
             if (atLeftLimit()) {
-                Common.debug("is holding power");
                 power = HOLDINGPOWER;
             }
         } else if (isLocked()) {
@@ -117,7 +116,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateLeftCurrent() {
-        leftCurrent = leftCurrent * .9 + Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .1;
+        leftCurrent = leftCurrent * .98 + Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .02;
     }
 
     /**
@@ -133,7 +132,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateRightCurrent() {
-        rightCurrent = rightCurrent * .9 + Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .1;
+        rightCurrent = rightCurrent * .98 + Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .02;
     }
 
     /**

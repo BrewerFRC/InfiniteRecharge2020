@@ -85,7 +85,14 @@ class Robot extends TimedRobot {
     //SAMS CODE FOR CONTROL SCHEME
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
     double turn = -driver.deadzone(driver.getX(Hand.kLeft));
-    dt.teleopDrive(drive, turn);
+    if (driver.getPressed(buttons.leftTrigger)) {
+      dt.visionTrack();
+      if (dt.vis.getAtTarget()) {
+        shooter.fireBall();
+      }
+    } else {
+      dt.teleopDrive(drive, turn);
+    }
 
     //DRIVER
     if (driver.when(Xbox.buttons.a)) {
@@ -143,7 +150,7 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }
+    }*/
     climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
     climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
@@ -207,13 +214,16 @@ class Robot extends TimedRobot {
     } else if (driver.when(buttons.dPadUp)) {
       auto.setAutoPath(paths.TRENCH_SHOOT);
     }
+
+    debug();
   }
   
-/***
+
   private void debug() {
-    colorWheel.debug();
+    Common.dashNum("LL horizental offset", dt.vis.ll.getHorizOffset());
+    Common.dashBool("LL hasTarget", dt.vis.ll.hasTarget());
+    Common.dashBool("LL at Target", dt.vis.getAtTarget());
   }
-  */
   public static PowerDistributionPanel getPDP() {
     return pdp;
   }

@@ -32,8 +32,8 @@ public class DriveTrain extends DifferentialDrive {
 		TURN, //A turn to a degree
 		DRIVE_TO_WALL_DIST, // A faster drive to a distance then switches to the final drive.
 		DRIVE_TO_WALL_FINAL, //A drive designed to go slowly and end when it hits a wall.
-		FIND_TARGET,
-		TURN_TO_TARGET,
+		VISION_TRACK,
+		AT_TARGET,
 		HOLD;
 	}
 	
@@ -480,13 +480,11 @@ public class DriveTrain extends DifferentialDrive {
 	/**
 	 * Enters FIND_TARGET and starts finding the target.
 	 * 
-	 * @param exit whether or no the robot will exit into TELOP every cycle.
 	 */
-	public void visionTrack(boolean exit) {
+	public void visionTrack() {
 		driveComp = false;
 		vis.ll.setLight(true);
-		visExit = exit;
-		DTState = DTStates.FIND_TARGET;
+		DTState = DTStates.VISION_TRACK;
 	}
 
 	/**
@@ -572,26 +570,26 @@ public class DriveTrain extends DifferentialDrive {
 					DTState = DTStates.HOLD;
 				}
 				break;
-			case FIND_TARGET:
-				if (vis.ll.hasTarget()) {
-					DTState = DTStates.TURN_TO_TARGET;
-				} else {
-					drive = 0; 
-					turn = -0.3; //Should be left
-					if (visExit) {
-						DTState = DTStates.TELEOP;
-					}
-				}
-				break;
-			case TURN_TO_TARGET:
+			case VISION_TRACK:
 				if (!vis.getAtTarget()) {
 					drive =  vis.calcDrive();
 					turn = vis.calcTurn();
 					if (!vis.ll.hasTarget()) {
-						DTState = DTStates.FIND_TARGET;
+						drive = 0;
+						turn = 0;
 					}
 				} else {
-					hold();
+					driveComp = true;
+					DTState = DTStates.AT_TARGET;
+				}
+				break;
+			case AT_TARGET:
+				if (vis.getAtTarget()) {
+					turn = 0;
+					drive = 0;
+				} else {
+					driveComp = false;
+					DTState = DTStates.VISION_TRACK;
 				}
 				break;
 			case HOLD:

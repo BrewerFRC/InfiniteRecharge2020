@@ -129,16 +129,19 @@ public class Flywheel {
             case LONG :
                 targetRPM = LONG_RPM;
                 toleranceRPM = LONG_TOLERANCE;
+                left_pidController.setFF(0.00018);
                 hoodDown();
                 break;
             case MEDIUM :
                 targetRPM = MEDIUM_RPM;
                 toleranceRPM = MEDIUM_TOLERANCE;
+                left_pidController.setFF(0.00018);
                 hoodDown();
                 break;
             case SHORT :
                 targetRPM = SHORT_RPM;
                 toleranceRPM = SHORT_TOLERANCE;
+                left_pidController.setFF(1.523E-4);
                 hoodUp();
                 break;           
         }
@@ -184,7 +187,11 @@ public class Flywheel {
         Common.dashNum("FW: targetRPM", RPM);
         // =======================
         // Set RPM of left motor. Right motor follows.
-        left_pidController.setReference(RPM, ControlType.kVelocity);
+        if (RPM >= 500) {
+            left_pidController.setReference(RPM, ControlType.kVelocity);
+        } else {
+            flywheelLeft.set(0);
+        }
         //processVariable = left_encoder.getVelocity();
     }
 
@@ -215,7 +222,7 @@ public class Flywheel {
     * Call every robot cycle.
     */
     public void update(){
-        double rpm = Common.getNum("FW: targetRPM",0);
+        //double rpm = Common.getNum("FW: targetRPM",0);
         // TESTING ===================================
         // read PID coefficients from SmartDashboard
         double p = Common.getNum("FW: P Gain", kP);

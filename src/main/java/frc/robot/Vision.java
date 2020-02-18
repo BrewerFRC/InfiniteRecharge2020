@@ -10,12 +10,12 @@ public class Vision {
     public Limelight2 ll = new Limelight2();
     private PID visionPID;
 
-    private final double P = 0, I = 0, D = 0, MAX_OUTPUT = .3;
+    private final double P = 0.1, I = 0, D = 0, MAX_OUTPUT = .3;
     private final double ACCEPTABLE_ERROR = 1;
 
 
     public Vision() {
-        visionPID = new PID(P, I, D, true, false, "Vision PID", true);
+        visionPID = new PID(P, I, D, false, false, "Vision PID", true);
         visionPID.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
     }
 
