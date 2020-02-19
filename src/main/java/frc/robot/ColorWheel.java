@@ -39,17 +39,17 @@ class ColorWheel{
     }
 
     public void debug(){
-        SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
-    SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
-    //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
-    //SmartDashboard.putNumber("sensor red", detectedColorRed);
-    //SmartDashboard.putNumber("sensor green", detectedColorGreen);
-    //SmartDashboard.putString("colorChar", ""+colorChar);
-    SmartDashboard.putNumber("S1-pieSlices", pieAmount1);
-    SmartDashboard.putNumber("S2-pieSlices", pieAmount2);
-    SmartDashboard.putString("targetColor", ""+targetColor); 
-    SmartDashboard.putBoolean("targetColorVerified", targetColorVerified());
-    SmartDashboard.putBoolean("rotationVerified", rotationVerified());
+        //SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
+        //SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
+        //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
+        //SmartDashboard.putNumber("sensor red", detectedColorRed);
+        //SmartDashboard.putNumber("sensor green", detectedColorGreen);
+        //SmartDashboard.putString("colorChar", ""+colorChar);
+        //SmartDashboard.putNumber("S1-pieSlices", pieAmount1);
+        //SmartDashboard.putNumber("S2-pieSlices", pieAmount2);
+        //SmartDashboard.putString("targetColor", ""+targetColor); 
+        //SmartDashboard.putBoolean("targetColorVerified", targetColorVerified());
+        //SmartDashboard.putBoolean("rotationVerified", rotationVerified());
     }
 
     /**

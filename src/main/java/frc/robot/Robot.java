@@ -46,7 +46,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-
+    dt.heading.reset();
   }
 
   @Override
@@ -54,8 +54,10 @@ class Robot extends TimedRobot {
     auto.update();
     dt.update();
     shooter.update();
+    climber.update();
+    
     Common.dashStr("Auto state", auto.getState().toString());
-    //debug();
+    debug();
   }
 
   @Override
@@ -76,11 +78,11 @@ class Robot extends TimedRobot {
       dt.turn(90);
     } else if (driver.when(Xbox.buttons.y)) {
       dt.turn(0);
-    }
+    }*/
 
     if (driver.when(Xbox.buttons.start)) {
       dt.heading.reset();;
-    }*/
+    }
     
     //SAMS CODE FOR CONTROL SCHEME
     double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
@@ -169,10 +171,8 @@ class Robot extends TimedRobot {
     colorWheel.update();
     shooter.update();
     debug();
-    shooter.debug();
-    colorWheel.debug();
     climber.update();
-    climber.debug();
+    //climber.debug();
   }
 
   
@@ -221,11 +221,15 @@ class Robot extends TimedRobot {
   
 
   private void debug() {
-    Common.dashNum("LL horizental offset", dt.vis.ll.getHorizOffset());
-    Common.dashBool("LL hasTarget", dt.vis.ll.hasTarget());
-    Common.dashBool("LL at Target", dt.vis.getAtTarget());
+    Common.dashNum("LL: horizental offset", dt.vis.ll.getHorizOffset());
+    Common.dashBool("LL: hasTarget", dt.vis.ll.hasTarget());
+    Common.dashBool("LL: at Target", dt.vis.getAtTarget());
+    Common.dashStr("Auto path", auto.getState().toString());
+    shooter.debug();
+    colorWheel.debug();
   }
   public static PowerDistributionPanel getPDP() {
     return pdp;
   }
-} 
+
+}

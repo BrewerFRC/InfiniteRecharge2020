@@ -15,7 +15,7 @@ public class Vision {
 
 
     public Vision() {
-        visionPID = new PID(P, I, D, false, false, "Vision PID", true);
+        visionPID = new PID(P, I, D, false, false, "Vision PID", false);
         visionPID.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
     }
 
@@ -28,8 +28,9 @@ public class Vision {
         
         if (ll.hasTarget()) {
             return visionPID.calc(ll.getHorizOffset());
+        } else {
+            return 0.0;
         }
-        return 0.0;
     }
 
     /**

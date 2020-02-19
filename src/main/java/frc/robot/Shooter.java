@@ -38,7 +38,7 @@ public class Shooter {
      * sets the flywheel to spin up
      */
     public void prepFire(Distance distance) {
-        if (mag.isIdle() || !mag.isEmpty() || mag.isJammed()){
+        if (mag.isIdle() || !mag.isEmpty() || !mag.isJammed()){
             intake.stopIntake();
             mag.loadBreach();
             flywheel.start(distance);
@@ -111,6 +111,10 @@ public class Shooter {
     }
     public void intakeOn() {
         intake.startIntake();
+    }
+
+    public void intakeOff() {
+        intake.stopIntake();
     }
     
     public boolean readyToLoad() {

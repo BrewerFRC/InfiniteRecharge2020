@@ -95,7 +95,7 @@ public class DriveTrain extends DifferentialDrive {
 		
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
-		drivePID = new PID(P, I, D, true, false, "DrivePID", true);
+		drivePID = new PID(P, I, D, true, false, "DrivePID", false);
 		drivePID.setOutputLimits(-MAX_OUTPUT, MAX_OUTPUT);
 		drivePID.setMinMagnitude(MIN_OUTPUT);
 
@@ -442,15 +442,26 @@ public class DriveTrain extends DifferentialDrive {
 	 * Starts a distance drive.
 	 * 
 	 * @param distance The distance to drive in inches.
+	 * @param maxOutput The maximum power allowed to be output
 	 */
-	public void driveDistance(double distance) {
+	public void driveDistance(double distance, double maxOutput) {
 		resetEncoders();
+		drivePID.setOutputLimits(-maxOutput, maxOutput);
 		drivePID.setTarget(distance);
 		heading.setHeadingHold(true);
 		DTState = DTStates.DIST_DRIVE;
 		driveComp = false;
 	}
 
+	/**
+	 * Starts a distance drive.
+	 * Uses default max power.
+	 * 
+	 * @param distance The distance to drive in inches.
+	 */
+	public void driveDistance(double distance) {
+		driveDistance(distance, MAX_OUTPUT);
+	}
 
 	/**
 	 * Moves the robot at a constant speed until it reaches the distance or has a slow velocity for 5 cycles
@@ -597,16 +608,16 @@ public class DriveTrain extends DifferentialDrive {
 				turn = heading.turnRate();
 				break;
 		}
-		Common.dashNum("Heading PID output", heading.turnRate());
-		Common.dashNum("Angle", heading.getAngle());
-		Common.dashNum("Heading", heading.getHeading());
-		Common.dashNum("Drive output", drive);
-		Common.dashNum("Turn output", turn);
-		Common.dashNum("DT: Average Distance", this.getAverageDist());
-		Common.dashNum("DT: Average velocity", getAverageVelocity());
-		Common.dashStr("Drivetrain state", getState().toString());
-		Common.dashBool("Drive comp", driveComp);
-		Common.dashNum("drivePIDOUT", drive);
+		//Common.dashNum("Heading PID output", heading.turnRate());
+		//Common.dashNum("Angle", heading.getAngle());
+		Common.dashNum("DT: Heading", heading.getHeading());
+		//Common.dashNum("Drive output", drive);
+		//Common.dashNum("Turn output", turn);
+		//Common.dashNum("DT: Average Distance", this.getAverageDist());
+		//Common.dashNum("DT: Average velocity", getAverageVelocity());
+		Common.dashStr("DT: state", getState().toString());
+		Common.dashBool("DT: complete", driveComp);
+		//Common.dashNum("drivePIDOUT", drive);
 		arcadeDrive(driveAccelCurve(drive), turnAccelCurve(turn));
 		drivePID.update();
 	}

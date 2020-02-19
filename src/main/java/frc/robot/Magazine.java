@@ -40,7 +40,7 @@ public class Magazine {
 	private final double MAX_POWER = 0.8;  //Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
 	private double power = 0;
-	private final double JAM_TIME = 1, JAM_AMP = 15; 
+	private final double JAM_TIME = 1.5, JAM_AMP = 17; //was 1s @ 15amps
 	
 	private enum States {
 		IDLE, 				//Motors stopped. May have ball.
@@ -71,7 +71,7 @@ public class Magazine {
 	 *	Move balls to Top sensor
 	 */
 	public void update() {
-		if (Robot.getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+		/*if (Robot.getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
 			if (jamTimer.get() > 0) {
 				if (jamTimer.get() >= JAM_TIME) {
 					stop();
@@ -84,7 +84,7 @@ public class Magazine {
 		} else {
 			jamTimer.stop();
 			jamTimer.reset();
-		}
+		}*/
 		switch (state) {
 			case IDLE:
 			// Motors Off.  May contain a ball.
@@ -239,8 +239,8 @@ public class Magazine {
 	 * 
 	 */
 	public void debug(){
-		Common.dashNum("time elapsed", timer.get());
-		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
+		//Common.dashNum("time elapsed", timer.get());
+		//Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
 		Common.dashStr("Mag: State", state.name());
 		Common.dashNum("Mag: amps", Robot.getPDP().getCurrent(8));
 	}
@@ -428,4 +428,5 @@ public class Magazine {
 			state = States.BEGIN_UNLOAD_BREACH;
 		}
 	}
+
 } // End Magazine class

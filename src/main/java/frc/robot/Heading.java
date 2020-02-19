@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  * @author Brent Roberts
  */
 public class Heading {
-	private static final double P = 0.05, I = 0, D = 20; //D might not be accurate
+	private static final double P = 0.05, I = 0, D = 0; //was P=0.03
 	private static final double MAX_OUTPUT = .75, MIN_OUTPUT = 0;// MIN was .13
 	
 	private ADXRS450_Gyro gyro;
@@ -26,7 +26,7 @@ public class Heading {
 	 * @param d the derivative scaler.
 	 */
 	public Heading() {
-		pid = new PID(P, I, D, true, false, "gyro", true);
+		pid = new PID(P, I, D, true, false, "gyro", false);
 		//PID is dealing with error; an error of 0 is always desired.
 		pid.setTarget(0.0);
 		pid.setMinMagnitude(MIN_OUTPUT);
