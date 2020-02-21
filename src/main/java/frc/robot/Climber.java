@@ -58,13 +58,13 @@ public class Climber{
     }
 
     public void unlock() {
-        leftRatchet.setAngle(180);
+        leftRatchet.setAngle(140);
         rightRatchet.setAngle(0);
         locked = false;
     }
 
     public void lock() {
-        leftRatchet.setAngle(90);
+        leftRatchet.setAngle(0);
         rightRatchet.setAngle(140); //was 90
         locked = true;
     }

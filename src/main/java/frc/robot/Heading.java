@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
  */
 public class Heading {
 	private static final double P = 0.05, I = 0, D = 0; //was P=0.03
-	private static final double MAX_OUTPUT = .75, MIN_OUTPUT = 0;// MIN was .13
+	private static final double MAX_OUTPUT = .5, MIN_OUTPUT = 0;// MIN was .13 MAX was .75
 	
 	private ADXRS450_Gyro gyro;
 	//PID takes cumulative angles

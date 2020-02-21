@@ -126,4 +126,7 @@ public class Shooter {
     public boolean empty() {
         return mag.isEmpty();
     }
+    public boolean shooting() {
+        return mag.isShootBall();
+    }
 }

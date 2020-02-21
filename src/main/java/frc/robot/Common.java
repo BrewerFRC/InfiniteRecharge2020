@@ -41,7 +41,7 @@ public class Common {
 	 * @param text to print in console.
 	 */
 	public static void debug(String text) {
-		System.out.println(formatter.format(new Date(time())) + text);
+		System.out.println(formatter.format(new Date(time())) + ": "+ text);
 	}
 	
 	/**
