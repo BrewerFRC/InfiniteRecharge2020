@@ -153,8 +153,10 @@ class Robot extends TimedRobot {
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
     }*/
-    climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
-    climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+
+    climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+    //climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
+    //climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
    
     

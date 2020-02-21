@@ -80,13 +80,37 @@ public class Climber{
     public boolean atRightLimit() {
         return !rightLimit.get();
     }
-    //inverts for the sake of joystick controls are inverted standard
-    public void leftPower(double power) {
-        targetPowerL = -power;
+
+
+    // Joystick control for climber.
+    public void teleopControl(double x, double y) {
+        // negate the y-axis value so that joystick up is a positive value
+        y = -y;  
+        // If x-axis is within deadzone, then y-axis operates both left and right climbers
+        if (Math.abs(x) < 0.75)  {
+            setLeftTarget(y);
+            setRightTarget(y);
+        } else {
+            // Retract slowly, based on which way the x-axis is pushed
+            if (x > 0) {
+                setLeftTarget(0.0);
+                setRightTarget(-(x - 0.5));
+
+            } else {
+                setLeftTarget((x + 0.5));
+                setRightTarget(0.0);
+            }
+        }
     }
-    //inverts for the sake of joystick controls are inverted standard
-    public void rightPower(double power) {
-        targetPowerR = -power;
+
+    //Set target power for left climber. Positive power extends climber.
+    private void setLeftTarget(double power) {
+        targetPowerL = power;
+    }
+    
+    //Set target power for right climber. Positive power extends climber.
+    private void setRightTarget(double power) {
+        targetPowerR = power;
     }
 
     private void setLeftPower(double power) {
