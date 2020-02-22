@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DriverStation;
 
 class ColorWheel{
-    String gameData;
-    ColorSensor colorSensor1;
-    ColorSensor colorSensor2;
-    Spark motor;
-    String verifiedColorChar1, verifiedColorChar2; 
-    double pieAmount1, pieAmount2;
-    String targetColor;
-    
+    private String gameData;
+    private ColorSensor colorSensor1;
+    private ColorSensor colorSensor2;
+    private Spark motor;
+    private String verifiedColorChar1, verifiedColorChar2; 
+    private double pieAmount1, pieAmount2;
+    private String targetColor;
+     
     public static final double ROTATION_POWER = 1;
     public static final double POSITION_POWER = 0.6;
     public static final double MAX_POWER = 1;
@@ -65,9 +65,10 @@ class ColorWheel{
             if (power < -MAX_POWER) {
                 power = -MAX_POWER;
             } 
-        motor.set(power);
         }
+        motor.set(power);
     }
+
 
     public void resetPieCount(){
         colorSensor1.resetPieCount();

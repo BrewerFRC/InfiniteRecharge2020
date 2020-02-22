@@ -37,7 +37,7 @@ public class Magazine {
 	private Timer jamTimer =  new Timer();
 
 	
-	private final double MAX_POWER = 0.9;  //Max power to run magazines polycord
+	private final double MAX_POWER = 1.0;  //was .9 Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
 	private double power = 0;
 	private final double JAM_TIME = 0.75, JAM_AMP = 20; 
@@ -417,7 +417,7 @@ public class Magazine {
 	 * driverstation or to prevent allowing the flywheel to spin up when no balls are availalbe.   
 	 */
 	public void loadBreach() {
-		if (state == States.IDLE) {
+		if (state == States.IDLE || state == States.JAMMED) {
 			state = States.BEGIN_LOAD_BREACH;
 		}
 	}
@@ -431,7 +431,7 @@ public class Magazine {
 	 *
 	 */
 	public void unloadBreach() {
-		if (state == States.BREACH_LOADED || state == States.BEGIN_LOAD_BREACH ) {
+		if (state == States.BREACH_LOADED || state == States.BEGIN_LOAD_BREACH || state == States.JAMMED) {
 			state = States.BEGIN_UNLOAD_BREACH;
 		}
 	}

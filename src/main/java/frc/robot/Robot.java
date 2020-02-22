@@ -78,8 +78,8 @@ class Robot extends TimedRobot {
       drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
       turn = -driver.deadzone(driver.getX(Hand.kLeft));
       if (drive==0 && turn==0) {
-        drive = operator.deadzone(driver.getY(GenericHID.Hand.kLeft));
-        turn = -operator.deadzone(driver.getX(Hand.kLeft));  
+        drive = operator.deadzone(operator.getY(GenericHID.Hand.kLeft));
+        turn = -operator.deadzone(operator.getX(Hand.kLeft));  
       }
       dt.teleopDrive(drive, turn * 0.75);
     }
@@ -125,7 +125,7 @@ class Robot extends TimedRobot {
     if (operator.getPressed(Xbox.buttons.y)) {
       climber.unlock();
     }
-    /*
+    
     if (operator.getPressed(Xbox.buttons.dPadUp)) {
       colorWheel.startCounting();
     }
@@ -137,7 +137,7 @@ class Robot extends TimedRobot {
     }
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
-    }*/
+    }
 
     climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),
                           operator.deadzone(operator.getY(GenericHID.Hand.kRight)));

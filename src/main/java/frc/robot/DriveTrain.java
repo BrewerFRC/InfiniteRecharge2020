@@ -39,7 +39,7 @@ public class DriveTrain extends DifferentialDrive {
 	
 	private DTStates DTState = DTStates.TELEOP;
 
-	public static double HIGH_DRIVE_ACCEL = 0.1, LOW_DRIVE_ACCEL = 0.05;
+	public static double HIGH_DRIVE_ACCEL = 0.025, LOW_DRIVE_ACCEL = 0.05;
 
 	public static final double TURNACCEL = .06;
 

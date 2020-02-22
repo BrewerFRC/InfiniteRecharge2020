@@ -139,8 +139,9 @@ public class Intake {
 	 * The state must be IDLE for this to occur.
 	*/
 	public void startIntake() {
-		if (state == States.IDLE);
+		if (state == States.IDLE); {
 			state = States.LOADING;
+		}
 	}
 
 	/**
@@ -149,14 +150,16 @@ public class Intake {
 	 * The state must be LOADING
 	 */
 	public void stopIntake() {
-		if (state == States.LOADING);
+		if (state == States.LOADING) {
 			state = States.START_CLEAR; 
 			//state = States.IDLE;
+		}
 	}
 
 	public void ejectingIntake() {
-		if (state == States.IDLE);
+		if (state == States.IDLE) {
 			state = States.EJECTING; 
+		}
 	}
 
 
