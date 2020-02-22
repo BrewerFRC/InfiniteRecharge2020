@@ -26,7 +26,7 @@ public class Climber{
     private double power = 0;
     private double targetPowerL = 0;
     private double targetPowerR = 0;
-    private double HOLDINGPOWER = -.2;
+    private double HOLDINGPOWER = -.22;
     private boolean locked = false; // is ratchet locking enabled
     private boolean teleop = false; // is the climber under the control of the drivers
 

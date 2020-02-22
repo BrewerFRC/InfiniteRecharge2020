@@ -79,7 +79,7 @@ public class Shooter {
      */
     public void eject() {
         if ((mag.isShootBall() == false) && (mag.isEmpty() == false)) {
-            intake.stopIntake();
+            intake.ejectingIntake();
             mag.dumpBalls();
             flywheel.stop();
         }

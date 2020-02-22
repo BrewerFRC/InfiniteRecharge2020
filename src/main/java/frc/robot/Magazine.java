@@ -37,7 +37,7 @@ public class Magazine {
 	private Timer jamTimer =  new Timer();
 
 	
-	private final double MAX_POWER = 0.8;  //Max power to run magazines polycord
+	private final double MAX_POWER = 0.9;  //Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
 	private double power = 0;
 	private final double JAM_TIME = 1.5, JAM_AMP = 17; //was 1s @ 15amps

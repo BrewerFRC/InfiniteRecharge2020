@@ -30,11 +30,14 @@ public class Intake {
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
 	private double power = 0;
+	private double clearWait = Common.time();
 
 	private enum States {
 		IDLE, 			//No motor movement, intake is up.
-		LOADING,			// Entered through a button press. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
-		EJECTING;          //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
+		LOADING,		//Entered through a button press. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
+		START_CLEAR, 	//sets the timer for the clear function
+		CLEAR,			//Will wait for the intake to be up then clear the intake of any stuck bowls.
+		EJECTING;       //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
 
 	}
 	
@@ -150,6 +153,12 @@ public class Intake {
 			state = States.IDLE;
 	}
 
+	public void ejectingIntake() {
+		if (state == States.IDLE);
+			state = States.EJECTING; 
+	}
+
+
 	/**
 	 * 
 	 */
@@ -164,10 +173,25 @@ public class Intake {
 				setIntakeDown();
 				motorIn();
 				break;
+			case START_CLEAR:
+				clearWait = Common.time();
+				state = state.CLEAR;
+				break;
+
+			case CLEAR:
+				if ((clearWait + 1000) >= Common.time()) {
+					//is waiting for the pneumatics
+				} else if ((clearWait  + 2000) >= Common.time()) {
+					motorOut();
+				} else {
+					state = state.IDLE;
+				}
+				break;
 
 			case EJECTING:
 				setIntakeDown();
 				motorOut();
+
 				if (timer.get() >= MAX_RUNTIME) {
 					state = States.IDLE;	
 				}

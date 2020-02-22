@@ -2,7 +2,7 @@ package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
-import edu.wpi.first.wpilibj.I2C;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,24 +25,20 @@ class Robot extends TimedRobot {
   private Xbox operator =  new Xbox(1);
   private Climber climber = new Climber();
   private Shooter shooter = new Shooter();
+  private ColorWheel colorWheel = new ColorWheel(); 
   private Compressor compressor = new Compressor(Constants.PCM_CAN_ID);
   private static PowerDistributionPanel pdp = new PowerDistributionPanel();
   private Auto auto =  new Auto(dt, shooter);
-
+  private double drive, turn;
   
-  // class - name - = - new class
-  ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 
-
   @Override
   public void robotInit() {
     shooter.init();
   }
 
-
   @Override
   public void robotPeriodic() {
   }
-
 
   @Override
   public void autonomousInit() {
@@ -55,8 +51,6 @@ class Robot extends TimedRobot {
     dt.update();
     shooter.update();
     climber.update();
-    
-    Common.dashStr("Auto state", auto.getState().toString());
     debug();
   }
 
@@ -69,31 +63,25 @@ class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    /*if (driver.when(Xbox.buttons.x)) {
-      dt.turn(auto.GP_TURN);
-      //dt.driveToWall(-60);
-    } else if (driver.when(Xbox.buttons.a)) {
-      //dt.driveDistance(-100);
-    } else if (driver.when(Xbox.buttons.b)) {
-      dt.turn(90);
-    } else if (driver.when(Xbox.buttons.y)) {
-      dt.turn(0);
-    }*/
-
     if (driver.when(Xbox.buttons.start)) {
       dt.heading.reset();;
     }
     
-    //SAMS CODE FOR CONTROL SCHEME
-    double drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
-    double turn = -driver.deadzone(driver.getX(Hand.kLeft));
+    //SAM'S CODE FOR CONTROL SCHEME
+    // DriveTrain Control
     if (driver.getPressed(buttons.leftTrigger)) {
       dt.visionTrack();
       if (dt.vis.getAtTarget()) {
         shooter.fireBall();
       }
     } else {
-      dt.teleopDrive(drive, turn);
+      drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
+      turn = -driver.deadzone(driver.getX(Hand.kLeft));
+      if (drive==0 && turn==0) {
+        drive = operator.deadzone(driver.getY(GenericHID.Hand.kLeft));
+        turn = -operator.deadzone(driver.getX(Hand.kLeft));  
+      }
+      dt.teleopDrive(drive, turn * 0.75);
     }
 
     //DRIVER
@@ -118,19 +106,16 @@ class Robot extends TimedRobot {
     else if (driver.when(Xbox.buttons.rightBumper))  {
       dt.shiftHigh();
     }
-    //driver.deadzone(driver.getX(GenericHID.Hand.kLeft), driver.deadzone(driver.getY(Hand.kRight)));
     if (driver.getPressed(Xbox.buttons.start)) {
+      Common.debug("ROBO: Eject");
       shooter.eject();
     }
     if (driver.getPressed(Xbox.buttons.back)) {
+      Common.debug("ROBO: Prep Load");
       shooter.prepLoad();
     }
 
     //OPERATOR
-    /*
-    if (operator.when(Xbox.buttons.a)) {
-      shooter.toggleIntake();
-    }*/
     if (operator.getPressed(Xbox.buttons.b)) {
       climber.enableTeleop();
     }
@@ -154,27 +139,18 @@ class Robot extends TimedRobot {
       shooter.prepLoad();
     }*/
 
-    climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
-    //climber.leftPower(operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
-    //climber.rightPower(operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+    climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),
+                          operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
 
-   
-    
-    
-    
     /*if (a.getBButton() == true){
       colorWheel.resetPieCount();
-     
     }*/
     
-   // debug();
-
     dt.update();
     colorWheel.update();
     shooter.update();
-    debug();
     climber.update();
-    //climber.debug();
+    debug();
   }
 
   
@@ -226,7 +202,7 @@ class Robot extends TimedRobot {
     Common.dashNum("LL: horizental offset", dt.vis.ll.getHorizOffset());
     Common.dashBool("LL: hasTarget", dt.vis.ll.hasTarget());
     Common.dashBool("LL: at Target", dt.vis.getAtTarget());
-    Common.dashStr("Auto path", auto.getState().toString());
+    Common.dashStr("Auto: state", auto.getState().toString());
     shooter.debug();
     colorWheel.debug();
   }

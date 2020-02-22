@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.util.Color;
 //import jdk.nashorn.internal.runtime.regexp.joni.constants.TargetInfo;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Spark;
@@ -31,10 +31,10 @@ class ColorWheel{
 	}
     private States state = States.IDLE;
 
-    public ColorWheel(Port one, Port two) {
+    public ColorWheel() {
         //make the sensor variables
-        colorSensor1 = new ColorSensor(one);
-        colorSensor2 = new ColorSensor(two);
+        colorSensor1 = new ColorSensor(I2C.Port.kOnboard);
+        colorSensor2 = new ColorSensor(I2C.Port.kMXP);
         motor = new Spark(Constants.PWM_COLORWHEEL_MOTOR);
     }
 
@@ -68,9 +68,6 @@ class ColorWheel{
         motor.set(power);
         }
     }
-
-
-    
 
     public void resetPieCount(){
         colorSensor1.resetPieCount();
