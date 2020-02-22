@@ -149,8 +149,9 @@ public class Intake {
 	 * The state must be LOADING
 	 */
 	public void stopIntake() {
-		if (state == States.LOADING); 
-			state = States.IDLE;
+		if (state == States.LOADING);
+			state = States.START_CLEAR; 
+			//state = States.IDLE;
 	}
 
 	public void ejectingIntake() {
@@ -173,18 +174,20 @@ public class Intake {
 				setIntakeDown();
 				motorIn();
 				break;
+
 			case START_CLEAR:
+				setIntakeUp();
 				clearWait = Common.time();
-				state = state.CLEAR;
+				state = States.CLEAR;
 				break;
 
 			case CLEAR:
-				if ((clearWait + 1000) >= Common.time()) {
+				if ((clearWait + 500) >= Common.time()) {
 					//is waiting for the pneumatics
-				} else if ((clearWait  + 2000) >= Common.time()) {
+				} else if ((clearWait  + 1500) >= Common.time()) {
 					motorOut();
 				} else {
-					state = state.IDLE;
+					state = States.IDLE;
 				}
 				break;
 
