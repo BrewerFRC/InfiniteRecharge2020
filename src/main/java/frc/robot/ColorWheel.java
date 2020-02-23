@@ -39,6 +39,9 @@ class ColorWheel{
     }
 
     public void debug(){
+        Common.dashNum("CW: S1 Blue", colorSensor1.colorSensor.getBlue());
+        Common.dashNum("CW: S1 Red", colorSensor1.colorSensor.getRed());
+        Common.dashNum("CW: S1 Green", colorSensor1.colorSensor.getGreen());
         //SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
         //SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
         //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
