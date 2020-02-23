@@ -25,7 +25,7 @@ public class Intake {
 	private final static Spark intakeMot = new Spark(Constants.PWM_INTAKE_MOTOR);
 	private final static Solenoid outSol = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_INTAKE_OUT_ARM);	
 	private final static Solenoid inSol  = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_INTAKE_IN_ARM);
-	private final static double MAX_POWER = 1.0; // This is a placeholder constant.
+	private final static double MAX_POWER = 0.8; // This is a placeholder constant.
 	private Timer timer = new Timer();  
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
@@ -197,7 +197,6 @@ public class Intake {
 			case EJECTING:
 				setIntakeDown();
 				motorOut();
-
 				if (timer.get() >= MAX_RUNTIME) {
 					state = States.IDLE;	
 				}

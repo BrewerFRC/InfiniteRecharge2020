@@ -346,7 +346,7 @@ public class Magazine {
 		} else if (power <= -MAX_POWER) {
 			power = -MAX_POWER;
 		}
-		magMot.set(power);
+		magMot.set(-power);
 	}
 
  	/**

@@ -45,18 +45,18 @@ public ColorSensor(I2C.Port port) {
         double yellowG = 0.55;
         */
         // new colour values for testing
-        double blueR = 0.17; 
-        double blueB = 0.34;
-        double blueG = 0.48;
-        double greenR = 0.24; 
-        double greenB = 0.19;
-        double greenG = 0.57;
-        double redR = 0.49; 
-        double redB = 0.14;
-        double redG = 0.37;
-        double yellowR = 0.32; 
-        double yellowB = 0.10;
-        double yellowG = 0.56;
+        double blueR = 0.16; 
+        double blueB = 0.38;
+        double blueG = 0.45;
+        double greenR = 0.21; 
+        double greenB = 0.26;
+        double greenG = 0.53;
+        double redR = 0.41; 
+        double redB = 0.18;
+        double redG = 0.4;
+        double yellowR = 0.34; 
+        double yellowB = 0.12;
+        double yellowG = 0.54;
     
         if ((Math.abs(blueR-r) < threshold) && (Math.abs(blueB-b) < threshold) && (Math.abs(blueG-g) < threshold) == true){
           return "B";

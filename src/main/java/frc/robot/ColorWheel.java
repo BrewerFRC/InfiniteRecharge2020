@@ -19,7 +19,7 @@ class ColorWheel{
     private String targetColor;
      
     public static final double ROTATION_POWER = 1;
-    public static final double POSITION_POWER = 0.6;
+    public static final double POSITION_POWER = 0.4;
     public static final double MAX_POWER = 1;
 
     private enum States {
@@ -39,9 +39,9 @@ class ColorWheel{
     }
 
     public void debug(){
-        Common.dashNum("CW: S1 Blue", colorSensor1.colorSensor.getBlue());
-        Common.dashNum("CW: S1 Red", colorSensor1.colorSensor.getRed());
-        Common.dashNum("CW: S1 Green", colorSensor1.colorSensor.getGreen());
+        Common.dashNum("CW: S1 Blue", colorSensor1.colorSensor.getColor().blue);
+        Common.dashNum("CW: S1 Red", colorSensor1.colorSensor.getColor().red);
+        Common.dashNum("CW: S1 Green", colorSensor1.colorSensor.getColor().green);
         //SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
         //SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
         //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
@@ -106,7 +106,7 @@ class ColorWheel{
      * 
      */
     public boolean rotationVerified() {
-        if ((pieAmount1 >= 24) && (pieAmount1 <= 40) && (pieAmount2 >= 24) && (pieAmount2 <= 40)){
+        if ((pieAmount1 >= 26) && (pieAmount1 <= 40) && (pieAmount2 >= 26) && (pieAmount2 <= 40)){
             return true;
         }
         else if  ((pieAmount1 > 40) && (pieAmount2 > 40)) {

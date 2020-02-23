@@ -23,7 +23,7 @@ public class Flywheel {
     private enum States {
         IDLE,
         SPIN_UP,
-        READY_TO_FIRE;
+         READY_TO_FIRE;
     }
 
     public enum Distance {
