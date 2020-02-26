@@ -23,7 +23,7 @@ public class Flywheel {
     private enum States {
         IDLE,
         SPIN_UP,
-         READY_TO_FIRE;
+        READY_TO_FIRE;
     }
 
     public enum Distance {
@@ -57,6 +57,8 @@ public class Flywheel {
         flywheelRight.restoreFactoryDefaults();
         flywheelLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
         flywheelRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        //flywheelLeft.setSmartCurrentLimit(40); //if needed 2/25/2020
+        //flywheelRight.setSmartCurrentLimit(40);
         left_pidController = flywheelLeft.getPIDController();
         right_pidController = flywheelRight.getPIDController();
         left_encoder = flywheelLeft.getEncoder();
@@ -112,7 +114,7 @@ public class Flywheel {
             case SHORT :
                 targetRPM = SHORT_RPM;
                 toleranceRPM = SHORT_TOLERANCE;
-                left_pidController.setFF(1.523E-4);
+                left_pidController.setFF(0.00016);// was 1.523E-4
                 hoodUp();
                 break;           
         }
