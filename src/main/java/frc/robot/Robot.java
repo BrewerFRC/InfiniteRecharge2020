@@ -176,9 +176,9 @@ class Robot extends TimedRobot {
     if (driver.when(Xbox.buttons.start)) {
       dt.heading.reset();
     }
-    if (driver.when(Xbox.buttons.rightBumper) || operator.when(buttons.rightBumper)) {
+    if (driver.getPressed(Xbox.buttons.rightBumper) || operator.getPressed(buttons.rightBumper)) {
       dt.vis.ll.setLight(true);
-    } else if (driver.when(buttons.leftBumper) || operator.when(buttons.leftBumper)) {
+    } else {//if (driver.when(buttons.leftBumper) || operator.when(buttons.leftBumper)) {
       dt.vis.ll.setLight(false);
     }
 

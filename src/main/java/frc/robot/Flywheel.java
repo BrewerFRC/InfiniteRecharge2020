@@ -142,14 +142,14 @@ public class Flywheel {
      * Put the hood up for short shots
      */
 	private void hoodUp(){
-        hood.set(true);
+        hood.set(false);
     }
 
     /**
      * Put the hood down for long and medium shots
      */
 	private void hoodDown(){
-        hood.set(false);
+        hood.set(true);
     }
 
     /**
