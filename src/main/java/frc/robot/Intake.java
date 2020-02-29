@@ -153,7 +153,7 @@ public class Intake {
 	 * The state must be LOADING
 	 */
 	public void raiseIntake() {
-		if (state == States.LOADING) {
+		if (state == States.LOADING || state == States.IDLE) {
 			state = States.START_CLEAR; 
 			//state = States.IDLE;
 		}
@@ -190,6 +190,7 @@ public class Intake {
 			case STOP:
 				motorStop();
 				state = States.IDLE;
+				break;
 
 			case START_CLEAR:
 				setIntakeUp();

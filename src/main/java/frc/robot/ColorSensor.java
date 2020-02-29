@@ -46,8 +46,8 @@ public ColorSensor(I2C.Port port) {
         */
         // new colour values for testing
         double blueR = 0.16; 
-        double blueB = 0.38;
-        double blueG = 0.45;
+        double blueB = .33;//0.38;
+        double blueG = .50;//0.45;
         double greenR = 0.21; 
         double greenB = 0.26;
         double greenG = 0.53;

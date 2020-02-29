@@ -74,7 +74,19 @@ class Robot extends TimedRobot {
       if (dt.vis.getAtTarget()) {
         shooter.fireBall();
       }
+    } else if (operator.getPressed(Xbox.buttons.dPadUp)) {
+      dt.teleopDrive(-.2, 0);
+      if (operator.when(Xbox.buttons.dPadUp)) {
+        colorWheel.startCounting();
+      }
+    } else if (operator.getPressed(Xbox.buttons.dPadDown)) {
+      dt.teleopDrive(-.2, 0);
+      if (operator.when(Xbox.buttons.dPadDown)) {
+        colorWheel.startFinding();
+      }
     } else {
+      operator.when(Xbox.buttons.dPadDown);
+      operator.when(Xbox.buttons.dPadUp);
       drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
       turn = -driver.deadzone(driver.getX(Hand.kLeft));
       if (drive==0 && turn==0) {
@@ -126,12 +138,7 @@ class Robot extends TimedRobot {
       climber.unlock();
     }
     
-    if (operator.getPressed(Xbox.buttons.dPadUp)) {
-      colorWheel.startCounting();
-    }
-    if (operator.getPressed(Xbox.buttons.dPadDown)) {
-      colorWheel.startFinding();
-    }
+    
     if (operator.getPressed(Xbox.buttons.start)) {
       shooter.eject();
     }

@@ -39,9 +39,9 @@ class ColorWheel{
     }
 
     public void debug(){
-        Common.dashNum("CW: S1 Blue", colorSensor1.colorSensor.getColor().blue);
-        Common.dashNum("CW: S1 Red", colorSensor1.colorSensor.getColor().red);
-        Common.dashNum("CW: S1 Green", colorSensor1.colorSensor.getColor().green);
+        Common.dashNum("CW: S2 Blue", colorSensor2.colorSensor.getColor().blue);
+        Common.dashNum("CW: S2 Red", colorSensor2.colorSensor.getColor().red);
+        Common.dashNum("CW: S2 Green", colorSensor2.colorSensor.getColor().green);
         //SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
         //SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
         //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
@@ -170,6 +170,9 @@ class ColorWheel{
         pieAmount1 = colorSensor1.getPieCount(2);
         pieAmount2 = colorSensor2.getPieCount(2);
         targetColor = this.colorToLocate();
+        Common.dashStr("CW: State", state.toString());
+        Common.dashStr("CW: color char 1", verifiedColorChar1);
+        Common.dashStr("CW: color char 2", verifiedColorChar2);
 
         switch (state) {
             case IDLE :
