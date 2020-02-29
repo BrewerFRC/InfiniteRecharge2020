@@ -45,6 +45,11 @@ public class Shooter {
         } 
     }
 
+    public void raiseIntake() {
+        if (intake.isLoading()) {
+            intake.raiseIntake();
+        }
+    }
     /**
      * 
      * Prepare shooter to intake balls

@@ -89,7 +89,7 @@ class Robot extends TimedRobot {
       shooter.toggleIntake();
     }
     if (driver.getPressed(Xbox.buttons.b)) {
-      shooter.prepFire(Flywheel.Distance.LONG);
+      shooter.raiseIntake();
     }
     if (driver.getPressed(Xbox.buttons.y)) {
       shooter.prepFire(Flywheel.Distance.SHORT);
