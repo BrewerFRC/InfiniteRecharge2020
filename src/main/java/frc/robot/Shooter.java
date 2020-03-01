@@ -46,9 +46,7 @@ public class Shooter {
     }
 
     public void raiseIntake() {
-        if (intake.isLoading()) {
             intake.raiseIntake();
-        }
     }
     /**
      * 
