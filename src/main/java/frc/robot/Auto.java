@@ -320,7 +320,7 @@ public class Auto {
             case GP_DRIVE:
                 if (dt.driveComplete()) {
                     autoTime = Common.time()+ GP_PICKUP_TIME;
-                    dt.visionTrack();
+                    dt.turn(GP_TURN);
                     Common.debug("AUTO: GP_TURN");
                     autoState = autoStates.GP_TURN;
                 }
@@ -328,7 +328,7 @@ public class Auto {
             case GP_TURN:
                 if (dt.driveComplete()) {
                     //Common.debug("GP_PAUSE over, autoTime: "+autoTime+" Common.time: "+Common.time());
-                    //dt.turn(GP_TURN);
+                    dt.visionTrack();
                     shooter.prepFire(Distance.MEDIUM);
                     Common.debug("AUTO: GP_ALIGN");
                     autoState = autoStates.GP_ALIGN;
@@ -363,6 +363,7 @@ public class Auto {
                     Common.debug("AUTO: GP_COMPLETE");
                     autoState = autoStates.GP_COMPLETE;
                 }
+                break;
             case GP_COMPLETE:
                 dt.hold();
                 break;

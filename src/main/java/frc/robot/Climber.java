@@ -33,8 +33,11 @@ public class Climber{
 
     public void update() {
         //auto lock ratchet when amperage crosses threshold
-        updateLeftCurrent();
-        updateRightCurrent();
+        if (Robot.instance().cycleCount == 2) {
+            updateLeftCurrent();
+        } else if (Robot.instance().cycleCount == 3) {
+            updateRightCurrent();
+        }
         if (getLeftCurrent() > 5 || getRightCurrent() > 5)  {
             locked = true;
         } 

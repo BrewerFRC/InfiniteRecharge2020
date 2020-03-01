@@ -35,7 +35,6 @@ public class Magazine {
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
 	private Timer timer = new Timer();
 	private Timer jamTimer =  new Timer();
-
 	
 	private final double MAX_POWER = 0.84;  //was .88; was .93 Max power to run magazines polycord
 	private final double MAX_RUNTIME = 2.0;  //Max seconds to run polycord as a timeout (tune to be a bit higher then the time it takes to move a ball through the magazine) 
@@ -72,23 +71,25 @@ public class Magazine {
 	 */
 	public void update() {
 		// Jam detection.
-		if (Robot.instance().getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
-			if (jamTimer.get() > 0) {
-				if (jamTimer.get() >= JAM_TIME) {
-					stop();
-					if (state == States.UNLOAD_BREACH)  {
-						state = States.JAMMED;
-					} else {
-						state = States.BEGIN_UNLOAD_BREACH;
+		if (Robot.instance().cycleCount == 1) {
+			if (Robot.instance().getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+				if (jamTimer.get() > 0) {
+					if (jamTimer.get() >= JAM_TIME) {
+						//stop();
+						if (state == States.UNLOAD_BREACH)  {
+							state = States.JAMMED;
+						} else {
+							state = States.BEGIN_UNLOAD_BREACH;
+						}
 					}
+				} else {
+					jamTimer.reset();
+					jamTimer.start();
 				}
 			} else {
+				jamTimer.stop();
 				jamTimer.reset();
-				jamTimer.start();
 			}
-		} else {
-			jamTimer.stop();
-			jamTimer.reset();
 		}
 
 		// State process
@@ -98,11 +99,16 @@ public class Magazine {
 			// If a ball is detected at the Bottom sensor and Magazine not full, then go to LOAD_BALL.
 			// If a ball is detected only the Top sensor then go to BREACH_LOADED.
 				stop();
-				if (bottomSensorTriggered() && !fullyLoaded()) {
+				/*if (bottomSensorTriggered() && !fullyLoaded()) {
 					state = States.LOAD_BALL;
 				} else if (topSensorTriggered()) {
 					state = States.BREACH_LOADED;
-				}	
+				}*/
+				if (topSensorTriggered()) {
+					state = States.BREACH_LOADED;
+				} else if (bottomSensorTriggered()) {
+					state = States.LOAD_BALL;
+				}
 				break;
 				
 			case EMPTY:

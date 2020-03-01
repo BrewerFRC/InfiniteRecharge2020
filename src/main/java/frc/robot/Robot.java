@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Compressor;
 
 class Robot extends TimedRobot {
   public static Robot instance;
+  public double cycleCount = 1;
   private DriveTrain dt = new DriveTrain();
   private Xbox driver = new Xbox(0);
   private Xbox operator =  new Xbox(1);
@@ -69,6 +70,12 @@ class Robot extends TimedRobot {
       dt.heading.reset();;
     }
     
+    /**
+     * @TODO
+     * Change to bumpers intake on/off
+     * Shifting dpad up/down
+     * A and B being intake forwards and backwards 
+     */
     //SAM'S CODE FOR CONTROL SCHEME
     // DriveTrain Control
     if (driver.getPressed(buttons.leftTrigger)) {
@@ -160,6 +167,10 @@ class Robot extends TimedRobot {
     shooter.update();
     climber.update();
     debug();
+    cycleCount++;
+    if (cycleCount >= 3) {
+      cycleCount = 0;
+    }
   }
 
   
