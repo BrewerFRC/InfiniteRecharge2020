@@ -38,8 +38,8 @@ public class Intake {
 		STOP,			//Turns off the intake wheels without raising the pneumatics
 		START_CLEAR, 	//sets the timer for the clear function
 		CLEAR,			//Will wait for the intake to be up then clear the intake of any stuck bowls.
-		EJECTING;       //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
-
+		EJECTING,     //Entered through a button press, runs the polycord outwards 5x, sets intake down. Remains in this state until adjusted through button input.
+		REVERSE;
 	}
 	
 	/**
@@ -172,6 +172,12 @@ public class Intake {
 		}
 	}
 
+	public void reverse() {
+		if (state == States.IDLE || state == States.LOADING) {
+			state = States.REVERSE;
+		}
+	}
+
 
 	/**
 	 * 
@@ -204,11 +210,13 @@ public class Intake {
 				} else if ((clearWait  + 1500) >= Common.time()) {
 					motorOut();
 				} else {
-					setIntakeUp();
 					state = States.IDLE;
 				}
 				break;
-
+			case REVERSE:
+				setIntakeDown();
+				motorOut();
+				break;
 			case EJECTING:
 				setIntakeDown();
 				motorOut();

@@ -46,7 +46,7 @@ public class Shooter {
     }
 
     public void raiseIntake() {
-            intake.raiseIntake();
+        intake.raiseIntake();
     }
     /**
      * 
@@ -89,19 +89,20 @@ public class Shooter {
     }
 
     /**
-     * sets the intake to down and on
-     * sets the magazine to idle
-     * sets the flywheel to off
-     * will chieck if intake is idle and if magazine is in a shooting state
-     * use whenPressed not WhilePressed for this because you dont want to call it 50 times a second
+     * Sets the intake to start by lowering and spinning or stop it
      */
     public void toggleIntake() {
+        /*sets the intake to down and on
+        * sets the magazine to idle
+        * sets the flywheel to off
+        * will chieck if intake is idle and if magazine is in a shooting state
+        * use whenPressed not WhilePressed for this because you dont want to call it 50 times a second
+        */
         if (intake.isIdle()) {
             if (mag.breachingStates()) {
                 mag.unloadBreach();
                 flywheel.stop();
                 Common.debug("SH: toggleIntake unloading breach");
-
             } else if (mag.isReadyToIntake()) {
                 intake.startIntake();
                 flywheel.stop();
@@ -112,12 +113,17 @@ public class Shooter {
             Common.debug("SH: toggleIntake stoping intake");
         }
     }
+    
     public void intakeOn() {
         intake.startIntake();
     }
 
     public void intakeOff() {
         intake.stopIntake();
+    }
+
+    public void intakeReverse() {
+        intake.reverse();
     }
     
     public boolean readyToLoad() {

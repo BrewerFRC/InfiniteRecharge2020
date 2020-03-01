@@ -106,25 +106,28 @@ class Robot extends TimedRobot {
     }
 
     //DRIVER
-    if (driver.when(Xbox.buttons.a)) {
-      shooter.toggleIntake();
-    }
-    if (driver.getPressed(Xbox.buttons.b)) {
+    if (driver.when(Xbox.buttons.rightBumper)) {
       shooter.raiseIntake();
     }
-    if (driver.getPressed(Xbox.buttons.y)) {
+    if (driver.when((buttons.a))) {
+      shooter.toggleIntake();
+    }
+    if (driver.when(Xbox.buttons.b)) {
+      shooter.intakeReverse();
+    }
+    if (driver.when(Xbox.buttons.y)) {
       shooter.prepFire(Flywheel.Distance.SHORT);
     }
-    if (driver.getPressed(Xbox.buttons.x)) {
+    if (driver.when(Xbox.buttons.x)) {
       shooter.prepFire(Flywheel.Distance.MEDIUM);
     }
     if (driver.getPressed(Xbox.buttons.rightTrigger)) {
       shooter.fireBall();
     }
-    if (driver.when(Xbox.buttons.leftBumper))  {
+    if (driver.when(Xbox.buttons.dPadUp))  {
       dt.shiftLow();
     }
-    else if (driver.when(Xbox.buttons.rightBumper))  {
+    else if (driver.when(Xbox.buttons.dPadUp))  {
       dt.shiftHigh();
     }
     if (driver.getPressed(Xbox.buttons.start)) {
