@@ -157,7 +157,7 @@ public class Flywheel {
      */
     private void setRPM(double RPM) {
         // TESTING ===============
-        Common.dashNum("FW: targetRPM", RPM);
+        //Common.dashNum("FW: targetRPM", RPM);
         // =======================
         // Set RPM of left motor. Right motor follows.
         if (RPM >= 500) {

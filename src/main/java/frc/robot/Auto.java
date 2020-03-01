@@ -59,6 +59,8 @@ public class Auto {
         GP_TURN,
         GP_ALIGN,
         GP_FIRE,
+        GP_2ND_TURN,
+        GP_2ND_DRIVE,
         GP_COMPLETE;
     }
 
@@ -68,7 +70,8 @@ public class Auto {
     SPIN_UP_DIST = -24, //Distance to spin up from wall
     T_SHOOT_DIST = 48, //Distance to move forward to shoot for trench
     TRENCH_RUN_DIST = 175-48, //Length to run into trench
-    GP_DRIVE_DIST = 93; // was 90 Length to move to generator in inches
+    GP_DRIVE_DIST = 93, // was 90 Length to move to generator in inches
+    GP_2ND_DRIVE_DISTANCE = 48; // 48 inches ACROSS GENERATOR
 
     //Angles
     public final static double T_FIRST_SHOOT_ANGLE = 347, //Angle of first trench shoot
@@ -341,12 +344,25 @@ public class Auto {
                 break;
             case GP_FIRE:
                 if (shooter.empty()) {
-                    Common.debug("AUTO: GP_COMPLETE");
-                    autoState = autoState.GP_COMPLETE;
+                    dt.turn(0);
+                    Common.debug("AUTO: GP_2ND_TURN");
+                    autoState = autoState.GP_2ND_TURN;
                 } else {
                     shooter.fireBall();
                 }
                 break;
+            case GP_2ND_TURN:
+                if (dt.driveComplete()){
+                    dt.driveDistance(GP_2ND_DRIVE_DISTANCE);
+                    Common.debug("AUTO: GP_2ND_DRIVE");
+                    autoState = autoStates.GP_2ND_DRIVE;
+                }
+                break;
+            case GP_2ND_DRIVE:
+                if (dt.driveComplete()) {
+                    Common.debug("AUTO: GP_COMPLETE");
+                    autoState = autoStates.GP_COMPLETE;
+                }
             case GP_COMPLETE:
                 dt.hold();
                 break;

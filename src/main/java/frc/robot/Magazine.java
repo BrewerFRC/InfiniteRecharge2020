@@ -72,7 +72,7 @@ public class Magazine {
 	 */
 	public void update() {
 		// Jam detection.
-		if (Robot.getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+		if (Robot.instance().getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
 			if (jamTimer.get() > 0) {
 				if (jamTimer.get() >= JAM_TIME) {
 					stop();
@@ -112,7 +112,7 @@ public class Magazine {
 				
 				stop();
 				if (bottomSensorTriggered() == true) {
-					Common.debug("Mag: Load Ball");
+					//Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				}
 				break;
@@ -122,14 +122,14 @@ public class Magazine {
 			// Once ball is loaded past Lower sensor or Top sensor triggers, then go to IDLE.
 				if (topSensorTriggered() == true){
 					stop();
-					Common.debug("Mag: Idle Top Sensor Triggered");
+					//Common.debug("Mag: Idle Top Sensor Triggered");
 					state = States.IDLE;
 				} else if (bottomSensorTriggered() == true) {
 					load();
-					Common.debug("Mag: loading bottom sensor triggered");
+					//Common.debug("Mag: loading bottom sensor triggered");
 				} else {
 					stop();
-					Common.debug("Mag: Idle");
+					//Common.debug("Mag: Idle");
 					state = States.IDLE;
 				}
 				break;
@@ -140,7 +140,7 @@ public class Magazine {
 			// Otherwise, run motor toward Top sensor, initialize timeout timer for breach load to handle empty
 			// magazine condition, and then go to LOAD_BREACH
 				timer.reset();
-				Common.debug("Mag: Load Breach");
+				//Common.debug("Mag: Load Breach");
 				state = States.LOAD_BREACH;
 				break;
 				
@@ -151,10 +151,10 @@ public class Magazine {
 				load();
 				if (topSensorTriggered() == true) {
 					stop();
-					Common.debug("Breach Loaded");
+					//Common.debug("Breach Loaded");
 					state = States.BREACH_LOADED;
 				} else if (timer.get() >= MAX_RUNTIME) {
-					Common.debug("Mag: Empty");
+					//Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				}
 				break;
@@ -164,7 +164,7 @@ public class Magazine {
 			// If Top sensor looses sight of ball, then go to BEGIN_LOAD_BREACH.
 				stop();
 				if (topSensorTriggered() == false) {
-					Common.debug("Mag: Begin Load Breach");
+					//Common.debug("Mag: Begin Load Breach");
 					state = States.BEGIN_LOAD_BREACH;
 				}
 				break;
@@ -173,7 +173,7 @@ public class Magazine {
 			//moves 1 ball in to flywheel.  When Top sensor clears, goes to BEGIN_LOAD_BREACH
 				load();
 				if (topSensorTriggered() == false) {
-					Common.debug("Mag: Begin Load Breach");
+					//Common.debug("Mag: Begin Load Breach");
 					state = States.BEGIN_LOAD_BREACH;
 				}
 				break;
@@ -184,12 +184,12 @@ public class Magazine {
 			// Otherwise, run motors toward Bottom sensor, begin timeout timer to handle empty magazine condition,
 			// and then go to UNLOAD_BREACH:
 				if (bottomSensorTriggered() == true) {
-					Common.debug("Mag: Load Ball");
+					//Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else {
 					timer.reset();
 					unload();
-					Common.debug("Mag: Unload Breach");
+					//Common.debug("Mag: Unload Breach");
 					state = States.UNLOAD_BREACH;
 				}
 				break;
@@ -200,10 +200,10 @@ public class Magazine {
 			// If the timeout timer expires, then the magazine must be empty, so go to EMPTY state.
 				if (bottomSensorTriggered() == true) {
 					stop();
-					Common.debug("Mag: Load Ball");
+					//Common.debug("Mag: Load Ball");
 					state = States.LOAD_BALL;
 				} else if (timer.get() >= MAX_RUNTIME) {
-					Common.debug("Mag: Empty");
+					//Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				}
 				break;
@@ -214,14 +214,14 @@ public class Magazine {
 			// Advance to DUMP_BALLS state.
 				timer.reset();
 				unload();
-				Common.debug("Mag: Dump Balls");
+				//Common.debug("Mag: Dump Balls");
 				state = States.DUMP_BALLS;
 				break;
 				
 			case DUMP_BALLS:
 			// Continue to dump balls until timeout occurs. Go to EMPTY state.
 				if (timer.get() >= MAX_RUNTIME) {
-					Common.debug("Mag: Empty");
+					//Common.debug("Mag: Empty");
 					state = States.EMPTY;
 				} else {
 					unload();
@@ -250,7 +250,7 @@ public class Magazine {
 		//Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
 		Common.dashNum("Mag: Timer", timer.get());
 		Common.dashStr("Mag: State", state.name());
-		Common.dashNum("Mag: amps", Robot.getPDP().getCurrent(8));
+		//Common.dashNum("Mag: amps", Robot.getPDP().getCurrent(8));
 		//Common.dashBool("Mag: TOP", topBeamBreak.get());
 	}
 

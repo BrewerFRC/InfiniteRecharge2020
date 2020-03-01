@@ -94,10 +94,9 @@ public class Climber{
             // Retract slowly, based on which way the x-axis is pushed
             if (x > 0) {
                 setLeftTarget(0.0);
-                setRightTarget(-(x - 0.5));
-
+                setRightTarget(-(x - 0.4));
             } else {
-                setLeftTarget((x + 0.5));
+                setLeftTarget((x + 0.4));
                 setRightTarget(0.0);
             }
         }
@@ -140,7 +139,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateLeftCurrent() {
-        leftCurrent = leftCurrent * .98 + Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .02;
+        leftCurrent = leftCurrent * .98 + Robot.instance().getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .02;
     }
 
     /**
@@ -156,7 +155,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateRightCurrent() {
-        rightCurrent = rightCurrent * .98 + Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .02;
+        rightCurrent = rightCurrent * .98 + Robot.instance().getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .02;
     }
 
     /**
@@ -172,6 +171,6 @@ public class Climber{
         Common.dashBool("CLMB: teleop mode", teleop);
         Common.dashBool("CLMB: locked", locked);
         Common.dashNum("CLMB: left draw", getLeftCurrent());
-        Common.dashNum("CLMB: Left pdp read", Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP));
+        //Common.dashNum("CLMB: Left pdp read", Robot.instance.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP));
     }
 }

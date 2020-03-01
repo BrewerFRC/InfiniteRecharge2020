@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Compressor;
 
 class Robot extends TimedRobot {
+  public static Robot instance;
   private DriveTrain dt = new DriveTrain();
   private Xbox driver = new Xbox(0);
   private Xbox operator =  new Xbox(1);
@@ -34,6 +35,7 @@ class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     shooter.init();
+    instance = this;
   }
 
   @Override
@@ -210,4 +212,7 @@ class Robot extends TimedRobot {
     return pdp;
   }
 
+  public static Robot instance() {
+		return instance;
+	}
 }
