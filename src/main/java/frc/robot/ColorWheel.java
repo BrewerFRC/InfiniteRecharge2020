@@ -17,6 +17,7 @@ class ColorWheel{
     String verifiedColorChar1, verifiedColorChar2; 
     double pieAmount1, pieAmount2;
     String targetColor;
+    LED led = new LED();
     
     public static final double ROTATION_POWER = 1;
     public static final double POSITION_POWER = 0.6;
@@ -69,7 +70,20 @@ class ColorWheel{
         }
     }
 
-
+    public void colorWheelLED() {
+        if ((verifiedColorChar1.equals("R")) && (verifiedColorChar2.equals("R"))){
+            //led.solid(255, 0 , 0);
+        }
+        if((verifiedColorChar1.equals("Y")) && (verifiedColorChar2.equals("Y"))) {
+            //led.solid(0, 255, 255);
+        }
+        if((verifiedColorChar1.equals("B")) && (verifiedColorChar2.equals("B"))) {
+            //led.solid(0, 0, 255);
+        }
+        if((verifiedColorChar1.equals("G")) && (verifiedColorChar2.equals("G"))) {
+            //led.solid(0, 255 , 0);
+        }
+    }
     
 
     public void resetPieCount(){

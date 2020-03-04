@@ -20,6 +20,7 @@ public class Climber{
     DigitalInput leftLimit = new DigitalInput(Constants.DIO_LEFT_CLIMBER);
     DigitalInput rightLimit = new DigitalInput(Constants.DIO_RIGHT_CLIMBER);
 
+    LED led = new LED();
     private double leftCurrent = 0, rightCurrent = 0;
     private double LEFTSERVOANGLE = 180;
     private double RIGHTSERVOANGLE = 0;
@@ -57,6 +58,11 @@ public class Climber{
         teleop = true;
     }
 
+    public void climberLED() {
+        if (teleop = true) {
+            led.chasing(0, 255, 255, 2);
+        }
+    }
     public void unlock() {
         leftRatchet.setAngle(180);
         rightRatchet.setAngle(0);

@@ -21,16 +21,16 @@ import edu.wpi.first.wpilibj.Timer;
  * Run init() when starting the robot and then call update() every robot cycle to drive the state process.
  */
 public class Intake {
+	LED led = new LED();
+	private Timer timer = new Timer();
 	
 	private final static Spark intakeMot = new Spark(Constants.PWM_INTAKE_MOTOR);
 	private final static Solenoid outSol = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_INTAKE_OUT_ARM);	
 	private final static Solenoid inSol  = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_INTAKE_IN_ARM);
-	private final static double MAX_POWER = 1.0; // This is a placeholder constant.
-	private Timer timer = new Timer();  
+	private final static double MAX_POWER = 1.0; // This is a placeholder constant  
 	private final double MAX_RUNTIME = 2.0;
 	private States state = States.IDLE;
 	private double power = 0;
-
 	private enum States {
 		IDLE, 			//No motor movement, intake is up.
 		LOADING,			// Entered through a button press. Intake is down. Remains in this state until adjusted through button input or five balls have been loaded.
@@ -48,6 +48,7 @@ public class Intake {
 	 */
 	public void init(){
 		state = States.IDLE;
+		led.blink(4, 4);
 	}
 
 	/**
@@ -163,14 +164,16 @@ public class Intake {
 			case LOADING:
 				setIntakeDown();
 				motorIn();
+				//led.updateBlink(0, 255, 0);
 				break;
-
+				
 			case EJECTING:
 				setIntakeDown();
 				motorOut();
 				if (timer.get() >= MAX_RUNTIME) {
 					state = States.IDLE;	
 				}
+				//led.updateBlink(255, 0, 255);
 				break;
 
 		}
