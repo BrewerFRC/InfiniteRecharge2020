@@ -65,7 +65,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
+    compressor.setClosedLoopControl(true);
     if (driver.when(Xbox.buttons.start)) {
       dt.heading.reset();;
     }
@@ -106,14 +106,14 @@ class Robot extends TimedRobot {
     }
 
     //DRIVER
-    if (driver.when(Xbox.buttons.rightBumper)) {
+    if (driver.when(Xbox.buttons.rightBumper) || driver.when(buttons.leftBumper)) {
       shooter.raiseIntake();
     }
     if (driver.when((buttons.a))) {
       shooter.toggleIntake();
     }
     if (driver.when(Xbox.buttons.b)) {
-      shooter.intakeReverse();
+      shooter.toggleIntakeReverse();
     }
     if (driver.when(Xbox.buttons.y)) {
       shooter.prepFire(Flywheel.Distance.SHORT);

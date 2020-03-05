@@ -125,6 +125,14 @@ public class Shooter {
     public void intakeReverse() {
         intake.reverse();
     }
+
+    public void toggleIntakeReverse() {
+        if (intake.isReverse()) {
+            intake.stopIntake();
+        } else {
+            intake.reverse();
+        }
+    }
     
     public boolean readyToLoad() {
         return (mag.isIdle() && flywheel.isIdle());

@@ -153,14 +153,14 @@ public class Intake {
 	 * The state must be LOADING
 	 */
 	public void raiseIntake() {
-		if (state == States.LOADING || state == States.IDLE) {
+		if (state == States.LOADING || state == States.IDLE || state == States.REVERSE) {
 			state = States.START_CLEAR; 
 			//state = States.IDLE;
 		}
 	}
 
 	public void stopIntake() {
-		if (state == States.LOADING) {
+		if (state == States.LOADING || state == States.REVERSE) {
 			state = States.STOP;
 		}
 	}
@@ -178,6 +178,9 @@ public class Intake {
 		}
 	}
 
+	public boolean isReverse() {
+		return state == States.REVERSE;
+	}
 
 	/**
 	 * 
@@ -199,6 +202,7 @@ public class Intake {
 				break;
 
 			case START_CLEAR:
+				Common.debug("Starting clear");
 				setIntakeUp();
 				clearWait = Common.time();
 				state = States.CLEAR;
