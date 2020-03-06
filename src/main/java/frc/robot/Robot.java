@@ -59,7 +59,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    compressor.setClosedLoopControl(true);
+    compressor.setClosedLoopControl(true); 
     //dt.teleopDrive(0, 0);
   }
 
@@ -185,8 +185,7 @@ class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    
-    
+    compressor.setClosedLoopControl(true);
   }
 
   @Override
@@ -216,7 +215,7 @@ class Robot extends TimedRobot {
     } else if (driver.when(buttons.dPadUp)) {
       auto.setAutoPath(paths.TRENCH_SHOOT);
     }
-
+    dt.update();
     debug();
   }
   

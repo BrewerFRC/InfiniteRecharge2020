@@ -297,7 +297,7 @@ public class Auto {
         switch (autoState) {
             case GP_INIT:
                 shooter.toggleIntake();
-                dt.driveDistance(this.GP_DRIVE_DIST - 20);
+                dt.driveDistance(this.GP_DRIVE_DIST - 20, .6);
                 autoTime = Common.time()+ GP_PICKUP_TIME;
                 Common.debug("AUTO: GP_FAST_DRIVE");
                 autoState = autoState.GP_FAST_DRIVE;
