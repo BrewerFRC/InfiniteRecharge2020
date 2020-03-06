@@ -26,7 +26,7 @@ class Robot extends TimedRobot {
   private Compressor compressor = new Compressor(Constants.PCM_CAN_ID);
   private static PowerDistributionPanel pdp = new PowerDistributionPanel();
   private Auto auto =  new Auto(dt, shooter);
-
+  LED led = new LED();
   
   // class - name - = - new class
   ColorWheel colorWheel  = new ColorWheel(I2C.Port.kOnboard, I2C.Port.kMXP); 

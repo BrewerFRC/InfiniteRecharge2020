@@ -15,6 +15,7 @@ public class Flywheel {
     private final static CANSparkMax flywheelRight = new CANSparkMax(Constants.FLYWHEEL_RIGHT_CAN_ID, MotorType.kBrushless);
     private final static Solenoid hood = new Solenoid(Constants.PCM_CAN_ID, Constants.SOL_FLAPPER);
     private double targetPower, targetRPM, toleranceRPM, setPoint = 0, processVariable;
+    LED led = new LED();
 
     
     private CANPIDController left_pidController, right_pidController;
@@ -36,7 +37,7 @@ public class Flywheel {
     private final static double LONG_RPM = 4800, MEDIUM_RPM = 4600, SHORT_RPM = 1969;
     private final static double LONG_TOLERANCE = 75, MEDIUM_TOLERANCE = 100, SHORT_TOLERANCE = 50;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-    // SMARTMOTION VARIABLES - CAN THESE BE REMOVED?
+    // SMARTMOTION VARIABLES - CAN THESE BE REMOVED? no, they cannot
     private double maxVel, minVel, maxAcc, allowedErr;
 
     /**
@@ -255,11 +256,13 @@ public class Flywheel {
                 setRPM(targetRPM);
                 if (atRPM()) {
                     state = States.READY_TO_FIRE;
+                    //led.chasing(255, 20, 0, 4);
                 }
                 break;
             case READY_TO_FIRE :
                 if (!atRPM()) {
                     state = States.SPIN_UP;
+                   // led.chasing(255, 20, 0, 2);
                 }
                 break;
         }

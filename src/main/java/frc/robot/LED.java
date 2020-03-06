@@ -162,7 +162,7 @@ public class LED {
                 for(int i = 0; i < length; i++){
                     
                     setLED(g1+i, r, g, b);
-                    setLED(g1, 0, 0 , 0);                   //This fixed the problem of the entire strip being orange
+                    setLED(g1, 0, 0 , 0);                   //This fixed the problem of the entire strip staying orange
                     //m_led.setData(m_ledBuffer);
                 }
                 m_led.setData(m_ledBuffer);

@@ -7,6 +7,7 @@ public class Shooter {
     private Magazine mag = new Magazine();
     private Intake intake = new Intake();
     private Flywheel flywheel = new Flywheel();
+    LED led = new LED();
     
     public void update() {
         mag.update();
@@ -30,6 +31,7 @@ public class Shooter {
         mag.init();
         intake.init();
         flywheel.init();
+        //led.blink(2, 2);  
     }
     /**
      * Prepares shooter for throwing. Provide distance either 'long', 'medium' or 'short'.
@@ -39,6 +41,7 @@ public class Shooter {
      */
     public void prepFire(Distance distance) {
         if (mag.isIdle() || !mag.isEmpty() || mag.isJammed()){
+            //led.chasing(0, 0, 255, 2);
             intake.stopIntake();
             mag.loadBreach();
             flywheel.start(distance);
@@ -54,6 +57,7 @@ public class Shooter {
      */
     public void prepLoad() {
         if (mag.isShootBall() || !mag.isEmpty()) {
+            //led.chasingBackwards(0, 0, 255, 2);
             intake.stopIntake();
             mag.unloadBreach();
             flywheel.stop();
@@ -69,6 +73,7 @@ public class Shooter {
         if (mag.isBreachLoaded() && flywheel.readyToFire()) {
             intake.stopIntake();
             mag.shootBall();
+            //led.solid(255,255,255);
         }
     }
 
@@ -101,6 +106,7 @@ public class Shooter {
 
             } else if (mag.isReadyToIntake()) {
                 intake.startIntake();
+                //led.fade(120, 2);
                 flywheel.stop();
                 Common.debug("SH: toggleIntake starting intake");
             }
@@ -121,5 +127,11 @@ public class Shooter {
     }
     public boolean empty() {
         return mag.isEmpty();
+    }
+
+    public void shooterLED() {
+        if (mag.isJammed()) {
+            //led.updateBlink(255, 0, 0);
+        }
     }
 }
