@@ -29,23 +29,22 @@ public ColorSensor(I2C.Port port) {
 
 
     public String getColor(double r, double b, double g, double threshold) {
-      /*
-      The real official values
-        double blueR = 0.12; 
-        double blueB = 0.44;
-        double blueG = 0.42;
-        double greenR = 0.175; 
-        double greenB = 0.25;
-        double greenG = 0.56;
-        double redR = 0.50; 
-        double redB = 0.14;
-        double redG = 0.35;
-        double yellowR = 0.32; 
-        double yellowB = 0.12;
-        double yellowG = 0.55;
-        */
+        //The real official values
+        double blueR = 0.14; 
+        double blueB = 0.36;
+        double blueG = 0.49;
+        double greenR = 0.18; 
+        double greenB = 0.21;
+        double greenG = 0.61;
+        double redR = 0.49; 
+        double redB = 0.12;
+        double redG = 0.4;
+        double yellowR = 0.3; 
+        double yellowB = 0.11;
+        double yellowG = 0.58;
+        
         // new colour values for testing
-        double blueR = 0.16; 
+        /*double blueR = 0.16; 
         double blueB = .33;//0.38;
         double blueG = .50;//0.45;
         double greenR = 0.21; 
@@ -56,7 +55,7 @@ public ColorSensor(I2C.Port port) {
         double redG = 0.4;
         double yellowR = 0.34; 
         double yellowB = 0.12;
-        double yellowG = 0.54;
+        double yellowG = 0.54;*/
     
         if ((Math.abs(blueR-r) < threshold) && (Math.abs(blueB-b) < threshold) && (Math.abs(blueG-g) < threshold) == true){
           return "B";

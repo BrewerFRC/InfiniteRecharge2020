@@ -190,7 +190,8 @@ class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    dt.vis.ll.setLight(false);  
+    dt.vis.ll.setLight(false); 
+    //dt.vis.ll.setLight(true); 
   }
 
   @Override
