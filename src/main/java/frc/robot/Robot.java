@@ -73,9 +73,7 @@ class Robot extends TimedRobot {
     } else {
       compressor.setClosedLoopControl(true);
     }
-    if (driver.when(Xbox.buttons.start)) {
-      dt.heading.reset();;
-    }
+    
     
     /**
      * @TODO
@@ -161,8 +159,11 @@ class Robot extends TimedRobot {
     
     
     if (operator.getPressed(Xbox.buttons.start)) {
-      shooter.eject();
+      //shooter.eject();
+      shooter.init();
+      dt.init();
     }
+    
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
     }
