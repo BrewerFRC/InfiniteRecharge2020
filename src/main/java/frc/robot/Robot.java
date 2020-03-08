@@ -139,7 +139,9 @@ class Robot extends TimedRobot {
     }
     if (driver.getPressed(Xbox.buttons.start)) {
       //Common.debug("ROBO: Eject");
-      shooter.eject();
+      //shooter.eject();
+      shooter.init();
+      dt.init();
     }
     if (driver.getPressed(Xbox.buttons.back)) {
       //Common.debug("ROBO: Prep Load");
