@@ -11,13 +11,18 @@ import edu.wpi.first.networktables.*;
  */
 public class Limelight2 {
 
-    private String table;
+    private String tableName = "limelight";
+    private NetworkTable table = NetworkTableInstance.getDefault().getTable(tableName);
+    private NetworkTableEntry tx = table.getEntry("tx"),
+    tv = table.getEntry("tv"),
+    ledMode = table.getEntry("ledMode");
+
 
     /**
      * A constructor that uses the default table "limelight"
      */
     public Limelight2() {
-        table = "limelight";
+        //table = "limelight";
     }
 
     /**
@@ -26,7 +31,7 @@ public class Limelight2 {
      * @param table The table of the target limelight 
      */
     public Limelight2(String table) {
-        this.table = table;
+        //this.table = table;
     }
 
     /**
@@ -46,13 +51,14 @@ public class Limelight2 {
      * getpipe	True active pipeline index of the camera (0 .. 9)
      * camtran	Results of a 3D position solution, 6 numbers: Translation (x,y,z) Rotation(pitch,yaw,roll)
      */
-    public double getDouble( String entry) {
-        return NetworkTableInstance.getDefault().getTable(table).getEntry(entry).getDouble(0);
-    }
+
+    /*public double getDouble( String entry) {
+        return 0;//NetworkTableInstance.getDefault().getTable(table).getEntry(entry).getDouble(0);
+    }*/
 
     public Boolean hasTarget() {
         //private to limit network table calls
-        return getDouble("tv") >= 1.0;
+        return tv.getDouble(0.0) >= 1.0;
     }
 
     /**
@@ -61,14 +67,14 @@ public class Limelight2 {
      * @return horizontal offset
      */
     public double getHorizOffset() {
-        return getDouble("tx");
+        return tx.getDouble(0.0);
     }
     /**
      * Vertical offset
      * From Crosshair To Target (LL2: -24.85 to 24.85 degrees)
      * @return
      */
-    public double getVertOffset() {
+    /*public double getVertOffset() {
         return getDouble("ty");
     }
     /**
@@ -76,7 +82,7 @@ public class Limelight2 {
      * (0% of image to 100% of image)
      * @return
      */
-    public double getTargetArea() {
+    /*public double getTargetArea() {
         return getDouble("ta");
     }
     /**
@@ -84,7 +90,7 @@ public class Limelight2 {
      * (-90 degrees to 0 degrees)
      * @return
      */
-    public double getRotation() {
+    /*public double getRotation() {
         return getDouble("ts");
     }
     /**
@@ -92,7 +98,7 @@ public class Limelight2 {
      * The pipeline’s latency contribution (ms) Add at least 11ms for image capture latency.
      * @return
      */
-    public double getLatency() {
+    /*public double getLatency() {
         return getDouble("tl");
     }
     /**
@@ -100,7 +106,7 @@ public class Limelight2 {
      * shortest side of the fitted bounding box (pixels)
      * @return
      */
-    public double getShortestSide() {
+    /*public double getShortestSide() {
         return getDouble("tshort");
     }
     /**
@@ -108,7 +114,7 @@ public class Limelight2 {
      * longest side of the fitted bounding box (pixels)
      * @return
      */
-    public double getLongestSide() {
+    /*public double getLongestSide() {
         return getDouble("tlong");
     }
     /**
@@ -116,7 +122,7 @@ public class Limelight2 {
      * rough bounding box (0 - 320 pixels)
      * @return
      */
-    public double gethorzSidelength() {
+    /*public double gethorzSidelength() {
         return getDouble("thor");
     }
     /**
@@ -124,7 +130,7 @@ public class Limelight2 {
      * rough bounding box (0  - 320 pixels)
      * @return
      */
-    public double getvertSidelength() {
+    /*public double getvertSidelength() {
         return getDouble("tvert");
     }
     /**
@@ -132,7 +138,7 @@ public class Limelight2 {
      * True active pipeline index of the camera (0 .. 9)
      * @return
      */
-    public double getPipe() {
+    /*public double getPipe() {
         return getDouble("getpipe");
     }
     /**
@@ -140,14 +146,14 @@ public class Limelight2 {
      * 6 numbers: Translation (x,y,z) Rotation(pitch,yaw,roll)
      * @return
      */
-    public double getcamTran() {
+    /*public double getcamTran() {
         return getDouble("camtran");
     }
-
+    /*
     private void setControl(String entry, double  value) {
         NetworkTableInstance.getDefault().getTable(table).getEntry(entry).setNumber(value);
     }
-
+    */
     /**
      * Turns the light on the limelight on or off.
      * 
@@ -156,9 +162,9 @@ public class Limelight2 {
     public void setLight(boolean On) {
         //set limelight on or off
         if (On) {
-            setControl("ledMode", 0); //on
+            ledMode.setNumber(0); //on
         } else {
-            setControl("ledMode", 1);
+            ledMode.setNumber(1);
         }
     }
 }

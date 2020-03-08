@@ -202,7 +202,7 @@ public class Intake {
 				break;
 
 			case START_CLEAR:
-				Common.debug("Starting clear");
+				//Common.debug("Starting clear");
 				setIntakeUp();
 				clearWait = Common.time();
 				state = States.CLEAR;

@@ -243,8 +243,8 @@ public class PID {
 		
 		// *** NaN check
 		if (Double.isNaN(output)) {
-			Common.debug("PID Calc is NaN " + this.name);
-			Common.debug("The input was " + input);
+			//Common.debug("PID Calc is NaN " + this.name);
+			//Common.debug("The input was " + input);
 			output = 0.0;
 			sumError = 0;
 		}

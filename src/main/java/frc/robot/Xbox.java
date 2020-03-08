@@ -123,7 +123,7 @@ public class Xbox extends XboxController {
 	 */
 	public boolean falling(buttons button) {
 		if (!fallingMap.containsKey(button)) {
-			Common.debug("falling map does not contain "+button.toString());
+			//Common.debug("falling map does not contain "+button.toString());
 			return false;
 		}
 		if (fallingMap.get(button.toString())) {

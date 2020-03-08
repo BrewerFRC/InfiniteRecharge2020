@@ -87,8 +87,8 @@ public class Auto {
     private autoStates autoState;
 
     public Auto(DriveTrain dt, Shooter shooter) {
-        this.dt = dt;
-        this.shooter = shooter;
+        this.dt = dt.instance();
+        this.shooter = shooter.getInstance();
         setAutoPath(paths.SHOOT_FROM_ANYWHERE);
     }
 
@@ -96,23 +96,23 @@ public class Auto {
         autoPath = path;
         switch (autoPath) {
             case SHOOT_FROM_ANYWHERE:
-                Common.debug("Setting auto to SFA");
+                //Common.debug("Setting auto to SFA");
                 autoState = autoStates.SFA_INIT;
                 break;
             case LAYUP:
-                Common.debug("setting auto to LAY");
+                //Common.debug("setting auto to LAY");
                 autoState = autoStates.LAY_INIT;
                 break;
             case TRENCH:
-                Common.debug("setting auto to TRENCH");
+                //Common.debug("setting auto to TRENCH");
                 autoState = autoStates.T_INIT;
                 break;
             case TRENCH_SHOOT:
-                Common.debug("setting auto to TRENCH SHOOT");
+                //Common.debug("setting auto to TRENCH SHOOT");
                 autoState = autoStates.T_INIT;
                 break;
             case GENERATOR_PICKUP:
-                Common.debug("setting auto to GP");
+                //Common.debug("setting auto to GP");
                 autoState = autoStates.GP_INIT;
                 break;
         }
@@ -299,13 +299,13 @@ public class Auto {
                 shooter.toggleIntake();
                 dt.driveDistance(this.GP_DRIVE_DIST - 20, .6);
                 autoTime = Common.time()+ GP_PICKUP_TIME;
-                Common.debug("AUTO: GP_FAST_DRIVE");
+                //Common.debug("AUTO: GP_FAST_DRIVE");
                 autoState = autoState.GP_FAST_DRIVE;
                 break;
             case GP_FAST_DRIVE:
                 if(dt.driveComplete()) {
                     dt.driveDistance(20, .3);
-                    Common.debug("AUTO: GP_PICKUP");
+                    //Common.debug("AUTO: GP_PICKUP");
                     autoState = autoStates.GP_PICKUP;
                 }
                 break;
@@ -313,7 +313,7 @@ public class Auto {
                 if (dt.driveComplete() && (Common.time() >= autoTime)) {
                     //shooter.toggleIntake();
                     dt.driveDistance(-10);
-                    Common.debug("AUTO: GP_DRIVE");
+                    //Common.debug("AUTO: GP_DRIVE");
                     autoState = autoState.GP_DRIVE;
                 }
                 break;
@@ -321,7 +321,7 @@ public class Auto {
                 if (dt.driveComplete()) {
                     autoTime = Common.time()+ GP_PICKUP_TIME;
                     dt.turn(GP_TURN);
-                    Common.debug("AUTO: GP_TURN");
+                    //Common.debug("AUTO: GP_TURN");
                     autoState = autoStates.GP_TURN;
                 }
                 break;
@@ -330,7 +330,7 @@ public class Auto {
                     //Common.debug("GP_PAUSE over, autoTime: "+autoTime+" Common.time: "+Common.time());
                     dt.visionTrack();
                     shooter.prepFire(Distance.MEDIUM);
-                    Common.debug("AUTO: GP_ALIGN");
+                    //Common.debug("AUTO: GP_ALIGN");
                     autoState = autoStates.GP_ALIGN;
                 }
                 break;
@@ -338,14 +338,14 @@ public class Auto {
                 //Common.dashNum("Auto time", );
                 if (dt.vis.getAtTarget() && shooter.readyToFire()) {
                     shooter.fireBall();
-                    Common.debug("AUTO: GP_FIRE");
+                    //Common.debug("AUTO: GP_FIRE");
                     autoState = autoState.GP_FIRE;
                 }
                 break;
             case GP_FIRE:
                 if (shooter.empty()) {
                     dt.turn(0);
-                    Common.debug("AUTO: GP_2ND_TURN");
+                    //Common.debug("AUTO: GP_2ND_TURN");
                     autoState = autoState.GP_2ND_TURN;
                 } else {
                     shooter.fireBall();
@@ -354,13 +354,13 @@ public class Auto {
             case GP_2ND_TURN:
                 if (dt.driveComplete()){
                     dt.driveDistance(GP_2ND_DRIVE_DISTANCE);
-                    Common.debug("AUTO: GP_2ND_DRIVE");
+                    //Common.debug("AUTO: GP_2ND_DRIVE");
                     autoState = autoStates.GP_2ND_DRIVE;
                 }
                 break;
             case GP_2ND_DRIVE:
                 if (dt.driveComplete()) {
-                    Common.debug("AUTO: GP_COMPLETE");
+                    //Common.debug("AUTO: GP_COMPLETE");
                     autoState = autoStates.GP_COMPLETE;
                 }
                 break;

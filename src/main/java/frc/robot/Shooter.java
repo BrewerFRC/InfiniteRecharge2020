@@ -7,6 +7,11 @@ public class Shooter {
     private Magazine mag = new Magazine();
     private Intake intake = new Intake();
     private Flywheel flywheel = new Flywheel();
+    private static Shooter instance;
+
+    public Shooter() {
+        instance = this;
+    }
     
     public void update() {
         mag.update();
@@ -47,6 +52,10 @@ public class Shooter {
 
     public void raiseIntake() {
         intake.raiseIntake();
+    }
+
+    public static Shooter getInstance() {
+        return instance;
     }
     /**
      * 
@@ -102,15 +111,15 @@ public class Shooter {
             if (mag.breachingStates()) {
                 mag.unloadBreach();
                 flywheel.stop();
-                Common.debug("SH: toggleIntake unloading breach");
+                //Common.debug("SH: toggleIntake unloading breach");
             } else if (mag.isReadyToIntake()) {
                 intake.startIntake();
                 flywheel.stop();
-                Common.debug("SH: toggleIntake starting intake");
+                //Common.debug("SH: toggleIntake starting intake");
             }
         } else {
             intake.stopIntake();
-            Common.debug("SH: toggleIntake stoping intake");
+            //Common.debug("SH: toggleIntake stoping intake");
         }
     }
     
@@ -145,5 +154,8 @@ public class Shooter {
     }
     public boolean shooting() {
         return mag.isShootBall();
+    }
+    public boolean isLoading() {
+        return (intake.isLoading());
     }
 }

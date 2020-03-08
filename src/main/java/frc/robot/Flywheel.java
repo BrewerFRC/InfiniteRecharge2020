@@ -89,7 +89,6 @@ public class Flywheel {
 
     public void init() {
         state = States.IDLE;
-
     }
    
     /** 

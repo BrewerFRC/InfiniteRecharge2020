@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Auto.paths;
+import frc.robot.Flywheel.Distance;
 import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -59,13 +60,19 @@ class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    compressor.setClosedLoopControl(true); 
+    compressor.setClosedLoopControl(true);
+    dt.init();
+    //shooter.init();
     //dt.teleopDrive(0, 0);
   }
 
   @Override
   public void teleopPeriodic() {
-    compressor.setClosedLoopControl(true);
+    if (shooter.shooting() || shooter.isLoading()) {
+      compressor.setClosedLoopControl(false);
+    } else {
+      compressor.setClosedLoopControl(true);
+    }
     if (driver.when(Xbox.buttons.start)) {
       dt.heading.reset();;
     }
@@ -129,13 +136,15 @@ class Robot extends TimedRobot {
     }
     else if (driver.when(Xbox.buttons.dPadUp))  {
       dt.shiftHigh();
+    } else if (driver.when(buttons.dPadLeft)) {
+      shooter.prepFire(Distance.LONG);
     }
     if (driver.getPressed(Xbox.buttons.start)) {
-      Common.debug("ROBO: Eject");
+      //Common.debug("ROBO: Eject");
       shooter.eject();
     }
     if (driver.getPressed(Xbox.buttons.back)) {
-      Common.debug("ROBO: Prep Load");
+      //Common.debug("ROBO: Prep Load");
       shooter.prepLoad();
     }
 
@@ -216,15 +225,15 @@ class Robot extends TimedRobot {
     } else if (driver.when(buttons.dPadUp)) {
       auto.setAutoPath(paths.TRENCH_SHOOT);
     }
-    dt.update();
+    
     debug();
   }
   
 
   private void debug() {
-    Common.dashNum("LL: horizental offset", dt.vis.ll.getHorizOffset());
+    /*Common.dashNum("LL: horizental offset", dt.vis.ll.getHorizOffset());
     Common.dashBool("LL: hasTarget", dt.vis.ll.hasTarget());
-    Common.dashBool("LL: at Target", dt.vis.getAtTarget());
+    Common.dashBool("LL: at Target", dt.vis.getAtTarget());*/
     Common.dashStr("Auto: state", auto.getState().toString());
     shooter.debug();
     colorWheel.debug();

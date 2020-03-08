@@ -108,6 +108,8 @@ public class DriveTrain extends DifferentialDrive {
 	 */
 	public void init() {
 		drivePID.reset();
+		instance.setSafetyEnabled(false);
+		DTState = DTStates.TELEOP;
 	}
 
 	
@@ -135,13 +137,20 @@ public class DriveTrain extends DifferentialDrive {
 		middleR.setIdleMode(IdleMode.kCoast);
 		backL.setIdleMode(IdleMode.kCoast);
 		backR.setIdleMode(IdleMode.kCoast);
+
+		frontL.setCANTimeout(10);
+		frontR.setCANTimeout(10);
+		middleL.setCANTimeout(10);
+		middleR.setCANTimeout(10);
+		backL.setCANTimeout(10);
+		backR.setCANTimeout(10);
 	}
 	
 	/**
 	 * Shifts the drivetrain gearbox to high gear.
 	 */
 	public void shiftHigh() {
-		Common.debug("Shifting high");
+		//Common.debug("Shifting high");
 		shifter.set(false);
 	}
 	
@@ -149,7 +158,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * Shifts the drivetrain gearbox to low gear.
 	 */
 	public void shiftLow() {
-		Common.debug("Shifting low");
+		//Common.debug("Shifting low");
 		shifter.set(true);
 	}
 	
@@ -471,7 +480,7 @@ public class DriveTrain extends DifferentialDrive {
 	public void driveToWall(double distance)  {
 		resetEncoders();
 		targetDistance = distance;
-		Common.debug("Target distance: "+targetDistance);
+		//Common.debug("Target distance: "+targetDistance);
 		heading.setHeadingHold(true);
 		driveComp = false;
 		DTState = DTStates.DRIVE_TO_WALL_DIST;
@@ -550,7 +559,7 @@ public class DriveTrain extends DifferentialDrive {
 					turn = heading.turnRate();
 					
 				} else {
-					Common.debug("Completing DRIVE_TO_WALL_DIST: "+getAverageDist());
+					//Common.debug("Completing DRIVE_TO_WALL_DIST: "+getAverageDist());
 					if (targetDistance > 0) {
 						drive = DTW_SLOW_SPEED;
 					} else {
