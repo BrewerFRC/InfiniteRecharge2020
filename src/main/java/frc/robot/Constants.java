@@ -16,8 +16,7 @@ public class Constants {
 
 
     //ANA
-
-
+    public static final int ANA_TOP_BEAMBREAK = 0, ANA_BOTTOM_BEAMBREAK = 1;
     //CAN
     
 

@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 class ColorWheel{
     private String gameData;
     private ColorSensor colorSensor1;
-    private ColorSensor colorSensor2;
+    //private ColorSensor colorSensor2;
     private Spark motor;
-    private String verifiedColorChar1, verifiedColorChar2; 
-    private double pieAmount1, pieAmount2;
+    private String verifiedColorChar1; //verifiedColorChar2; 
+    private double pieAmount1; //pieAmount2;
     private String targetColor;
      
     public static final double ROTATION_POWER = 1;
@@ -34,14 +34,14 @@ class ColorWheel{
     public ColorWheel() {
         //make the sensor variables
         colorSensor1 = new ColorSensor(I2C.Port.kOnboard);
-        colorSensor2 = new ColorSensor(I2C.Port.kMXP);
+        //colorSensor2 = new ColorSensor(I2C.Port.kMXP);
         motor = new Spark(Constants.PWM_COLORWHEEL_MOTOR);
     }
 
     public void debug(){
-        Common.dashNum("CW: S2 Blue", colorSensor2.colorSensor.getColor().blue);
-        Common.dashNum("CW: S2 Red", colorSensor2.colorSensor.getColor().red);
-        Common.dashNum("CW: S2 Green", colorSensor2.colorSensor.getColor().green);
+        //Common.dashNum("CW: S2 Blue", colorSensor2.colorSensor.getColor().blue);
+        //Common.dashNum("CW: S2 Red", colorSensor2.colorSensor.getColor().red);
+        //Common.dashNum("CW: S2 Green", colorSensor2.colorSensor.getColor().green);
         //SmartDashboard.putString("S1-VerifiedColor", verifiedColorChar1);
         //SmartDashboard.putString("S2-VerifiedColor", verifiedColorChar2);
         //SmartDashboard.putNumber("sensor Blue", detectedColorBlue);
@@ -75,25 +75,25 @@ class ColorWheel{
 
     public void resetPieCount(){
         colorSensor1.resetPieCount();
-        colorSensor2.resetPieCount();
+        //colorSensor2.resetPieCount();
     }
 
-    public String verifiedColor(){
+    /**public String verifiedColor(){
         if (colorSensor1.getVerifiedColor(2) == colorSensor2.getVerifiedColor(2)){
             return colorSensor1.verifiedColorChar;
         }
         else{
             return "?";
         }
-            
+    **/        
 
     /**
      * Are both color sensors on the right color?
      *  
      */    
-    }
+    //}
     public boolean targetColorVerified(){
-        if ((verifiedColorChar1.equals(targetColor)) && (verifiedColorChar2.equals(targetColor))){
+        if ((verifiedColorChar1.equals(targetColor)) /**&& (verifiedColorChar2.equals(targetColor))**/){
             return true;
         }
         else{
@@ -106,12 +106,12 @@ class ColorWheel{
      * 
      */
     public boolean rotationVerified() {
-        if ((pieAmount1 >= 26) && (pieAmount1 <= 40) && (pieAmount2 >= 26) && (pieAmount2 <= 40)){
+        if ((pieAmount1 >= 26) && (pieAmount1 <= 40) /*&& (pieAmount2 >= 26) && (pieAmount2 <= 40)**/){
             return true;
         }
-        else if  ((pieAmount1 > 40) && (pieAmount2 > 40)) {
+        else if  ((pieAmount1 > 40) /**&& (pieAmount2 > 40)**/) {
             colorSensor1.resetPieCount();
-            colorSensor2.resetPieCount();
+            //colorSensor2.resetPieCount();
             return false;
         }
         else{
@@ -164,15 +164,15 @@ class ColorWheel{
     
     public void update(){
         colorSensor1.update();
-        colorSensor2.update();
+        //colorSensor2.update();
         verifiedColorChar1 = colorSensor1.getVerifiedColor(2);
-        verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
+        //verifiedColorChar2 = colorSensor2.getVerifiedColor(2);
         pieAmount1 = colorSensor1.getPieCount(2);
-        pieAmount2 = colorSensor2.getPieCount(2);
+        //pieAmount2 = colorSensor2.getPieCount(2);
         targetColor = this.colorToLocate();
         Common.dashStr("CW: State", state.toString());
         Common.dashStr("CW: color char 1", verifiedColorChar1);
-        Common.dashStr("CW: color char 2", verifiedColorChar2);
+        //Common.dashStr("CW: color char 2", verifiedColorChar2);
 
         switch (state) {
             case IDLE :

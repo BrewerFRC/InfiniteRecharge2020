@@ -26,7 +26,7 @@ public class Climber{
     private double power = 0;
     private double targetPowerL = 0;
     private double targetPowerR = 0;
-    private double HOLDINGPOWER = -.22;
+    private double HOLDINGPOWER = -.17; // was -.22
     private boolean locked = false; // is ratchet locking enabled
     private boolean teleop = false; // is the climber under the control of the drivers
 
@@ -105,6 +105,16 @@ public class Climber{
         }
     }
 
+    // Joystick control for climber.
+    public void dualYControl(double y1, double y2) {
+        // negate the y-axis value so that joystick up is a positive value
+        y1 = -y1; 
+        y2 = -y2;  
+        // If x-axis is within deadzone, then y-axis operates both left and right climbers
+        setLeftTarget(y1);
+        setRightTarget(y2);
+    }
+
     //Set target power for left climber. Positive power extends climber.
     private void setLeftTarget(double power) {
         targetPowerL = power;
@@ -142,7 +152,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateLeftCurrent() {
-        leftCurrent = leftCurrent * .98 + Robot.instance().getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .02;
+        //leftCurrent = leftCurrent * .98 + Robot.getPDP().getCurrent(Constants.LEFT_CLIMBER_PDP) * .02;
     }
 
     /**
@@ -158,7 +168,7 @@ public class Climber{
      * Updates the left current using a complementary filter.
      */
     private void updateRightCurrent() {
-        rightCurrent = rightCurrent * .98 + Robot.instance().getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .02;
+        //rightCurrent = rightCurrent * .98 + Robot.getPDP().getCurrent(Constants.RIGHT_CLIMBER_PDP) * .02;
     }
 
     /**

@@ -2,8 +2,8 @@ package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
-
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -28,11 +28,12 @@ class Robot extends TimedRobot {
   private Xbox operator =  new Xbox(1);
   private Climber climber = new Climber();
   private Shooter shooter = new Shooter();
-  private ColorWheel colorWheel = new ColorWheel(); 
+  //private ColorWheel colorWheel = new ColorWheel(); 
   private Compressor compressor = new Compressor(Constants.PCM_CAN_ID);
   private static PowerDistributionPanel pdp = new PowerDistributionPanel();
   private Auto auto =  new Auto(dt, shooter);
   private double drive, turn;
+  private Notifier follower;
   
   @Override
   public void robotInit() {
@@ -53,9 +54,14 @@ class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     auto.update();
     dt.update();
-    shooter.update();
-    climber.update();
-    debug();
+    //follower = new Notifier(() -> {
+      shooter.update();
+      climber.update();
+    //});
+    //follower.startPeriodic(0.005);
+    //shooter.update();
+    //climber.update();
+    //debug();
   }
 
   @Override
@@ -88,7 +94,7 @@ class Robot extends TimedRobot {
       if (dt.vis.getAtTarget()) {
         shooter.fireBall();
       }
-    } else if (operator.getPressed(Xbox.buttons.dPadUp)) {
+    }/* else if (operator.getPressed(Xbox.buttons.dPadUp)) {
       dt.teleopDrive(-.2, 0);
       if (operator.when(Xbox.buttons.dPadUp)) {
         colorWheel.startCounting();
@@ -98,15 +104,15 @@ class Robot extends TimedRobot {
       if (operator.when(Xbox.buttons.dPadDown)) {
         colorWheel.startFinding();
       }
-    } else {
+    }*/ else {
       operator.when(Xbox.buttons.dPadDown);
       operator.when(Xbox.buttons.dPadUp);
       drive = -driver.deadzone(driver.getY(GenericHID.Hand.kLeft));
       turn = -driver.deadzone(driver.getX(Hand.kLeft));
-      if (drive==0 && turn==0) {
+      /**if (drive==0 && turn==0) {
         drive = operator.deadzone(operator.getY(GenericHID.Hand.kLeft));
         turn = -operator.deadzone(operator.getX(Hand.kLeft));  
-      }
+      }**/
       dt.teleopDrive(drive, turn * 0.75);
     }
 
@@ -161,27 +167,38 @@ class Robot extends TimedRobot {
     
     
     if (operator.getPressed(Xbox.buttons.start)) {
-      //shooter.eject();
-      shooter.init();
-      dt.init();
+      shooter.eject();
+      //shooter.init();
+      //dt.init();
     }
     
     if (operator.getPressed(Xbox.buttons.back)) {
       shooter.prepLoad();
     }
 
+    //climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),
+    //                      operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+    if(climber.isLocked()){
+      climber.dualYControl(operator.deadzone(operator.getY(GenericHID.Hand.kRight)),
+      operator.deadzone(operator.getY(GenericHID.Hand.kLeft)));
+    }
+   else{
     climber.teleopControl(operator.deadzone(operator.getX(GenericHID.Hand.kRight)),
                           operator.deadzone(operator.getY(GenericHID.Hand.kRight)));
+   }
 
     /*if (a.getBButton() == true){
       colorWheel.resetPieCount();
     }*/
     
     dt.update();
-    colorWheel.update();
-    shooter.update();
-    climber.update();
-    debug();
+    //colorWheel.update();
+    //follower = new Notifier(() -> {
+      shooter.update();
+      climber.update();
+    //});
+    //follower.startPeriodic(0.);
+    //debug();
     cycleCount++;
     if (cycleCount >= 3) {
       cycleCount = 0;
@@ -229,6 +246,7 @@ class Robot extends TimedRobot {
       auto.setAutoPath(paths.TRENCH_SHOOT);
     }
     
+    //debug();
     debug();
   }
   
@@ -239,7 +257,7 @@ class Robot extends TimedRobot {
     Common.dashBool("LL: at Target", dt.vis.getAtTarget());*/
     Common.dashStr("Auto: state", auto.getState().toString());
     shooter.debug();
-    colorWheel.debug();
+    //colorWheel.debug();
   }
   public static PowerDistributionPanel getPDP() {
     return pdp;

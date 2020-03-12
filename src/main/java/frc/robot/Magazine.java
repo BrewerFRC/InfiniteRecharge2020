@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,6 +34,9 @@ public class Magazine {
 	private static final Talon magMot = new Talon(Constants.PWM_MAGAZINE_MOTOR);
 	private DigitalInput topBeamBreak = new DigitalInput(Constants.DIO_TOP_BEAMBREAK);
 	private DigitalInput bottomBeamBreak = new DigitalInput(Constants.DIO_BOTTOM_BEAMBREAK);
+	//private AnalogInput anaTopBeamBreak = new AnalogInput(Constants.ANA_TOP_BEAMBREAK);
+	private static AnalogInput anaBottomBeamBreak = new AnalogInput(Constants.ANA_BOTTOM_BEAMBREAK);
+	
 	private Timer timer = new Timer();
 	private Timer jamTimer =  new Timer();
 	
@@ -72,7 +76,7 @@ public class Magazine {
 	public void update() {
 		// Jam detection.
 		if (Robot.instance().cycleCount == 1) {
-			if (Robot.instance().getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
+			if (Robot.getPDP().getCurrent(Constants.MAGAZINE_PDP_PORT) >= JAM_AMP) {
 				if (jamTimer.get() > 0) {
 					if (jamTimer.get() >= JAM_TIME) {
 						//stop();
@@ -87,8 +91,11 @@ public class Magazine {
 					jamTimer.start();
 				}
 			} else {
-				jamTimer.stop();
-				jamTimer.reset();
+				if(jamTimer.get() != 0){
+					jamTimer.stop();
+					jamTimer.reset();
+				}
+
 			}
 		}
 
@@ -130,7 +137,7 @@ public class Magazine {
 					stop();
 					//Common.debug("Mag: Idle Top Sensor Triggered");
 					state = States.IDLE;
-				} else if (bottomSensorTriggered() == true) {
+				} else if (bottomSensorTriggered() == true ) {
 					load();
 					//Common.debug("Mag: loading bottom sensor triggered");
 				} else {
@@ -253,11 +260,13 @@ public class Magazine {
 	 */
 	public void debug(){
 		//Common.dashNum("time elapsed", timer.get());
-		//Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
-		Common.dashNum("Mag: Timer", timer.get());
-		Common.dashStr("Mag: State", state.name());
+		Common.dashBool("BOTTOM SENSOR TRIGGERED", bottomBeamBreak.get());
+		//Common.dashNum("Mag: Timer", timer.get());
+		//Common.dashStr("Mag: State", state.name());
 		//Common.dashNum("Mag: amps", Robot.getPDP().getCurrent(8));
 		//Common.dashBool("Mag: TOP", topBeamBreak.get());
+		//Common.dashNum("Mag: topBeamBreak",anaTopBeamBreak.get);
+		Common.dashNum("Mag: bottomBeamBreak",anaBottomBeamBreak.getVoltage());
 	}
 
 	public boolean bottomSensorTriggered(){

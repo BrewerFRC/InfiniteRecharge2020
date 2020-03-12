@@ -264,7 +264,7 @@ public class Auto {
                     if (shoot) {
                         if (shooter.readyToLoad()) {
                             shooter.intakeOff();
-                            shooter.prepFire(Distance.MEDIUM);//not sure if long or medium
+                            shooter.prepFire(Distance.LONG);//not sure if long or medium
                             dt.visionTrack();
                             autoState = autoStates.T_READY_TO_FIRE;
                         }
